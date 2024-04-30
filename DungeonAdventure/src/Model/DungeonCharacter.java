@@ -85,19 +85,5 @@ public abstract class DungeonCharacter {
     public void setMyName(String theName) {
         myName = theName;
     }
-    void attack(DungeonCharacter theOther){
-        int numberOfAttacks = theOther.getMyAttackSpeed()/myAttackSpeed;
-        int randomNumber = (int) (Math.random() * 100)+1;
-        while(numberOfAttacks>0) {
-            boolean canHit = randomNumber <= myChanceToHit;
-            if (canHit) {
-                int damage = (int) (Math.random() * (myMaxDamage - myMinDamage + 1)) + myMinDamage;
-                theOther.setMyHealthPoints(theOther.getMyHealthPoints() - damage);
-                System.out.println("Successfully attacked the monster for " + damage + " points."); //edit this to display on gui
-            } else {
-                System.out.println("Attack missed!"); //edit this to display on gui
-            }
-            numberOfAttacks--;
-        }
-    }
+    abstract void attack(DungeonCharacter theOther);
 }
