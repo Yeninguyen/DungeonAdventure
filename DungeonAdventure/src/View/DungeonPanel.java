@@ -1,108 +1,128 @@
 package View;
 
+import Controller.GameUI;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class DungeonPanel extends JPanel implements Runnable{
+
+public class DungeonPanel extends JPanel implements Runnable {
     //Screen Setting
-    final int originalTileSize = 16;
-    final int scale = 3;
-    final int tileSize = originalTileSize * scale;
-    final int maxScreenCol = 16;
-    final int maxScreenRow = 12;
-    final int screenWidth = tileSize * maxScreenCol;
-    final int screenHeight = tileSize * maxScreenRow;
+    private final int myOriginalTileSize = 16; // 16px
+    private final int myTileSize = myOriginalTileSize * 3; // 48 pixel
+    private final int myMaxScreenCol = 16; // 16
+    private final int myMaxScreenRow = 12; // 12
+    private final int myWidth = myTileSize * myMaxScreenCol; // 768
+    private final int myHeight = myTileSize * myMaxScreenRow; // 576
 
-    public final int titleState = 0;
+
+    private final int myTitleState = 0;
 
     // GAME STATE
-    public int gameState;
-    public final int playState = 1;
-    public final int pauseState = 2;
+    private int gameState;
 
 
-    Thread gameThread;
+    private final int playState = 2;
+    private final int selectionState = 1;
+    private final int pauseState = 3;
+
+    private final GameUI myGameUi;
+
+
+    private Thread gameThread;
 
     public DungeonPanel() {
-        this.setPreferredSize(new Dimension(screenWidth,screenHeight));
+        gameState = myTitleState;
+        this.setPreferredSize(new Dimension(myWidth, myHeight));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
+        myGameUi = new GameUI(this);
         startGameThread();
-        gameState = playState;
     }
 
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
     }
+
     @Override
     public void run() {
-        while(gameThread != null){
-            System.out.println("Running");
+        double interval = 1000000000 / 60;
+        double delta = 0;
+        long prevTime = System.nanoTime();
+        long currTime;
+        while (gameThread != null) {
+            System.out.println(gameState);
+            currTime = System.nanoTime();
+            delta += (currTime - prevTime) / interval;
+
+            prevTime = currTime;
+
+            if (delta >= 1) {
+                update();
+                repaint();
+                delta--;
+            }
         }
     }
 
-    public void update(){
-        if(gameState == playState){
-            // player update
+
+    public void update() {
+        if (gameState == playState) {
+            myGameUi.updatePlayerLocation();
         }
 
-        if(gameState == titleState){
-
-        }
-        if(gameState == pauseState){
-            // pause for later.
-        }
     }
 
     @Override
-    public void paintComponent(Graphics g){
+    public void paintComponent(Graphics g) {
+
         super.paintComponent(g);
         Graphics2D graphics2D = (Graphics2D) g;
-        drawTitleScreen(graphics2D);
+        if (gameState == playState) {
+            myGameUi.drawPlayer(graphics2D);
+        } else if (gameState == selectionState) {
+            myGameUi.drawCharacterSelection(graphics2D);
+        } else if (gameState == myTitleState) {
+            myGameUi.drawTitleScreen(graphics2D);
+        }
     }
 
-    public void drawTitleScreen(Graphics2D g2) {
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
-        String title = "DUNGEON ADVENTURE";
-        int x = tileSize;
-        int y = tileSize * 2;
-
-        g2.setColor(Color.gray);
-        g2.drawString(title, x + 5, y + 5);
-        g2.setColor(Color.WHITE);
-        g2.drawString(title, x, y);
-
-        createButton("NEW GAME", tileSize * 5);
-        createButton( "LOAD GAME", tileSize * 7);
-        createButton("QUIT GAME", tileSize * 9);
+    public int getMyTitleState() {
+        return myTitleState;
     }
 
-    private void createButton(String text, int y) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.BOLD, 16));
-        button.setFocusPainted(false);
-        button.setBounds(tileSize * 6, y, 192, tileSize);
-        this.add(button);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               if(text.equals("NEW GAME")){
-                   gameState = playState;
-               }
-               else if(text.equals("LOAD GAME")){
-
-               }
-               else{
-                   System.exit(0);
-               }
-            }
-        });
-        add(button);
+    public int getSelectionState() {
+        return selectionState;
     }
 
+    public void setGameState(int gameState) {
+        this.gameState = gameState;
+    }
+
+    public int getPauseState() {
+        return pauseState;
+    }
+
+    public int getGameState() {
+        return gameState;
+    }
+
+    public int getPlayState() {
+        return playState;
+    }
+
+    public int getMyWidth() {
+        return myWidth;
+    }
+
+    public int getMyHeight() {
+        return myHeight;
+    }
+
+    public int getMyTileSize() {
+        return myTileSize;
+    }
 
     public static void main(final String... theArgs) {
         EventQueue.invokeLater(new Runnable() {

@@ -32,8 +32,7 @@ public class Dungeon {
             }
         }
         placeExit();
-        placeEntrance();
-        placePillars();
+
     }
 
     private boolean isTraversable(){
@@ -84,9 +83,9 @@ public class Dungeon {
     }
 
     private void placeExit(){
-        //It sets the exit attribute of the room at the bottom-right corner of the maze to true.
-        myDungeon[mySize-1][mySize-1].setExit(true);
     }
+
+
 
     private void placeEntrance(){
         //It sets the entrance attribute of the room at the top-left corner of the maze to true.
@@ -108,6 +107,7 @@ public class Dungeon {
                 numOfPillars++;
             }
         }
+
     }
 
     @Override
