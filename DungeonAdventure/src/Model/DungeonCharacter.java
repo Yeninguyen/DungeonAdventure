@@ -2,21 +2,20 @@ package Model;
 
 public abstract class DungeonCharacter {
     private String myName;
-    private int myHealthPoints;
     private int myHitPoints;
     private int myAttackSpeed;
-    private int myDamageRange;
     private double myChanceToHit;
     private int myMaxDamage;
     private int myMinDamage;
+    private int myX;
+    private int myY;
 
-    DungeonCharacter(String theName, int theHealthPoints, int theHitPoints, int theAttackSpeed,
-                            int theDamageRange, double theChanceToHit, int theMaxDamage, int theMinDamage){
+    DungeonCharacter(String theName, int theHitPoints,  int theAttackSpeed,
+                            double theChanceToHit, int theMaxDamage, int theMinDamage,
+                     int theX, int theY){
         myName = theName;
-        myHealthPoints = theHealthPoints;
         myHitPoints = theHitPoints;
         myAttackSpeed = theAttackSpeed;
-        myDamageRange = theDamageRange;
         myChanceToHit = theChanceToHit;
         myMaxDamage = theMaxDamage;
         myMinDamage = theMinDamage;
@@ -26,12 +25,24 @@ public abstract class DungeonCharacter {
         return myName;
     }
 
-    public int getMyHitPoints() {
-        return myHitPoints;
+    public void setMyChanceToHit(double myChanceToHit) {
+        this.myChanceToHit = myChanceToHit;
     }
 
-    public void setMyHitPoints(int theHitPoints) {
-        myHitPoints = theHitPoints;
+    public int getMyY() {
+        return myY;
+    }
+
+    public void setMyY(int myY) {
+        this.myY = myY;
+    }
+
+    public int getMyX() {
+        return myX;
+    }
+
+    public void setMyX(int myX) {
+        this.myX = myX;
     }
 
     public int getMyMinDamage() {
@@ -58,14 +69,6 @@ public abstract class DungeonCharacter {
         myChanceToHit = theChanceToHit;
     }
 
-    public int getMyDamageRange() {
-        return myDamageRange;
-    }
-
-    public void setMyDamageRange(int theDamageRange) {
-        myDamageRange = theDamageRange;
-    }
-
     public int getMyAttackSpeed() {
         return myAttackSpeed;
     }
@@ -74,16 +77,16 @@ public abstract class DungeonCharacter {
         myAttackSpeed = theAttackSpeed;
     }
 
-    public int getMyHealthPoints() {
-        return myHealthPoints;
+    public int getMyHitPoints() {
+        return myHitPoints;
     }
 
-    public void setMyHealthPoints(int theHealthPoints) {
-        myHealthPoints = theHealthPoints;
+    public void setMyHitPoints(int theHealthPoints) {
+        myHitPoints = theHealthPoints;
     }
 
     public void setMyName(String theName) {
         myName = theName;
     }
-    abstract void attack(DungeonCharacter theOther);
+    protected abstract void attack(DungeonCharacter theOther);
 }
