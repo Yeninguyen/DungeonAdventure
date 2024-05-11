@@ -124,12 +124,5 @@ public class DungeonPanel extends JPanel implements Runnable {
         return myTileSize;
     }
 
-    public static void main(final String... theArgs) {
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new DungeonGUI();
-            }
-        });
-    }
+
 }
