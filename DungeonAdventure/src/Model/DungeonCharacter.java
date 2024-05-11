@@ -1,22 +1,21 @@
 package Model;
 
-public class DungeonCharacter {
+public abstract class DungeonCharacter {
     private String myName;
-    private int myHealthPoints;
     private int myHitPoints;
     private int myAttackSpeed;
-    private int myDamageRange;
     private double myChanceToHit;
     private int myMaxDamage;
     private int myMinDamage;
+    private int myX;
+    private int myY;
 
-    DungeonCharacter(String theName, int theHealthPoints, int theHitPoints, int theAttackSpeed,
-                     int theDamageRange, double theChanceToHit, int theMaxDamage, int theMinDamage){
+    DungeonCharacter(String theName, int theHitPoints,  int theAttackSpeed,
+                            double theChanceToHit, int theMaxDamage, int theMinDamage,
+                     int theX, int theY){
         myName = theName;
-        myHealthPoints = theHealthPoints;
         myHitPoints = theHitPoints;
         myAttackSpeed = theAttackSpeed;
-        myDamageRange = theDamageRange;
         myChanceToHit = theChanceToHit;
         myMaxDamage = theMaxDamage;
         myMinDamage = theMinDamage;
@@ -26,12 +25,24 @@ public class DungeonCharacter {
         return myName;
     }
 
-    public int getMyHitPoints() {
-        return myHitPoints;
+    public void setMyChanceToHit(double myChanceToHit) {
+        this.myChanceToHit = myChanceToHit;
     }
 
-    public void setMyHitPoints(int theHitPoints) {
-        myHitPoints = theHitPoints;
+    public int getMyY() {
+        return myY;
+    }
+
+    public void setMyY(int myY) {
+        this.myY = myY;
+    }
+
+    public int getMyX() {
+        return myX;
+    }
+
+    public void setMyX(int myX) {
+        this.myX = myX;
     }
 
     public int getMyMinDamage() {
@@ -58,14 +69,6 @@ public class DungeonCharacter {
         myChanceToHit = theChanceToHit;
     }
 
-    public int getMyDamageRange() {
-        return myDamageRange;
-    }
-
-    public void setMyDamageRange(int theDamageRange) {
-        myDamageRange = theDamageRange;
-    }
-
     public int getMyAttackSpeed() {
         return myAttackSpeed;
     }
@@ -74,30 +77,16 @@ public class DungeonCharacter {
         myAttackSpeed = theAttackSpeed;
     }
 
-    public int getMyHealthPoints() {
-        return myHealthPoints;
+    public int getMyHitPoints() {
+        return myHitPoints;
     }
 
-    public void setMyHealthPoints(int theHealthPoints) {
-        myHealthPoints = theHealthPoints;
+    public void setMyHitPoints(int theHealthPoints) {
+        myHitPoints = theHealthPoints;
     }
 
     public void setMyName(String theName) {
         myName = theName;
     }
-    void attack(DungeonCharacter theOther){
-        int numberOfAttacks = theOther.getMyAttackSpeed()/myAttackSpeed;
-        int randomNumber = (int) (Math.random() * 100)+1;
-        while(numberOfAttacks>0) {
-            boolean canHit = randomNumber <= myChanceToHit;
-            if (canHit) {
-                int damage = (int) (Math.random() * (myMaxDamage - myMinDamage + 1)) + myMinDamage;
-                theOther.setMyHealthPoints(theOther.getMyHealthPoints() - damage);
-                System.out.println("Successfully attacked the monster for " + damage + " points."); //edit this to display on gui
-            } else {
-                System.out.println("Attack missed!"); //edit this to display on gui
-            }
-            numberOfAttacks--;
-        }
-    }
+    protected abstract void attack(DungeonCharacter theOther);
 }

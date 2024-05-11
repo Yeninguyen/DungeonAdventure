@@ -50,7 +50,7 @@ public class GameUI {
         theDungeonPanel.addKeyListener(myGameControls);
         theDungeonPanel.addMouseListener(myGameControls);
         theDungeonPanel.setFocusable(true);
-        myWarrior = new Warrior();
+        myWarrior = Model.Warrior.getInstance();
         loadImages();
     }
 
