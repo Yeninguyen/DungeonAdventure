@@ -27,6 +27,7 @@ public abstract class Hero extends DungeonCharacter {
     protected void attack(DungeonCharacter theOther) {
        int numberOfAttacks = theOther.getMyAttackSpeed() / super.getMyAttackSpeed();
 
+
         while(numberOfAttacks > 0) {
             double randomForHit = Math.random() +0.1;
             double randomForBlock =  Math.random() +0.1;
@@ -38,6 +39,7 @@ public abstract class Hero extends DungeonCharacter {
                 System.out.println("Successfully attacked the monster for " + damage + " points!"); //edit this to display on gui
             } else if(myCanBlock){
                 System.out.println("Attack successfully blocked!"); //edit this to display on gui
+
             }else {
                 System.out.println("Attack missed!"); //edit this to display on gui
             }

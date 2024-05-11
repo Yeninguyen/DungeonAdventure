@@ -19,11 +19,7 @@ public class Room {
         myEntrance = theEntrance;
         myPillar = thePillar;
         myVisionPotion = theVisionPotion;
-        myHealingPotion = theHealingPotion;
-        myPit = thePit;
-        myEntrance = theEntrance;
-        myPillar = thePillar;
-        myVisionPotion = theVisionPotion;
+
 
     }
 

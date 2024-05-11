@@ -23,4 +23,7 @@ public class Warrior extends Hero{
         }
         return MyUniqueInstance;
     }
+    public static Warrior TEST_getInstance(){
+        return new Warrior();
+    }
 }
