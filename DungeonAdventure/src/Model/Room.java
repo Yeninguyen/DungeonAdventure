@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.Random;
+
 public class Room {
     private int myHealingPotion;
     private int myPit;
@@ -13,40 +15,46 @@ public class Room {
     private boolean myHasExit;
     private String myItem;
 
+
+
     public Room() {
         setUpRoom();
     }
 
     private void setUpRoom() {
-        double chanceForHealingPotion = Math.random() + 0.1;
-        double chanceForPit = Math.random() + 0.1;
-        double chanceForEntrance = Math.random() + 0.1;
-        double chanceForPillar = Math.random() + 0.1;
-        double chanceForVisionPotion = Math.random() + 0.1;
-        double chanceForExit = Math.random() + 0.1;
-        if(chanceForHealingPotion <= 0.15 && chanceForPit <= 0.15
-            && chanceForVisionPotion <= 0.15){
+        double randomValue = Math.random();
+        double chanceForHealingPotion = Math.random();
+        double chanceForPit = Math.random();
+        double chanceForVisionPotion = Math.random();
+
+        if (chanceForHealingPotion <= 0.15 && chanceForPit <= 0.15 && chanceForVisionPotion <= 0.15) {
+            // 15% chance for multiple items (healing potion, pit, and vision potion)
             setUpMultipleItems();
-        } else if(chanceForExit <= 0.1){
-            myExit = true;
-            myHasExit = true;
-        } else if(chanceForEntrance <= 0.1){
+        } else if (randomValue < 0.05) {
+            // 5% chance for entrance
             myEntrance = true;
             myHasEntrance = true;
-        } else if(chanceForPillar <= 0.1){
+        } else if (randomValue < 0.10) {
+            // 5% chance for exit
+            myExit = true;
+            myHasExit = true;
+        } else if (randomValue < 0.20) {
+            // 10% chance for pillar
             setUpPillar();
-        } else if(chanceForVisionPotion <= 0.25){
+        } else if (randomValue < 0.35) {
+            // 15% chance for vision potion
             myVisionPotion = true;
             myItem = "V";
-        } else if(chanceForPit <= 0.25){
-           myPit = (int) (Math.random() * 20) + 1;
-           myItem = "X";
-        }else if(chanceForHealingPotion <= 0.25){
+        } else if (randomValue < 0.55) {
+            // 20% chance for pit
+            myPit = (int) (Math.random() * 20) + 1;
+            myItem = "X";
+        } else {
+            // 45% chance for healing potion
             myHealingPotion = (int) (Math.random() * 11) + 10;
             myItem = "H";
-        } else{
-            myItem = " ";
         }
+
         setLocation();
     }
 
@@ -88,9 +96,9 @@ public class Room {
                 sb.append("*_*").append("\n");
             }
             if(myHasEntrance){
-                sb.append("*").append(myItem).append("|").append("\n");
+                sb.append("*").append("i").append("|").append("\n");
             } else if(myHasExit){
-                sb.append("|").append(myItem).append("*").append("\n");
+                sb.append("|").append("o").append("*").append("\n");
             } else{
                 sb.append("|").append(myItem).append("|").append("\n");
             }
