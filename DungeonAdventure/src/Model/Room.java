@@ -196,8 +196,10 @@ public class Room {
         myVisionPotion = theVisionPotion;
     }
     public static void main(String[] args){
-        Room room = new Room();
-        System.out.println(room.toString());
+        for (int i = 0; i < 10; i++) {
+            Room room = new Room();
+            System.out.println(room);
+        }
     }
 }
 
