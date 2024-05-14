@@ -12,7 +12,7 @@ public class GameSounds {
 
     public void playClickSound(){
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/Sounds/clicksound.wav"));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("DungeonAdventure/src/Sounds/clicksound.wav"));
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
