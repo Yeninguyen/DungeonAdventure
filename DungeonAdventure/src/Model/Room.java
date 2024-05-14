@@ -76,3 +76,4 @@ public class Room {
         myVisionPotion = theVisionPotion;
     }
 }
+

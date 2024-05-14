@@ -14,6 +14,6 @@ public class DungeonGUI extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
-
     }
+
 }

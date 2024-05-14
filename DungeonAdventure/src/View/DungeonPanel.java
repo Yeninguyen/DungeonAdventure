@@ -1,5 +1,6 @@
 package View;
 
+import Controller.GameSounds;
 import Controller.GameUI;
 
 import javax.swing.*;
@@ -8,19 +9,22 @@ import java.awt.*;
 
 public class DungeonPanel extends JPanel implements Runnable {
     //Screen Setting
-    private final int myOriginalTileSize = 16; // 16px
-    private final int myTileSize = myOriginalTileSize * 3; // 48 pixel
+    private final int myOriginalTileSize = 16; // 16px   // 704 x
+    private final int myTileSize = myOriginalTileSize * 4; // 48 ixel
     private final int myMaxScreenCol = 16; // 16
+
+
     private final int myMaxScreenRow = 12; // 12
     private final int myWidth = myTileSize * myMaxScreenCol; // 768
     private final int myHeight = myTileSize * myMaxScreenRow; // 576
 
 
-    private final int myTitleState = 0;
+    // Camera
 
     // GAME STATE
     private int gameState;
 
+    private final int myBeginningState = 0;
 
     private final int playState = 2;
     private final int selectionState = 1;
@@ -28,17 +32,22 @@ public class DungeonPanel extends JPanel implements Runnable {
 
     private final GameUI myGameUi;
 
+    private final GameSounds myGameSounds;
+
 
     private Thread gameThread;
 
     public DungeonPanel() {
-        gameState = myTitleState;
+        gameState = myBeginningState;
         this.setPreferredSize(new Dimension(myWidth, myHeight));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
         myGameUi = new GameUI(this);
+        myGameSounds = new GameSounds();
         startGameThread();
     }
+
+
 
     public void startGameThread() {
         gameThread = new Thread(this);
@@ -47,12 +56,12 @@ public class DungeonPanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        double interval = 1000000000 / 60;
+        double interval = 1000000000.0 / 60;
         double delta = 0;
         long prevTime = System.nanoTime();
         long currTime;
         while (gameThread != null) {
-            System.out.println(gameState);
+      //      System.out.println(gameState);
             currTime = System.nanoTime();
             delta += (currTime - prevTime) / interval;
 
@@ -76,20 +85,22 @@ public class DungeonPanel extends JPanel implements Runnable {
 
     @Override
     public void paintComponent(Graphics g) {
-
         super.paintComponent(g);
         Graphics2D graphics2D = (Graphics2D) g;
         if (gameState == playState) {
             myGameUi.drawPlayer(graphics2D);
         } else if (gameState == selectionState) {
             myGameUi.drawCharacterSelection(graphics2D);
-        } else if (gameState == myTitleState) {
+        } else if (gameState == myBeginningState) {
             myGameUi.drawTitleScreen(graphics2D);
         }
+        graphics2D.dispose();
     }
 
-    public int getMyTitleState() {
-        return myTitleState;
+
+
+    public int getMyBeginningState() {
+        return myBeginningState;
     }
 
     public int getSelectionState() {
@@ -131,5 +142,17 @@ public class DungeonPanel extends JPanel implements Runnable {
                 new DungeonGUI();
             }
         });
+    }
+
+    public int getMyMaxScreenCol() {
+        return myMaxScreenCol;
+    }
+
+    public int getMyMaxScreenRow() {
+        return myMaxScreenRow;
+    }
+
+    public GameSounds getMyGameSounds() {
+        return myGameSounds;
     }
 }
