@@ -1,16 +1,16 @@
 package Model;
 
 public class Room {
-    private int myHealingPotion;
-    private int myPit;
-    private boolean myEntrance;
-    private boolean myExit;
+    private int myHealingPotion; // boolean
+    private int myPit; // boolean
+    private boolean myEntrance; // move to dungeon
+    private boolean myExit;  // move to dungeon
     private String myPillar;
     private boolean myVisionPotion;
     private int myX;
     private int myY;
-    private boolean myHasEntrance;
-    private boolean myHasExit;
+    private boolean myHasEntrance; // no need
+    private boolean myHasExit; // no need
     private String myItem;
 
     public Room() {
