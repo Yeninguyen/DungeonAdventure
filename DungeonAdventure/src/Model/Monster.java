@@ -18,39 +18,7 @@ public class Monster extends DungeonCharacter{
 
 
     }
-    /*
-    private void retrieveFromDB() {
 
-        SQLiteDataSource ds = null;
-        try{
-            ds = new SQLiteDataSource();
-            ds.setUrl("jdbc:sqlite:DungeonAdventureDB.db");
-        } catch(Exception e){
-            e.printStackTrace();
-            System.exit(1);
-        }
-        String query = "SELECT * FROM monster WHERE name='"+myName+"'";
-        try(Connection con = ds.getConnection();
-            Statement stmt = con.createStatement()){
-            ResultSet rs = stmt.executeQuery(query);
-            myHitPoints = rs.findColumn("HIT POINTS");
-            myAttackSpeed = rs.findColumn("ATTACK SPEED");
-            myChanceToHit = rs.findColumn("CHANCE TO HIT");
-            myMinDamage = rs.findColumn("MIN DAMAGE");
-            myMaxDamage = rs.findColumn("MAX DAMAGE");
-            myChanceToHeal = rs.findColumn("CHANCE TO HEAL");
-            myMinHealPoints = rs.findColumn("MIN HEAL POINTS");
-            myMaxHealPoints = rs.findColumn("MAX HEAL POINTS");
-
-
-
-        } catch(Exception e){
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
-
-     */
 
     public double getMyChanceToHeal() {
         return myChanceToHeal;
@@ -96,5 +64,10 @@ public class Monster extends DungeonCharacter{
             System.out.println(getMyName() + " Successfully healed for " + healAmount + " points");
         }
     }
+public static Monster testMonsterInstance(String name, int hitPoints, int attackSpeed, double chanceToHit,
+                                          int maxDamage, int minDamage, double chanceToHeal, int minHealPoints, int maxHealPoints){
+        return new Monster(name, hitPoints, attackSpeed, chanceToHit,
+     maxDamage, minDamage, chanceToHeal, minHealPoints, maxHealPoints);
 
+}
 }
