@@ -65,8 +65,8 @@ public class GameUI {
 
 
     public void drawPlayer(Graphics2D theGraphics) {
-         map(theGraphics);
-         myCharacter.drawAnimations(theGraphics);
+        map(theGraphics);
+        myCharacter.drawAnimations(theGraphics);
     }
 
 
