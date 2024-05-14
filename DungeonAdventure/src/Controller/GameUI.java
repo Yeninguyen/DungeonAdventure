@@ -44,6 +44,7 @@ public class GameUI {
     private BufferedImage selection;
 
 
+
     public GameUI(DungeonPanel theDungeonPanel) {
         myDungeonPanel = theDungeonPanel;
         myGameControls = new GameControls(this);
@@ -67,6 +68,7 @@ public class GameUI {
             img = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/big_kobold_new.png")));
             background = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/blog__becoming-a-dm.png")));
             selection = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/CharacterSelection.png")));
+
         } catch (IOException e) {
             e.printStackTrace();
         }

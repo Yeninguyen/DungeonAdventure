@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal" created-in="IU-241.15989.150">
-    <data-source name="monsterTable" uuid="d7171ae3-b7d6-4894-bd65-f385d26c8300">
+    <data-source name="monsters" uuid="65bec343-6f3e-483a-a595-02b3cc76a7ba">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="SQLITE" />
+      <schema-mapping />
+    </data-source>
+    <data-source name="monster" uuid="42b7b710-80b2-49dd-8237-9488b81dde7b">
       <database-info product="SQLite" version="3.45.1" jdbc-version="4.2" driver-name="SQLite JDBC" driver-version="3.45.1.0" dbms="SQLITE" exact-version="3.45.1" exact-driver-version="3.45">
         <identifier-quote-string>&quot;</identifier-quote-string>
       </database-info>

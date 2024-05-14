@@ -39,7 +39,7 @@ public class Characters {
     private final Map<String, BufferedImage[]> myAnimations;
     public Characters(GameUI theGameUI) {
         myGameUI = theGameUI;
-        myWarrior = new Warrior();
+        myWarrior = Model.Warrior.getInstance();
         myAnimations = new HashMap<>();
         loadImage();
         myCurrentAnimation = myIdleAnimations;
