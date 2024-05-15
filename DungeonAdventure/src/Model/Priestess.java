@@ -8,10 +8,10 @@ public class Priestess extends Hero{
                 0.3,50,100,0.6);
     }
     @Override
-    protected void specialAttack(DungeonCharacter theOther) {
-        double random = Math.random() +0.1;
-        if(random <= getMyChanceForSpecialAttack()){
-            int healedPoints = (int) (Math.random() * (getMySpecialAttackMaxDamage() - getMySpecialAttackMinDamage() + 1)) + getMySpecialAttackMinDamage();
+    protected void special(DungeonCharacter theOther) {
+        double random = Math.random() ;
+        if(random <= getMyChanceForSpecial()){
+            int healedPoints = (int) (Math.random() * (getMySpecialMax() - getMySpecialMin() + 1)) + getMySpecialMin();
             this.setMyHitPoints(getMyHitPoints()+healedPoints);
             //turn this print statement into a gui component
             System.out.println("Successfully landed special skill to heal: " + healedPoints + " points!");
