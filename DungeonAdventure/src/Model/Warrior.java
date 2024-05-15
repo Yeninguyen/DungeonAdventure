@@ -8,10 +8,10 @@ public class Warrior extends Hero{
 
     }
     @Override
-    protected void specialAttack(DungeonCharacter theOther) {
+    protected void special(DungeonCharacter theOther) {
      double random = Math.random() +0.1;
-     if(random <= getMyChanceForSpecialAttack()){
-         int damage = (int) (Math.random() * (super.getMySpecialAttackMaxDamage() - super.getMySpecialAttackMinDamage() + 1)) + super.getMySpecialAttackMinDamage();
+     if(random <= getMyChanceForSpecial()){
+         int damage = (int) (Math.random() * (getMySpecialMax() - getMySpecialMin() + 1)) + getMySpecialMin();
          theOther.setMyHitPoints(theOther.getMyHitPoints()-damage);
          //turn this print statement into a gui component
          System.out.println("Successfully landed special attack Crushing Blow for: " + damage + " points!");

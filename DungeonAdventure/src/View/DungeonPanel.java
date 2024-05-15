@@ -10,13 +10,13 @@ import java.awt.*;
 public class DungeonPanel extends JPanel implements Runnable {
     //Screen Setting
     private final int myOriginalTileSize = 16; // 16px   // 704 x
-    private final int myTileSize = myOriginalTileSize * 4; // 48 ixel
+    private final int myTileSize = myOriginalTileSize * 4; // 64 pixel
     private final int myMaxScreenCol = 16; // 16
 
 
     private final int myMaxScreenRow = 12; // 12
-    private final int myWidth = myTileSize * myMaxScreenCol; // 768
-    private final int myHeight = myTileSize * myMaxScreenRow; // 576
+    private final int myWidth = myTileSize * myMaxScreenCol; // 1024
+    private final int myHeight = myTileSize * myMaxScreenRow; // 768
 
 
     // Camera

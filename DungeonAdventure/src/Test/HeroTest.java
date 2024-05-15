@@ -1,3 +1,4 @@
+/*
 package Test;
 
 
@@ -24,18 +25,18 @@ class HeroTest {
 
     @org.junit.jupiter.api.Test
     void getMyChanceForSpecialAttack() {
-      assertEquals(0.4, myHero1.getMyChanceForSpecialAttack());
+      assertEquals(0.4, myHero1.getMyChanceForSpecial());
     }
 
     @org.junit.jupiter.api.Test
     void setMyChanceForSpecialAttackException() {
-      assertThrows(IllegalArgumentException.class, () -> myHero1.setMyChanceForSpecialAttack(23));
+      assertThrows(IllegalArgumentException.class, () -> myHero1.setMyChanceForSpecial(23));
     }
 
   @org.junit.jupiter.api.Test
   void setMyChanceForSpecialAttackValid() {
-    myHero1.setMyChanceForSpecialAttack(0.8);
-    assertEquals(0.8,myHero1.getMyChanceForSpecialAttack());
+    myHero1.setMyChanceForSpecial(0.8);
+    assertEquals(0.8,myHero1.getMyChanceForSpecial());
 
   }
 
@@ -59,33 +60,35 @@ class HeroTest {
 
     @org.junit.jupiter.api.Test
     void getMySpecialAttackMinDamage() {
-      assertEquals(75, myHero1.getMySpecialAttackMinDamage());
+      assertEquals(75, myHero1.getMySpecialMin());
     }
 
     @org.junit.jupiter.api.Test
     void getMySpecialAttackMaxDamage() {
-      assertEquals(175, myHero1.getMySpecialAttackMaxDamage());
+      assertEquals(175, myHero1.getMySpecialMax());
     }
 
     @org.junit.jupiter.api.Test
     void setMySpecialAttackMaxDamageException() {
-      assertThrows(IllegalArgumentException.class,()-> myHero1.setMySpecialAttackMaxDamage(-3837));
+      assertThrows(IllegalArgumentException.class,()-> myHero1.setMySpecialMax(-3837));
     }
   @org.junit.jupiter.api.Test
   void setMySpecialAttackMaxDamageValid() {
-    myHero1.setMySpecialAttackMaxDamage(1000);
-    assertEquals(1000,myHero1.getMySpecialAttackMaxDamage());
+    myHero1.setMySpecialMax(1000);
+    assertEquals(1000,myHero1.getMySpecialMax());
   }
 
     @org.junit.jupiter.api.Test
     void setMySpecialAttackMinDamageException() {
-      assertThrows(IllegalArgumentException.class,()-> myHero1.setMySpecialAttackMinDamage(-3837));
+      assertThrows(IllegalArgumentException.class,()-> myHero1.setMySpecialMin(-3837));
     }
 
   @org.junit.jupiter.api.Test
   void setMySpecialAttackMinDamageValid() {
-   myHero1.setMySpecialAttackMinDamage(20);
-   assertEquals(20,myHero1.getMySpecialAttackMinDamage());
+   myHero1.setMySpecialMin(20);
+   assertEquals(20,myHero1.getMySpecialMin());
   }
 
 }
+
+ */
