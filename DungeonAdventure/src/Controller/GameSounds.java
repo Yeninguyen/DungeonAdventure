@@ -7,13 +7,11 @@ import java.io.File;
 
 public class GameSounds {
 
-    private String myButtonClickedSound = "clicksound.wav";
-    private String myWarriorAttackSound = "warriorAttack.wav";
+    private final String myButtonClickedSound = "clicksound.wav";
+    private final String myWarriorAttackSound = "warriorAttack.wav";
     public GameSounds() {
 
     }
-
-
 
     public void playClickSound(int theSoundNumber){
         String filePath = "";

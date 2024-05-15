@@ -65,8 +65,8 @@ public class GameUI {
 
 
     public void drawPlayer(Graphics2D theGraphics) {
-         map(theGraphics);
-         myCharacter.drawAnimations(theGraphics);
+        map(theGraphics);
+        myCharacter.drawAnimations(theGraphics);
     }
 
 
@@ -214,7 +214,7 @@ public class GameUI {
     public void map(Graphics2D theGraphics){
         for (int i = 0; i < myDungeonPanel.getMyMaxScreenCol(); i++) {
             for (int j = 0; j < myDungeonPanel.getMyMaxScreenRow(); j++) {
-                theGraphics.drawImage(floor, myDungeonPanel.getMyTileSize() * i, myDungeonPanel.getMyTileSize() * j,myDungeonPanel.getMyTileSize(), myDungeonPanel.getMyTileSize(),  null);
+                theGraphics.drawImage(floor, myDungeonPanel.getMyTileSize() * i, myDungeonPanel.getMyTileSize() * j,myDungeonPanel.getMyTileSize() - 1, myDungeonPanel.getMyTileSize() - 1,  null);
             }
         }
     }
