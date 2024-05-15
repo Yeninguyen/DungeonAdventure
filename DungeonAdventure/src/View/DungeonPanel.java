@@ -18,6 +18,7 @@ public class DungeonPanel extends JPanel implements Runnable {
     private final int myWidth = myTileSize * myMaxScreenCol; // 768
     private final int myHeight = myTileSize * myMaxScreenRow; // 576
 
+    private final static int FPS = 60;
 
     // Camera
 
@@ -56,7 +57,7 @@ public class DungeonPanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        double interval = 1000000000.0 / 60;
+        double interval = 1000000000.0 / FPS;
         double delta = 0;
         long prevTime = System.nanoTime();
         long currTime;

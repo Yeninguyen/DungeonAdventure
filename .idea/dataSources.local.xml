@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal" created-in="IU-223.8836.41">
-    <data-source name="DungeonAdventureDB.sqlite" uuid="bfbabbe4-6c14-4fd6-af77-33a27a9e65f6">
+    <data-source name="monsters" uuid="65bec343-6f3e-483a-a595-02b3cc76a7ba">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="SQLITE" exact-version="0" />
       <schema-mapping />
     </data-source>
-    <data-source name="monster" uuid="91641ba5-1ee5-4245-a96e-e56c62fd6cfd">
+    <data-source name="monster" uuid="42b7b710-80b2-49dd-8237-9488b81dde7b">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="SQLITE" exact-version="0" />
       <schema-mapping />
     </data-source>
-    <data-source name="DungeonAdventureDB" uuid="6446145d-1db7-45d4-a685-0d0a164fbd82">
+    <data-source name="DungeonAdventureDB" uuid="44ee3985-b738-4218-85bb-1ccaa7067ef0">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="SQLITE" exact-version="0" />
       <schema-mapping />
     </data-source>

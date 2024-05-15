@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.util.*;
 
 public class Characters {
+
+    private int myX;
+    private int myY;
     private BufferedImage myImg;
     private BufferedImage[] myIdleAnimations;
     private BufferedImage[] myIdleAnimationsUpDown;
@@ -21,6 +24,11 @@ public class Characters {
     private BufferedImage[] myWarriorAttackUp;
     private BufferedImage[] myWarriorAttackDown;
     private BufferedImage[] myWarriorDeathRight;
+
+    private final String myWarriorPath = "/WarriorImages/Warrior";
+    private final String myPriestessPath = "/Priestess/Priestess";
+    private final String myThiefPath = "/Thief/Thief";
+
 
     private boolean isAttacking = false;
     private boolean isMoving = false;
@@ -47,8 +55,10 @@ public class Characters {
         myGameUI = theGameUI;
         myWarrior = Model.Warrior.getInstance();
         myAnimations = new HashMap<>();
-        loadImage();
+        loadImage(1);
         myCurrentAnimation = myIdleAnimations;
+        myWarrior.setMyY(200);
+        myWarrior.setMyX(200);
     }
 
 
@@ -103,29 +113,74 @@ public class Characters {
         }
     }
 
+
+    public int[] calculateXY(int x, int y){
+        if(directions.equals("right") || directions.equals("left")){
+            y += 64;
+            x -= 64;
+        }else{
+            y -= 64;
+            x += 64;
+        }
+        myWarrior.setMyX(x);
+        myWarrior.setMyY(y);
+        return new int [] {x, y};
+    }
+
+
     public void updatePlayerLocation() {
         if(isMoving) {
             if (myGameUI.getMyGameControls().isMyUpArrow()) {
-                directions = "up";
                 int y = myWarrior.getMyY();
-                y -= playerSpeed;
+                int x = myWarrior.getMyX();
+                if(directions.equals("right") || directions.equals("left")){
+                    y += 64;
+                    x -= 64;
+                    myWarrior.setMyX(x);
+                    myWarrior.setMyY(y);
+                }
+                directions = "up";
                 myCurrentAnimation = myAnimations.get("RU");
+                 y -= playerSpeed;
                 myWarrior.setMyY(y);
             } else if (myGameUI.getMyGameControls().isMyDownArrow()) {
-                directions = "down";
                 int y = myWarrior.getMyY();
+                int x = myWarrior.getMyX();
+                if(directions.equals("left") || directions.equals("right")){
+                    y += 64;
+                    x -= 64;
+                    myWarrior.setMyX(x);
+                    myWarrior.setMyY(y);
+                }
+
+                directions = "down";
                 myCurrentAnimation = myAnimations.get("RD");
                 y += playerSpeed;
                 myWarrior.setMyY(y);
             } else if (myGameUI.getMyGameControls().isMyLeftArrow()) {
-                directions = "left";
+                int y = myWarrior.getMyY();
                 int x = myWarrior.getMyX();
+                if(directions.equals("down") || directions.equals("up")){
+                    y -= 64;
+                    x += 64;
+                    myWarrior.setMyX(x);
+                    myWarrior.setMyY(y);
+                }
+
+                directions = "left";
                 myCurrentAnimation = myAnimations.get("RL");
                 x -= playerSpeed;
                 myWarrior.setMyX(x);
             } else if (myGameUI.getMyGameControls().isMyRightArrow()) {
-                directions = "right";
+                int y = myWarrior.getMyY();
                 int x = myWarrior.getMyX();
+                if(directions.equals("up") || directions.equals("down")){
+                    y -= 64;
+                    x += 64;
+                    myWarrior.setMyX(x);
+                    myWarrior.setMyY(y);
+                }
+                directions = "right";
                 myCurrentAnimation = myAnimations.get("RR");
                 x += playerSpeed;
                 myWarrior.setMyX(x);
@@ -134,7 +189,7 @@ public class Characters {
                 if(directions.equals("left") || directions.equals("right")) {
                     myCurrentAnimation = myAnimations.get("Idle1");
                 }else{
-                    myCurrentAnimation = myAnimations.get("Idle2");
+                     myCurrentAnimation = myAnimations.get("Idle2");
                 }
             }
         }
@@ -161,27 +216,32 @@ public class Characters {
         }
     }
 
-    private void loadImage(){
+    private void loadImage(int theNumber){
+        String path = "";
+        switch (theNumber){
+            case 1 -> path = myWarriorPath;
+            case 2 -> path = myPriestessPath;
+        }
         try {
-            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorIdle.png")));
+            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/" + path + "Idle.png")));
             myIdleAnimations = loadIdleAnimationsLeftRight(5, false);
-            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorRunRight.png")));
+            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/" + path + "RunRight.png")));
             myWarriorRunRight = loadIdleAnimationsLeftRight(8, false);
-            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorRunLeft.png")));
+            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/" + path + "RunLeft.png")));
             myWarriorRunLeft = loadIdleAnimationsLeftRight(8, true);
-            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorRunDown.png")));
+            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/" + path + "RunDown.png")));
             myWarriorRunDown = loadIdleAnimationsUpDown(8);
-            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorRunUp.png")));
+            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/" + path + "RunUp.png")));
             myWarriorRunUp = loadIdleAnimationsUpDown(8);
-            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorAttackRight.png")));
+            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/" + path + "AttackRight.png")));
             myWarriorAttackRight = loadIdleAnimationsLeftRight(7, false);
-            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorAttackLeft.png")));
+            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/" + path + "AttackLeft.png")));
             myWarriorAttackLeft = loadIdleAnimationsLeftRight(7, true);
-            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorAttackDown.png")));
+            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/" + path + "AttackDown.png")));
             myWarriorAttackDown = loadIdleAnimationsUpDown(7);
-            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorAttackUp.png")));
+            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/" + path + "AttackUp.png")));
             myWarriorAttackUp = loadIdleAnimationsUpDown(7);
-            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorIdleUpDown.png")));
+            myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/" + path + "IdleUpDown.png")));
             myIdleAnimationsUpDown = loadIdleAnimationsUpDown(5);
             myAnimations.put("Idle1", myIdleAnimations);
             myAnimations.put("Idle2", myIdleAnimationsUpDown);

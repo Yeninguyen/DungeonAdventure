@@ -7,13 +7,11 @@ import java.io.File;
 
 public class GameSounds {
 
-    private String myButtonClickedSound = "clicksound.wav";
-    private String myWarriorAttackSound = "warriorAttack.wav";
+    private final String myButtonClickedSound = "clicksound.wav";
+    private final String myWarriorAttackSound = "warriorAttack.wav";
     public GameSounds() {
 
     }
-
-
 
     public void playClickSound(int theSoundNumber){
         String filePath = "";
@@ -22,7 +20,7 @@ public class GameSounds {
             case 2 -> filePath = myWarriorAttackSound;
         }
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/Sounds/" + filePath));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("DungeonAdventure/src/Sounds/" + filePath));
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();

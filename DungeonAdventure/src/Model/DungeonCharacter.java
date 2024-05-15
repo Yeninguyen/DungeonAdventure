@@ -10,76 +10,97 @@ public abstract class DungeonCharacter {
     private int myX;
     private int myY;
 
-    DungeonCharacter(String theName, int theHitPoints,  int theAttackSpeed,
-                            double theChanceToHit, int theMaxDamage, int theMinDamage,
-                     int theX, int theY){
-        myName = theName;
-        myHitPoints = theHitPoints;
-        myAttackSpeed = theAttackSpeed;
-        myChanceToHit = theChanceToHit;
-        myMaxDamage = theMaxDamage;
-        myMinDamage = theMinDamage;
+    DungeonCharacter(final String theName, final int theHitPoints,  final int theAttackSpeed,
+                            final double theChanceToHit, final int theMaxDamage, final int theMinDamage,
+                    final int theX, final int theY){
+        setMyName(theName);
+        setMyHitPoints(theHitPoints);
+        setMyAttackSpeed(theAttackSpeed);
+        setMyChanceToHit(theChanceToHit);
+        setMyMaxDamage(theMaxDamage);
+        setMyMinDamage(theMinDamage);
     }
 
     public String getMyName() {
         return myName;
     }
-
-    public void setMyChanceToHit(double myChanceToHit) {
-        this.myChanceToHit = myChanceToHit;
-    }
-
     public int getMyY() {
         return myY;
     }
-
-    public void setMyY(int myY) {
-        this.myY = myY;
-    }
-
     public int getMyX() {
         return myX;
-    }
-
-    public void setMyX(int myX) {
-        this.myX = myX;
     }
 
     public int getMyMinDamage() {
         return myMinDamage;
     }
 
-    public void setMyMinDamage(int  theMinDamage) {
-        myMinDamage = theMinDamage;
-    }
-
     public int getMyMaxDamage() {
         return myMaxDamage;
-    }
-
-    public void setMyMaxDamage(int theMaxDamage) {
-        myMaxDamage = theMaxDamage;
     }
 
     public double getMyChanceToHit() {
         return myChanceToHit;
     }
-
-    public void setMyChanceToHit(int theChanceToHit) {
-        myChanceToHit = theChanceToHit;
-    }
-
     public int getMyAttackSpeed() {
         return myAttackSpeed;
-    }
-
-    public void setMyAttackSpeed(int theAttackSpeed) {
-        myAttackSpeed = theAttackSpeed;
     }
 
     public int getMyHitPoints() {
         return myHitPoints;
     }
+
+
+    public void setMyChanceToHit(final double theChanceToHit) {
+        if(theChanceToHit < 0.0 || theChanceToHit > 1.0){
+            throw new IllegalArgumentException("Chance to hit can only be between 0.0 to 1.0, you passed: " + theChanceToHit);
+        }else{
+            myChanceToHit = theChanceToHit;
+        }
+    }
+
+
+
+    public void setMyY(int theY) {
+//        if(theY < 0 || theY > 768){
+//            throw new IllegalArgumentException("The Y can only be between 0 to 768 you passed: " + theY);
+//        }else{
+//            myY = theY;
+//        }
+        myY = theY;
+
+    }
+
+
+
+    public void setMyX(int myX) {
+        this.myX = myX;
+    }
+
+
+
+    public void setMyMinDamage(int  theMinDamage) {
+        myMinDamage = theMinDamage;
+    }
+
+
+    public void setMyMaxDamage(int theMaxDamage) {
+        myMaxDamage = theMaxDamage;
+    }
+
+
+
+    public void setMyChanceToHit(int theChanceToHit) {
+        myChanceToHit = theChanceToHit;
+    }
+
+
+
+    public void setMyAttackSpeed(int theAttackSpeed) {
+        myAttackSpeed = theAttackSpeed;
+    }
+
+
 
     public void setMyHitPoints(int theHealthPoints) {
         myHitPoints = theHealthPoints;
@@ -88,5 +109,7 @@ public abstract class DungeonCharacter {
     public void setMyName(String theName) {
         myName = theName;
     }
-    protected abstract void attack(DungeonCharacter theOther);
+    protected  void attack(DungeonCharacter theOther){
+
+    }
 }
