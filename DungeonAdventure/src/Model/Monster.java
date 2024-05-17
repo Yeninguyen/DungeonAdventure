@@ -3,22 +3,44 @@ package Model;
 
 public class Monster extends DungeonCharacter{
 
-    private final double myChanceToHeal;
-    private final int myMinHealPoints;
-    private final int myMaxHealPoints;
+    private double myChanceToHeal;
+    private int myMinHealPoints;
+    private int myMaxHealPoints;
 
 
 
-    protected Monster(String theName, int theHitPoints, int theAttackSpeed, double theChanceToHit,
-                    int theMaxDamage, int theMinDamage, double theChanceToHeal, int theMinHealPoints, int theMaxHealPoints){
+    protected Monster(final String theName, final int theHitPoints, final int theAttackSpeed, final double theChanceToHit,
+                    final int theMaxDamage, final int theMinDamage, final double theChanceToHeal, final int theMinHealPoints, final int theMaxHealPoints){
         super(theName,theHitPoints,theAttackSpeed,theChanceToHit,theMaxDamage,theMinDamage,10,10);
-        myChanceToHeal = theChanceToHeal;
+        setMyChanceToHeal(theChanceToHeal);
         myMinHealPoints = theMinHealPoints;
         myMaxHealPoints = theMaxHealPoints;
 
 
     }
+    void setMyMaxHealPoints(final int theMaxHealPoints){
+        if(theMaxHealPoints < 0){
+            throw new IllegalArgumentException("The max heal points cannot be less than zero.");
+        } else{
+            myMaxHealPoints = theMaxHealPoints;
+        }
+    }
 
+    void setMyMinHealPoints(final int theMinHealPoints){
+        if(theMinHealPoints < 0){
+            throw new IllegalArgumentException("The minimum heal points cannot be less than zero.");
+        } else{
+            myMinHealPoints = theMinHealPoints;
+        }
+    }
+
+    void setMyChanceToHeal(final double theChanceToHeal){
+        if(theChanceToHeal < 0.0 || theChanceToHeal > 1.0){
+            throw new IllegalArgumentException("The chance to heal must be between 0.0 and 1.0");
+        }else{
+            myChanceToHeal = theChanceToHeal;
+        }
+    }
 
     public double getMyChanceToHeal() {
         return myChanceToHeal;
@@ -32,32 +54,8 @@ public class Monster extends DungeonCharacter{
         return myMinHealPoints;
     }
 
-    @Override
-    protected void attack(DungeonCharacter theOther) {
-        int numberOfAttacks = theOther.getMyAttackSpeed() / getMyAttackSpeed();
-
-
-        while(numberOfAttacks > 0) {
-            double random = Math.random() +0.1;
-            int hitPointsBeforeAttack = getMyHitPoints();
-            boolean myCanHit = random <= getMyChanceToHit();
-            if (myCanHit) {
-                int damage = (int) (Math.random() * (getMyMaxDamage() - getMyMinDamage() + 1)) + getMyMinDamage();
-                theOther.setMyHitPoints(theOther.getMyHitPoints() - damage);
-                System.out.println(getMyName() + "Successfully attacked player for " + damage + " points"); //edit this to display on gui
-            }
-            numberOfAttacks--;
-            //chance to heal if monster loses hit points but has not fainted
-            if(hitPointsBeforeAttack-getMyHitPoints() >= 0 && getMyHitPoints() > 0){
-                heal();
-            }
-            }
-
-
-
-    }
     public void heal(){
-        double random = Math.random() + 0.1;
+        double random = Math.random();
         if(random <= myChanceToHeal){
             int healAmount =  (int) (Math.random() * (myMaxHealPoints - myMinHealPoints + 1)) + myMinHealPoints;
             setMyHitPoints(getMyHitPoints()+healAmount);

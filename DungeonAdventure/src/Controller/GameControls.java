@@ -24,12 +24,6 @@ public class GameControls implements KeyListener, MouseListener {
     private boolean myMediumSelected;
     private boolean myHardSelected;
 
-    public boolean spaceKeyProcessed = false;
-
-
-    public boolean isMySpaceKeyPressed() {
-        return mySpaceKeyPressed;
-    }
 
     private boolean mySpaceKeyPressed;
 
@@ -89,7 +83,7 @@ public class GameControls implements KeyListener, MouseListener {
             myRightArrow = true;
             myGameUi.getMyCharacter().setMoving(true);
         }
-        if (keyCode == KeyEvent.VK_SPACE && !spaceKeyProcessed) {
+        if (keyCode == KeyEvent.VK_SPACE) {
             mySpaceKeyPressed = true;
             myGameUi.getMyCharacter().setAttacking(true);
         }
@@ -113,7 +107,7 @@ public class GameControls implements KeyListener, MouseListener {
         if (keyCode == KeyEvent.VK_SPACE) {
             mySpaceKeyPressed = false;
             myGameUi.getMyCharacter().setAttacking(false);
-            spaceKeyProcessed = false; // Reset flag when space key is released
+            myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(2);
         }
     }
 
@@ -130,21 +124,21 @@ public class GameControls implements KeyListener, MouseListener {
                 myStartGameClicked = true;
                 myLoadGameClicked = false;
                 myQuitGameClicked = false;
-                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound();
+                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
 
             }
             if (myGameUi.getMyLoadRectangle().contains(e.getPoint())) {
                 myStartGameClicked = false;
                 myLoadGameClicked = true;
                 myQuitGameClicked = false;
-                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound();
+                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
 
             }
             if (myGameUi.getMyQuitRectangle().contains(e.getPoint())) {
                 myStartGameClicked = false;
                 myLoadGameClicked = false;
                 myQuitGameClicked = true;
-                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound();
+                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
 
             }
         } else {
@@ -152,20 +146,21 @@ public class GameControls implements KeyListener, MouseListener {
                 myWarriorSelected = true;
                 myThiefSelected = false;
                 myPriestessSelected = false;
-                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound();
+                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
+                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(2);
 
             }
             if (myGameUi.getMyThiefCheckBox().contains(e.getPoint())) {
                 myWarriorSelected = false;
                 myThiefSelected = true;
                 myPriestessSelected = false;
-                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound();
+                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
             }
             if (myGameUi.getMyPriestessCheckBox().contains(e.getPoint())) {
                 myWarriorSelected = false;
                 myThiefSelected = false;
                 myPriestessSelected = true;
-                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound();
+                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
 
             }
 
@@ -173,27 +168,26 @@ public class GameControls implements KeyListener, MouseListener {
                 myEasySelected = true;
                 myMediumSelected = false;
                 myHardSelected = false;
-                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound();
+                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
 
             }
             if (myGameUi.getMyMediumCheckBox().contains(e.getPoint())) {
                 myEasySelected = false;
                 myMediumSelected = true;
                 myHardSelected = false;
-                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound();
+                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
 
             }
             if (myGameUi.getMyHardCheckBox().contains(e.getPoint())) {
                 myEasySelected = false;
                 myMediumSelected = false;
                 myHardSelected = true;
-                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound();
+                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
 
             }
             if (myGameUi.getMySelectButton().contains(e.getPoint())) {
                 mySelection = true;
-                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound();
-
+                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
             }
 
         }
@@ -250,6 +244,9 @@ public class GameControls implements KeyListener, MouseListener {
 
     public boolean isMyHardSelected() {
         return myHardSelected;
+    }
+    public boolean isMySpaceKeyPressed() {
+        return mySpaceKeyPressed;
     }
 
 }

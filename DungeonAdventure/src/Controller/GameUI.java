@@ -182,7 +182,7 @@ public class GameUI {
         int height = myDungeonPanel.getMyTileSize() * 4;
         if (myGameControls.isMyWarriorSelected()) {
             updateCheckboxSelection(theGraphics2D, myWarriorCheckBox);
-            theGraphics2D.drawImage(myPlayerImage, myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
+            theGraphics2D.drawImage(myCharacter.getMyWarriorAttackLeft()[myCharacter.getMyAnimationIndex()], myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
         }
 
         if (myGameControls.isMyPriestessSelected()) {
@@ -210,10 +210,11 @@ public class GameUI {
         }
     }
 
+
     public void map(Graphics2D theGraphics){
         for (int i = 0; i < myDungeonPanel.getMyMaxScreenCol(); i++) {
             for (int j = 0; j < myDungeonPanel.getMyMaxScreenRow(); j++) {
-                theGraphics.drawImage(floor, myDungeonPanel.getMyTileSize() * i, myDungeonPanel.getMyTileSize() * j,myDungeonPanel.getMyTileSize(), myDungeonPanel.getMyTileSize(),  null);
+                theGraphics.drawImage(floor, myDungeonPanel.getMyTileSize() * i, myDungeonPanel.getMyTileSize() * j,myDungeonPanel.getMyTileSize() - 1, myDungeonPanel.getMyTileSize() - 1,  null);
             }
         }
     }

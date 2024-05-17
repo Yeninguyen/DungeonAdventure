@@ -1,125 +1,128 @@
 package Model;
-import java.util.*;
+
+import java.util.ArrayList;
+
+import java.util.Collections;
+import java.util.List;
+
+
 public class Dungeon {
-    private Room[][] myDungeon;
-    private int myAdventurerLocation;
-    private int mySize;
-    private Random random;
-    private static final int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-    public Dungeon(int theSize) {
-        this.mySize = theSize;
-        myDungeon = new Room[theSize][theSize];
-        random = new Random();
+    private final Room[][] maze;
+    private final int SIZE = 4;
+    private int myNumberOfEntrances;
+    private int myNumberOfExits;
+    private int myNumberOfPillars;
+    public Dungeon() {
+        maze = new Room[SIZE][SIZE];
+        generateMaze();
+
     }
 
-    private void generateDungeon() {
-        // Initialize each room in the dungeon
-        for (int i = 0; i < mySize; i++) {
-            for (int j = 0; j < mySize; j++) {
-                //myDungeon[i][j] = new Room(); // Initialize each room as a new Room object
-            }
-        }
-
-        // Check if the dungeon is traversable before placing exit, entrance, and pillars
-        while (!isTraversable()) {
-            // Reset entrance, exit, and pillars
-            for (int i = 0; i < mySize; i++) {
-                for (int j = 0; j < mySize; j++) {
-                    myDungeon[i][j].setMyEntrance(false);
-                    myDungeon[i][j].setExit(false);
-                    myDungeon[i][j].setMyPillar("");
+    private void generateMaze() {
+        boolean validMaze = false;
+        while (!validMaze) {
+          List<Character> pillars = new ArrayList<>();
+          pillars.add('A');
+          pillars.add('P');
+          pillars.add('E');
+          pillars.add('I');
+            // Initialize maze with empty rooms
+            for (int i = 0; i < SIZE; i++) {
+                for (int j = 0; j < SIZE; j++) {
+                    maze[i][j] = new Room();
+                    maze[i][j].setMyX(i);
+                    maze[i][j].setMyY(j);
+                    if(maze[i][j].getMyHasPillar()){
+                        setUpPillars(maze[i][j],pillars);
+                    }
                 }
             }
-        }
-        placeExit();
 
-    }
+            // Place entrance and exit
+            maze[0][0].setMyEntrance(true);
+            maze[SIZE - 1][SIZE - 1].setMyExit(true);
 
-    private boolean isTraversable(){
-        Queue<int[]> queue = new LinkedList<>();
-        boolean[][] visited = new boolean[mySize][mySize];
-        queue.offer(new int[]{0, 0}); // Start from the entrance
-        visited[0][0] = true;
 
-        while (!queue.isEmpty()) {
-            int[] current = queue.poll();
-            int x = current[0];
-            int y = current[1];
 
-            // Check if the current room is the exit
-            if (myDungeon[x][y].isMyExit()) {
-                return true; // Found exit
-            }
 
-            // Check all four directions
-            for (int[] dir : directions) {
-                int newX = x + dir[0];
-                int newY = y + dir[1];
 
-                // Check if the new position is within bounds and not visited
-                if (newX >= 0 && newX < mySize && newY >= 0 && newY < mySize && !visited[newX][newY]) {
-                    visited[newX][newY] = true;
-                    queue.offer(new int[]{newX, newY});
-                }
+            // Check if the maze is traversable
+            if (isTraversable()) {
+                validMaze = true;
+            } else{
+                myNumberOfEntrances = 0;
+                myNumberOfExits = 0;
+                myNumberOfPillars = 0;
             }
         }
-        return false; // Exit not found
     }
 
-    public Room[][] getMyDungeon() {
-        return myDungeon;
-    }
-
-    public void setMyDungeon(final Room[][] theDungeon) {
-        myDungeon = theDungeon;
-    }
-
-    public int getMyAdventurerLocation() {
-        return myAdventurerLocation;
-    }
-
-    public void setMyAdventurerLocation(final int theAdventurerLocation) {
-        myAdventurerLocation = theAdventurerLocation;
-    }
-
-    private void placeExit(){
-    }
-
-
-
-    private void placeEntrance(){
-        //It sets the entrance attribute of the room at the top-left corner of the maze to true.
-        myDungeon[0][0].setMyEntrance(true);
-    }
-
-    private void placePillars(){
-        int numOfPillars = 0;
-        Set<Integer> usedPositions = new HashSet<>();
-        while (numOfPillars < 4) {
-            int x = random.nextInt(mySize);
-            int y = random.nextInt(mySize);
-            int position = x * mySize + y; // Unique position identifier
-
-            // Check if the position is already used or if it's at the entrance or exit
-            if (!usedPositions.contains(position) && !myDungeon[x][y].isMyEntrance() && !myDungeon[x][y].isMyExit()) {
-                myDungeon[x][y].setMyPillar("");
-                usedPositions.add(position);
-                numOfPillars++;
-            }
+    private void setUpPillars(Room theRoom, List<Character> thePillars) {
+        Collections.shuffle(thePillars); // Shuffle the pillars to randomize placement
+        if(!thePillars.isEmpty()){
+            theRoom.setMyItem(thePillars.getFirst());
+            thePillars.removeFirst();
         }
-
     }
+
+    private boolean dfs(int x, int y, boolean[][] visited) {
+        if (x < 0 || x >= SIZE || y < 0 || y >= SIZE || visited[x][y])
+            return false;
+        visited[x][y] = true;
+        if (maze[x][y].isMyExit()) {
+            myNumberOfExits++;
+        } else if (maze[x][y].isMyEntrance()) {
+            myNumberOfEntrances++;
+        } else if(maze[x][y].getMyHasPillar()){
+            myNumberOfPillars++;
+        }
+        if (myNumberOfEntrances > 1 || myNumberOfExits > 1 || myNumberOfPillars > 4) {
+            return false; // More than one entrance or exit found, maze is invalid
+        }
+        if (maze[x][y].isMyExit())
+            return true;
+        boolean up = dfs(x - 1, y, visited);
+        boolean down = dfs(x + 1, y, visited);
+        boolean left = dfs(x, y - 1, visited);
+        boolean right = dfs(x, y + 1, visited);
+        return up || down || left || right;
+    }
+
+    private boolean isTraversable() {
+        boolean[][] visited = new boolean[SIZE][SIZE];
+        return dfs(0, 0, visited) && myNumberOfPillars==4;
+    }
+
 
     @Override
     public String toString() {
-        return "Dungeon{" +
-                "myDungeon=" + Arrays.toString(myDungeon) +
-                ", myAdventurerLocation=" + myAdventurerLocation +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < SIZE; i++) {
+            sb.append("+---".repeat(SIZE));
+            sb.append("+\n");
+            for (int j = 0; j < SIZE; j++) {
+                sb.append("| ");
+                sb.append(maze[i][j].getMyItem()).append(" ");
+            }
+            sb.append("|\n");
+        }
+        sb.append("+---".repeat(SIZE));
+        sb.append("+\n");
+        return sb.toString();
     }
 
     public static void main(String[] args) {
-        Dungeon d = new Dungeon(5);
-        System.out.println(d);
+        Dungeon dungeon = new Dungeon();
+        System.out.println(dungeon);
+        System.out.println("Testing dungeon matches room toString");
+        for(int i=0;i< dungeon.SIZE;i++){
+            for(int j=0;j< dungeon.SIZE;j++){
+                System.out.println(dungeon.maze[i][j].toString());
+                System.out.println();
+            }
+            System.out.println();
+        }
+
+
     }
 }

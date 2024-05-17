@@ -10,83 +10,108 @@ public abstract class DungeonCharacter {
     private int myX;
     private int myY;
 
-    DungeonCharacter(String theName, int theHitPoints,  int theAttackSpeed,
-                            double theChanceToHit, int theMaxDamage, int theMinDamage,
-                     int theX, int theY){
-        myName = theName;
-        myHitPoints = theHitPoints;
+    DungeonCharacter(final String theName, final int theHitPoints, final int theAttackSpeed,
+                            final double theChanceToHit, final int theMaxDamage, final int theMinDamage,
+                     final int theX, final int theY){
+        setMyName(theName);
+        setMyHitPoints(theHitPoints);
+        setMyAttackSpeed(theAttackSpeed);
+        setMyChanceToHit(theChanceToHit);
+        setMyMaxDamage(theMaxDamage);
+        setMyMinDamage(theMinDamage);
+    }
+
+
+    protected void setMyChanceToHit(final double theChanceToHit) {
+        if (myChanceToHit < 0.0 || myChanceToHit > 1.0) {
+            throw new IllegalArgumentException("Chance to hit must be between 0.0 and 1.0");
+        }else {
+            myChanceToHit = theChanceToHit;
+        }
+    }
+
+    public void setMyY(final int theY) {
+       // if(theY < 0 || theY > 768) {
+         //   throw new IllegalArgumentException("Y must be between 0 and 768");
+       // }else{
+            myY = theY;
+      //  }
+    }
+
+    public void setMyX(final int theX) {
+       //if(theX < 0 || theX > 1024) {
+         //  throw new IllegalArgumentException("X must be between 0 and 1024");
+       //}else{
+           myX = theX;
+       //}
+    }
+
+    void setMyMinDamage(final int theMinDamage) {
+        if(theMinDamage < 0 ) {
+            throw new IllegalArgumentException("Min damage must be greater than 0");
+        }
+        myMinDamage = theMinDamage;
+    }
+   void setMyMaxDamage(final int theMaxDamage) {
+        if(theMaxDamage < 0 ) {
+            throw new IllegalArgumentException("Max damage must be greater than 0");
+        }
+        myMaxDamage = theMaxDamage;
+    }
+
+    void setMyAttackSpeed(final int theAttackSpeed) {
+        if(theAttackSpeed < 0){
+            throw  new IllegalArgumentException("AttackSpeed must be greater than 0");
+        }
         myAttackSpeed = theAttackSpeed;
-        myChanceToHit = theChanceToHit;
-        myMaxDamage = theMaxDamage;
-        myMinDamage = theMinDamage;
     }
 
-    public String getMyName() {
-        return myName;
+    void setMyHitPoints(final int theHealthPoints) {
+        myHitPoints = theHealthPoints;
     }
 
-    public void setMyChanceToHit(double myChanceToHit) {
-        this.myChanceToHit = myChanceToHit;
+    void setMyName(final String theName) {
+        if(theName == null) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+        myName = theName;
     }
-
-    public int getMyY() {
-        return myY;
-    }
-
-    public void setMyY(int myY) {
-        this.myY = myY;
-    }
-
-    public int getMyX() {
-        return myX;
-    }
-
-    public void setMyX(int myX) {
-        this.myX = myX;
-    }
-
-    public int getMyMinDamage() {
-        return myMinDamage;
-    }
-
-    public void setMyMinDamage(int  theMinDamage) {
-        myMinDamage = theMinDamage;
-    }
-
-    public int getMyMaxDamage() {
-        return myMaxDamage;
-    }
-
-    public void setMyMaxDamage(int theMaxDamage) {
-        myMaxDamage = theMaxDamage;
-    }
-
-    public double getMyChanceToHit() {
-        return myChanceToHit;
-    }
-
-    public void setMyChanceToHit(int theChanceToHit) {
-        myChanceToHit = theChanceToHit;
+    public int getMyHitPoints() {
+        return myHitPoints;
     }
 
     public int getMyAttackSpeed() {
         return myAttackSpeed;
     }
 
-    public void setMyAttackSpeed(int theAttackSpeed) {
-        myAttackSpeed = theAttackSpeed;
+    public double getMyChanceToHit() {
+        return myChanceToHit;
     }
 
-    public int getMyHitPoints() {
-        return myHitPoints;
+    public int getMyMaxDamage() {
+        return myMaxDamage;
     }
 
-    public void setMyHitPoints(int theHealthPoints) {
-        myHitPoints = theHealthPoints;
+    public String getMyName() {
+        return myName;
     }
 
-    public void setMyName(String theName) {
-        myName = theName;
+    public int getMyMinDamage() {
+        return myMinDamage;
     }
-    protected abstract void attack(DungeonCharacter theOther);
+
+    public int getMyX() {
+        return myX;
+    }
+
+    public int getMyY() {
+        return myY;
+    }
+    public void attack(final DungeonCharacter theOther){
+        double random = Math.random();
+        if(random <= myChanceToHit) {
+            int damage = (int) (Math.random() * (getMyMaxDamage() - getMyMinDamage() + 1)) + getMyMinDamage();
+            theOther.setMyHitPoints(theOther.getMyHitPoints()-damage);
+        }
+    }
 }

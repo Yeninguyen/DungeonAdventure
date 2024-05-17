@@ -1,3 +1,4 @@
+/*
 package Controller;
 import org.sqlite.SQLiteDataSource;
 
@@ -34,25 +35,25 @@ public class MonsterDatabase {
         try (Connection conn = ds.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.execute(createTableQuery);
-            System.out.println("Table created successfully");
+            //System.out.println("Table created successfully");
         } catch (SQLException e) {
             e.printStackTrace();
             return;
         }
 
         // Insert sample data into the monsters table (uncomment if needed)
-        /*String insertDataQuery = "INSERT INTO monsters (name, hitPoints, attackSpeed, chanceToHit, minDamage, maxDamage, chanceToHeal, minHealPoints, maxHealPoints ) VALUES " +
-                "('Ogre', 200, 2, 0.6, 30, 60, 0.1, 30, 60), " +
-                "('Gremlin', 70, 5, 0.8, 15, 30, 0.4, 20, 40), " +
-                "('Skeleton', 100, 3, 0.8, 30, 50, 0.3, 30, 50)";
-        try (Connection conn = ds.getConnection();
-             Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate(insertDataQuery);
-            System.out.println("Sample data inserted successfully");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return;
-        }*/
+//        /*String insertDataQuery = "INSERT INTO monsters (name, hitPoints, attackSpeed, chanceToHit, minDamage, maxDamage, chanceToHeal, minHealPoints, maxHealPoints ) VALUES " +
+//                "('Ogre', 200, 2, 0.6, 30, 60, 0.1, 30, 60), " +
+//                "('Gremlin', 70, 5, 0.8, 15, 30, 0.4, 20, 40), " +
+//                "('Skeleton', 100, 3, 0.8, 30, 50, 0.3, 30, 50)";
+//        try (Connection conn = ds.getConnection();
+//             Statement stmt = conn.createStatement()) {
+//            stmt.executeUpdate(insertDataQuery);
+//            System.out.println("Sample data inserted successfully");
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return;
+//        }
 
         // Query the monsters table and display the results
         String selectDataQuery = "SELECT * FROM monsters";
@@ -85,7 +86,11 @@ public class MonsterDatabase {
         Scanner input = new Scanner(System.in);
         input.nextLine();
     }
+
 }
+
+ */
+
 
 
 

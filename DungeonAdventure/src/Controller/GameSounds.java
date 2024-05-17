@@ -6,13 +6,21 @@ import javax.sound.sampled.Clip;
 import java.io.File;
 
 public class GameSounds {
+
+    private final String myButtonClickedSound = "clicksound.wav";
+    private final String myWarriorAttackSound = "warriorAttack.wav";
     public GameSounds() {
 
     }
 
-    public void playClickSound(){
+    public void playClickSound(int theSoundNumber){
+        String filePath = "";
+        switch (theSoundNumber) {
+            case 1 -> filePath = myButtonClickedSound;
+            case 2 -> filePath = myWarriorAttackSound;
+        }
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("DungeonAdventure/src/Sounds/clicksound.wav"));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("DungeonAdventure/src/Sounds/" + filePath));
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
@@ -20,4 +28,6 @@ public class GameSounds {
             e.printStackTrace();
         }
     }
+
+
 }
