@@ -1,3 +1,4 @@
+/*
 package Controller;
 import org.sqlite.SQLiteDataSource;
 
@@ -52,7 +53,7 @@ public class MonsterDatabase {
 //        } catch (SQLException e) {
 //            e.printStackTrace();
 //            return;
-//        }*/
+//        }
 
         // Query the monsters table and display the results
         String selectDataQuery = "SELECT * FROM monsters";
@@ -87,6 +88,9 @@ public class MonsterDatabase {
     }
 
 }
+
+ */
+
 
 
 

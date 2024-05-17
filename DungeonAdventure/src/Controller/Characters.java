@@ -221,6 +221,7 @@ public class Characters {
         switch (theNumber){
             case 1 -> path = myWarriorPath;
             case 2 -> path = myPriestessPath;
+            case 3 -> path = myThiefPath;
         }
         try {
             myImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/" + path + "Idle.png")));
