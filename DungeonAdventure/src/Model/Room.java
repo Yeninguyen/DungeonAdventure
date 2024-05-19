@@ -146,5 +146,13 @@ public class Room {
         return myHasVisionPotion;
     }
 
+    public boolean getMyEntrance() {
+        return myEntrance;
+    }
+
+    public boolean getMyExit() {
+        return myExit;
+    }
+
 
 }

@@ -34,6 +34,8 @@ public class Characters {
     private boolean isMoving = false;
 
     private int playerSpeed = 4;
+    private final int screenX;
+    private final int screenY;
 
 
 
@@ -41,6 +43,9 @@ public class Characters {
     private final GameUI myGameUI;
 
     private final Warrior myWarrior;
+
+
+
 
     private int myAnimationTick;
     private int myAnimationIndex;
@@ -51,6 +56,7 @@ public class Characters {
     private String directions = "idle";
 
     private final Map<String, BufferedImage[]> myAnimations;
+
     public Characters(GameUI theGameUI) {
         myGameUI = theGameUI;
         myWarrior = Model.Warrior.getInstance();
@@ -59,6 +65,8 @@ public class Characters {
         myCurrentAnimation = myIdleAnimations;
         myWarrior.setMyY(200);
         myWarrior.setMyX(200);
+        screenX = myGameUI.getMyDungeonPanel().getMyWidth()/2-myGameUI.getMyDungeonPanel().getMyTileSize()/2;
+        screenY = myGameUI.getMyDungeonPanel().getMyHeight()/2-myGameUI.getMyDungeonPanel().getMyTileSize()/2;
     }
 
 
@@ -110,6 +118,7 @@ public class Characters {
     public void drawAnimations(Graphics2D theGraphics){
         if(myAnimationIndex < myCurrentAnimation.length) {
             theGraphics.drawImage(myCurrentAnimation[myAnimationIndex], myWarrior.getMyX(), myWarrior.getMyY(), 150, 150, null);
+            //theGraphics.drawRect(screenX, screenY, 20, 20);
         }
     }
 
@@ -278,5 +287,15 @@ public class Characters {
 
     public int getMyAnimationIndex() {
         return myAnimationIndex;
+    }
+    public Warrior getMyWarrior() {
+        return myWarrior;
+    }
+
+    public int getScreenX() {
+        return screenX;
+    }
+    public int getScreenY() {
+        return screenY;
     }
 }

@@ -1,5 +1,11 @@
 package View;
+import org.sqlite.SQLiteDataSource;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
 import java.awt.*;
 
 public class DungeonMain {
@@ -13,7 +19,7 @@ public class DungeonMain {
             }
         });
     }
-}
+
 
 
 //            SQLiteDataSource ds = null;
@@ -58,21 +64,21 @@ public class DungeonMain {
 //            //next insert two rows of data
 //            System.out.println( "Attempting to insert two rows into questions table" );
 //
-////            String query1 = "INSERT INTO monsters (name, hitPoints, attackSpeed, chanceToHit, minDamage, maxDamage, chanceToHeal, minHealPoints, maxHealPoints ) VALUES " +
-////                    "('Ogre', 200, 2, 0.6, 30, 60, 0.1, 30, 60), " +
-////                    "('Gremlin', 70, 5, 0.8, 15, 30, 0.4, 20, 40), " +
-////                    "('Skeleton', 100, 3, 0.8, 30, 50, 0.3, 30, 50)";
-////            try ( Connection conn = ds.getConnection();
-////                  Statement stmt = conn.createStatement(); ) {
-////                int rv = stmt.executeUpdate( query1 );
-////                System.out.println( "1st executeUpdate() returned " + rv );
-////
-//////                rv = stmt.executeUpdate( query2 );
-//////                System.out.println( "2nd executeUpdate() returned " + rv );
-////            } catch ( SQLException e ) {
-////                e.printStackTrace();
-////                System.exit( 0 );
-////            }
+//            String query1 = "INSERT INTO monsters (name, hitPoints, attackSpeed, chanceToHit, minDamage, maxDamage, chanceToHeal, minHealPoints, maxHealPoints ) VALUES " +
+//                    "('Ogre', 200, 2, 0.6, 30, 60, 0.1, 30, 60), " +
+//                    "('Gremlin', 70, 5, 0.8, 15, 30, 0.4, 20, 40), " +
+//                    "('Skeleton', 100, 3, 0.8, 30, 50, 0.3, 30, 50)";
+//            try ( Connection conn = ds.getConnection();
+//                  Statement stmt = conn.createStatement(); ) {
+//                int rv = stmt.executeUpdate( query1 );
+//                System.out.println( "1st executeUpdate() returned " + rv );
+//
+////                rv = stmt.executeUpdate( query2 );
+////                System.out.println( "2nd executeUpdate() returned " + rv );
+//            } catch ( SQLException e ) {
+//                e.printStackTrace();
+//                System.exit( 0 );
+//            }
 //
 //
 //            //now query the database table for all its contents and display the results
@@ -111,6 +117,6 @@ public class DungeonMain {
 //            input.nextLine();
 //        }
 //
-//
-//}
-//
+
+}
+

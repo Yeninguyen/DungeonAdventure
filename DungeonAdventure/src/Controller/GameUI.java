@@ -6,10 +6,14 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.io.FileReader;
 
 public class GameUI {
     private RoundRectangle2D myStartRectangle;
@@ -50,6 +54,9 @@ public class GameUI {
 
     private Characters myCharacter;
 
+    private int[][] dungeonMap;
+    private TileManager myTileManager;
+
 
 
     public GameUI(DungeonPanel theDungeonPanel) {
@@ -60,14 +67,78 @@ public class GameUI {
         theDungeonPanel.setFocusable(true);
         myCharacter = new Characters(this);
         loadImages();
+        initializeDungeonMap(); // Initialize dungeonMap here
+        loadMap();
+        //myTileManager = new TileManager(this);
     }
 
 
 
     public void drawPlayer(Graphics2D theGraphics) {
         map(theGraphics);
+       // myTileManager.drawTiles(theGraphics);
         myCharacter.drawAnimations(theGraphics);
+
+
     }
+
+
+//    private void loadMap() {
+//        try {
+//            InputStream resourceAsStream = getClass().getResourceAsStream("/Images/maps/map.txt");
+//            BufferedReader br = new BufferedReader(new InputStreamReader(resourceAsStream));
+//            int row = 0;
+//            int col = 0;
+//            while (col < myDungeonPanel.getMyMaxScreenCol() && row < myDungeonPanel.getMyMaxScreenRow()) {
+//                String line = br.readLine();
+//                while (col < myDungeonPanel.getMyMaxScreenCol()) {
+//                    String numbers[] = line.split(" ");
+//                    int num = Integer.parseInt(numbers[col]);
+//                    dungeonMap[row][col] = num;
+//                    col++;
+//                }
+//                if (col == myDungeonPanel.getMyMaxScreenCol()) {
+//                    col = 0;
+//                    row++;
+//                }
+//            }
+//            br.close();
+//        } catch(IOException e){
+//                e.printStackTrace();
+//            }
+//
+//    }
+
+    private void initializeDungeonMap() {
+        dungeonMap = new int[myDungeonPanel.getMyMaxScreenRow()][myDungeonPanel.getMyMaxScreenCol()];
+    }
+    private void loadMap() {
+        try {
+            InputStream resourceAsStream = getClass().getResourceAsStream("/Images/maps/map.txt");
+            BufferedReader br = new BufferedReader(new InputStreamReader(resourceAsStream));
+            int row = 0;
+            int col = 0;
+            while (col < myDungeonPanel.getMyMaxScreenCol() && row < myDungeonPanel.getMyMaxScreenRow()) {
+                String line = br.readLine();
+                while (col < myDungeonPanel.getMyMaxScreenCol()) {
+                    String numbers[] = line.split(" ");
+                    if (!numbers[col].isEmpty()) { // Check if the string is not empty
+                        int num = Integer.parseInt(numbers[col]);
+                        dungeonMap[row][col] = num;
+                    }
+                    col++;
+                }
+                if (col == myDungeonPanel.getMyMaxScreenCol()) {
+                    col = 0;
+                    row++;
+                }
+            }
+            br.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     public void loadImages() {
@@ -211,10 +282,22 @@ public class GameUI {
     }
 
 
-    public void map(Graphics2D theGraphics){
-        for (int i = 0; i < myDungeonPanel.getMyMaxScreenCol(); i++) {
-            for (int j = 0; j < myDungeonPanel.getMyMaxScreenRow(); j++) {
-                theGraphics.drawImage(floor, myDungeonPanel.getMyTileSize() * i, myDungeonPanel.getMyTileSize() * j,myDungeonPanel.getMyTileSize() - 1, myDungeonPanel.getMyTileSize() - 1,  null);
+    public void map(Graphics2D theGraphics) {
+        for (int row = 0; row < myDungeonPanel.getMyMaxScreenRow(); row++) {
+            for (int col = 0; col < myDungeonPanel.getMyMaxScreenCol(); col++) {
+                int tileNum = dungeonMap[row][col];
+                BufferedImage tileImage;
+
+                if (tileNum == 0) {
+                    tileImage = wall;
+                } else {
+                    tileImage = floor;
+                }
+
+                int x = col * myDungeonPanel.getMyTileSize();
+                int y = row * myDungeonPanel.getMyTileSize();
+
+                theGraphics.drawImage(tileImage, x, y, myDungeonPanel.getMyTileSize(), myDungeonPanel.getMyTileSize(), null);
             }
         }
     }
