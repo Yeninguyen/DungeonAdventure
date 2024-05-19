@@ -1,0 +1,1 @@
+Team member’s names: Pham Nguyen, Ali Mohamed, and Faisal NurClass: TCSS360Date: May 13, 2024This week, we started to discuss and work on the SQLite database for the Monster class. We also worked on the GUI and the logic of the Dungeon game. Overall, everyone spent at least 8 hours communicating and distributing useful ideas. 
