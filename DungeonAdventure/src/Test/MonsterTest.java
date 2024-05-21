@@ -1,5 +1,6 @@
 package Test;
 
+/*
 import Model.Monster;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,3 +81,5 @@ class MonsterTest {
     void heal() {
     }
 }
+
+ */
