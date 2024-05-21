@@ -106,8 +106,11 @@ public class GameControls implements KeyListener, MouseListener {
         }
         if (keyCode == KeyEvent.VK_SPACE) {
             mySpaceKeyPressed = false;
-            myGameUi.getMyCharacter().setAttacking(false);
             myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(2);
+        }
+        if(keyCode == KeyEvent.VK_ENTER){
+            myGameUi.getMyCharacter().setMoving(false);
+            myGameUi.getMyCharacter().setMoving(true);
         }
     }
 
@@ -142,7 +145,7 @@ public class GameControls implements KeyListener, MouseListener {
 
             }
         } else {
-            if (myGameUi.getMyWarriorCheckBox().contains(e.getPoint())) {
+            if (myGameUi.getMyWarriorCheckBox() != null && myGameUi.getMyWarriorCheckBox().contains(e.getPoint())) {
                 myWarriorSelected = true;
                 myThiefSelected = false;
                 myPriestessSelected = false;

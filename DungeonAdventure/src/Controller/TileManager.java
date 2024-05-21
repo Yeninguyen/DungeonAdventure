@@ -15,7 +15,7 @@ public class TileManager {
     GameUI myGameUi;
     private Map<String, BufferedImage> myTiles;
 
-    private String[][] mapTileNum;
+    private final String[][] mapTileNum;
 
     public TileManager(final GameUI theGameUi) {
         myGameUi = theGameUi;
@@ -41,7 +41,7 @@ public class TileManager {
 
         while (row < 24 && col < 48) {
 
-            String tileNum = mapTileNum[row][col]; // Corrected the indices
+            String tileNum = mapTileNum[row][col];
 
             int x = col * myGameUi.getMyDungeonPanel().getMyTileSize();
             int y = row * myGameUi.getMyDungeonPanel().getMyTileSize();
@@ -50,9 +50,9 @@ public class TileManager {
             int screenY = y - myGameUi.getMyCharacter().getMyWarrior().getMyY() + myGameUi.getMyCharacter().getScreenY();
 
             if(x + 64 > myGameUi.getMyCharacter().getMyWarrior().getMyX() - myGameUi.getMyCharacter().getScreenX() &&
-                    x  - 64 < myGameUi.getMyCharacter().getMyWarrior().getMyX() + myGameUi.getMyCharacter().getScreenX() &&
-                    y  + 64> myGameUi.getMyCharacter().getMyWarrior().getMyY() - myGameUi.getMyCharacter().getScreenY() &&
-                    y  - 64< myGameUi.getMyCharacter().getMyWarrior().getMyY() + myGameUi.getMyCharacter().getScreenY()){
+               x  - 64 < myGameUi.getMyCharacter().getMyWarrior().getMyX() + myGameUi.getMyCharacter().getScreenX() &&
+               y  + 64> myGameUi.getMyCharacter().getMyWarrior().getMyY() - myGameUi.getMyCharacter().getScreenY() &&
+               y  - 64< myGameUi.getMyCharacter().getMyWarrior().getMyY() + myGameUi.getMyCharacter().getScreenY()){
                 theGraphics.drawImage(myTiles.get(tileNum), screenX, screenY, myGameUi.getMyDungeonPanel().getMyTileSize(), myGameUi.getMyDungeonPanel().getMyTileSize(), null);
 
             }
@@ -66,7 +66,7 @@ public class TileManager {
 
     public void loadMap(){
         try {
-            InputStream is = getClass().getResourceAsStream("/Images/maps/map.txt");
+            InputStream is = getClass().getResourceAsStream("/Maps/map.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
             for(int row = 0; row < 24; row++) {
