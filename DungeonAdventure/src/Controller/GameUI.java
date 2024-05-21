@@ -7,8 +7,6 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class GameUI {
@@ -40,15 +38,11 @@ public class GameUI {
 
 
 
-    private BufferedImage myPlayerImage;
     private BufferedImage selection;
 
-    private BufferedImage wall;
-    private BufferedImage floor;
-
-    private Map<BufferedImage, Boolean> myTiles;
 
     private Characters myCharacter;
+    private TileManager myTileManager;
 
 
 
@@ -59,48 +53,41 @@ public class GameUI {
         theDungeonPanel.addMouseListener(myGameControls);
         theDungeonPanel.setFocusable(true);
         myCharacter = new Characters(this);
+        myTileManager = new TileManager(this);
         loadImages();
     }
 
-
-
-    public void drawPlayer(Graphics2D theGraphics) {
-        map(theGraphics);
-        myCharacter.drawAnimations(theGraphics);
-    }
-
-
     public void loadImages() {
         try {
-            myPlayerImage = myCharacter.getMyIdleAnimations()[0];
             background = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Backgrounds/StartGameBackground.png")));
             selection = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Backgrounds/CharacterSelection.png")));
-            wall = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Tiles/wall.png")));
-            floor = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Tiles/earth.png")));
-
-            myTiles = new HashMap<>();
-            myTiles.put(wall, false);
-            myTiles.put(floor, true);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void drawTitleScreen(Graphics2D g2) {
 
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
+
+    public void drawPlayer(Graphics2D theGraphics) {
+         myTileManager.drawTiles(theGraphics);
+         myCharacter.drawPlayer(theGraphics);
+    }
+
+    public void drawTitleScreen(Graphics2D theGraphics) {
+
+        theGraphics.setFont(theGraphics.getFont().deriveFont(Font.PLAIN, 60F));
         String title = "DUNGEON ADVENTURE";
         int x = (int) (myDungeonPanel.getMyTileSize() * 2.5);
         int y = myDungeonPanel.getMyTileSize() * 2;
 
-        g2.drawImage(background, 0, 0, myDungeonPanel.getMyWidth(), myDungeonPanel.getMyHeight(), null);
+        theGraphics.drawImage(background, 0, 0, myDungeonPanel.getMyWidth(), myDungeonPanel.getMyHeight(), null);
 
-        g2.setColor(Color.BLACK);
-        g2.drawString(title, x + 5, y + 5);
-        g2.setColor(Color.WHITE);
-        g2.drawString(title, x, y);
-        createButton(g2);
+        theGraphics.setColor(Color.BLACK);
+        theGraphics.drawString(title, x + 5, y + 5);
+        theGraphics.setColor(Color.WHITE);
+        theGraphics.drawString(title, x, y);
+        createButton(theGraphics);
     }
 
 
@@ -182,17 +169,18 @@ public class GameUI {
         int height = myDungeonPanel.getMyTileSize() * 4;
         if (myGameControls.isMyWarriorSelected()) {
             updateCheckboxSelection(theGraphics2D, myWarriorCheckBox);
-            theGraphics2D.drawImage(myCharacter.getMyWarriorAttackLeft()[myCharacter.getMyAnimationIndex()], myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
+           theGraphics2D.drawImage((myCharacter.getMyCurrentAnimation()[0]),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
         }
 
         if (myGameControls.isMyPriestessSelected()) {
             updateCheckboxSelection(theGraphics2D, myPriestessCheckBox);
-            theGraphics2D.drawImage(myPlayerImage, myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
+           // theGraphics2D.drawImage(myPlayerImage, myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
+           // theGraphics2D.drawImage((myCharacter.getMyIdleAnimations()[0])[myCharacter.getMyAnimationIndex()]),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
         }
 
         if (myGameControls.isMyThiefSelected()) {
             updateCheckboxSelection(theGraphics2D, myThiefCheckBox);
-            theGraphics2D.drawImage(myPlayerImage, myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
+           // theGraphics2D.drawImage(myPlayerImage, myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
         }
 
         if (myGameControls.isMyEasySelected()) {
@@ -207,17 +195,13 @@ public class GameUI {
 
         if (myGameControls.isMySelection()) {
             myDungeonPanel.setGameState(myDungeonPanel.getPlayState());
-        }
-    }
-
-
-    public void map(Graphics2D theGraphics){
-        for (int i = 0; i < myDungeonPanel.getMyMaxScreenCol(); i++) {
-            for (int j = 0; j < myDungeonPanel.getMyMaxScreenRow(); j++) {
-                theGraphics.drawImage(floor, myDungeonPanel.getMyTileSize() * i, myDungeonPanel.getMyTileSize() * j,myDungeonPanel.getMyTileSize() - 1, myDungeonPanel.getMyTileSize() - 1,  null);
+            if(myGameControls.isMyWarriorSelected()){
+            //    myCharacter.heroType(1);
             }
         }
     }
+
+
 
 
 
