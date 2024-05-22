@@ -2,6 +2,7 @@ package Model;
 
 import java.util.ArrayList;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,35 +22,43 @@ public class Dungeon {
     private void generateMaze() {
         boolean validMaze = false;
         while (!validMaze) {
-          List<Character> pillars = new ArrayList<>();
-          pillars.add('A');
-          pillars.add('P');
-          pillars.add('E');
-          pillars.add('I');
             // Initialize maze with empty rooms
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
-                    maze[i][j] = new Room();
+                    maze[i][j] = new Room(); // This will automatically set up the room items
                     maze[i][j].setMyX(i);
                     maze[i][j].setMyY(j);
-                    if(maze[i][j].getMyHasPillar()){
-                        setUpPillars(maze[i][j],pillars);
-                    }
                 }
+            }
+
+            // Place the pillars
+            List<int[]> pillarPositions = new ArrayList<>();
+            while (pillarPositions.size() < 4) {
+                int x = (int) (Math.random() * SIZE);
+                int y = (int) (Math.random() * SIZE);
+                if (!maze[x][y].getMyHasPillar() && !maze[x][y].isMyEntrance() && !maze[x][y].isMyExit()) {
+                    pillarPositions.add(new int[]{x, y});
+                }
+            }
+
+            // Assign pillars to the selected positions
+            char[] pillars = {'A', 'P', 'E', 'I'};
+            Collections.shuffle(Arrays.asList(pillars));
+
+            for (int i = 0; i < 4; i++) {
+                int[] pos = pillarPositions.get(i);
+                maze[pos[0]][pos[1]].setMyItem(pillars[i]);
+                maze[pos[0]][pos[1]].setMyHasPillar(true);
             }
 
             // Place entrance and exit
             maze[0][0].setMyEntrance(true);
             maze[SIZE - 1][SIZE - 1].setMyExit(true);
 
-
-
-
-
             // Check if the maze is traversable
             if (isTraversable()) {
                 validMaze = true;
-            } else{
+            } else {
                 myNumberOfEntrances = 0;
                 myNumberOfExits = 0;
                 myNumberOfPillars = 0;
@@ -57,13 +66,6 @@ public class Dungeon {
         }
     }
 
-    private void setUpPillars(Room theRoom, List<Character> thePillars) {
-        Collections.shuffle(thePillars); // Shuffle the pillars to randomize placement
-        if(!thePillars.isEmpty()){
-            theRoom.setMyItem(thePillars.getFirst());
-            thePillars.removeFirst();
-        }
-    }
 
     private boolean dfs(int x, int y, boolean[][] visited) {
         if (x < 0 || x >= SIZE || y < 0 || y >= SIZE || visited[x][y])
@@ -112,15 +114,10 @@ public class Dungeon {
     }
 
     public static void main(String[] args) {
-        Dungeon dungeon = new Dungeon();
-        System.out.println(dungeon);
-        System.out.println("Testing dungeon matches room toString");
-        for(int i=0;i< dungeon.SIZE;i++){
-            for(int j=0;j< dungeon.SIZE;j++){
-                System.out.println(dungeon.maze[i][j].toString());
-                System.out.println();
-            }
-            System.out.println();
+
+        for(int i=0;i< 10;i++){
+            Dungeon dungeon = new Dungeon();
+            System.out.println(dungeon);
         }
 
 
