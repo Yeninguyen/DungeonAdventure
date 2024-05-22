@@ -53,30 +53,55 @@ public class Room {
         setMyItem('M');
     }
     @Override
+//    public String toString() {
+//        StringBuilder sb = new StringBuilder();
+//
+//        if(myY == 0){
+//            sb.append("***").append("\n");
+//        } else{
+//            sb.append("*_*").append("\n");
+//        }
+//        if(myX == 0){
+//            sb.append("*").append(myItem).append("|").append("\n");
+//        }else if(myX == 3){
+//            sb.append("|").append(myItem).append("*").append("\n");
+//        }else{
+//            sb.append("|").append(myItem).append("|").append("\n");
+//        }
+//        if(myY==3){
+//            sb.append("***");
+//        } else{
+//            sb.append("*_*");
+//        }
+//        return sb.toString();
+//
+//    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        if(myY == 0){
-            sb.append("***").append("\n");
-        } else{
-            sb.append("*_*").append("\n");
+        if (myY == 0) {
+            sb.append("*******\n");
+        } else {
+            sb.append("***_***\n");
         }
-        if(myX == 0){
-            sb.append("*").append(myItem).append("|").append("\n");
-        }else if(myX == 3){
-            sb.append("|").append(myItem).append("*").append("\n");
-        }else{
-            sb.append("|").append(myItem).append("|").append("\n");
+
+        if (myX == 0) {
+            sb.append("*--").append(myItem).append("--|\n");
+        } else if (myX == 3) {
+            sb.append("|--").append(myItem).append("--*\n");
+        } else {
+            sb.append("|--").append(myItem).append("--|\n");
         }
-        if(myY==3){
-            sb.append("***");
-        } else{
-            sb.append("*_*");
+
+        if (myY == 3) {
+            sb.append("*******").append("\n");
+        } else {
+            sb.append("***_***").append("\n");;
         }
+
         return sb.toString();
-
     }
-
     public void setMyHealingPotionAmount(final int theHealingPotion) {
         myHealingPotionAmount = theHealingPotion;
     }
@@ -146,5 +171,15 @@ public class Room {
         return myHasVisionPotion;
     }
 
+    public String getPartOfTheRoom(Room theRoom, int thePart) {
+        String roomString = theRoom.toString();
+        String[] lines = roomString.split("\n");
 
+        if (thePart >= 0 && thePart < lines.length) {
+            return lines[thePart];
+        } else {
+            return "Invalid part number";
+        }
+    }
 }
+
