@@ -1,42 +1,54 @@
 package Model;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+
 public class Dungeon {
     private final Room[][] maze;
-    private final int SIZE = 3;
+    private final int SIZE = 4;
     private int myNumberOfEntrances;
     private int myNumberOfExits;
     private int myNumberOfPillars;
-
     public Dungeon() {
         maze = new Room[SIZE][SIZE];
         generateMaze();
-        writeMazeToFile("maze.txt");
+
     }
 
     private void generateMaze() {
         boolean validMaze = false;
         while (!validMaze) {
-            List<Character> pillars = new ArrayList<>();
-            pillars.add('A');
-            pillars.add('P');
-            pillars.add('E');
-            pillars.add('I');
             // Initialize maze with empty rooms
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
-                    maze[i][j] = new Room();
+                    maze[i][j] = new Room(); // This will automatically set up the room items
                     maze[i][j].setMyX(i);
                     maze[i][j].setMyY(j);
-                    if (maze[i][j].getMyHasPillar()) {
-                        setUpPillars(maze[i][j], pillars);
-                    }
                 }
+            }
+
+            // Place the pillars
+            List<int[]> pillarPositions = new ArrayList<>();
+            while (pillarPositions.size() < 4) {
+                int x = (int) (Math.random() * SIZE);
+                int y = (int) (Math.random() * SIZE);
+                if (!maze[x][y].getMyHasPillar() && !maze[x][y].isMyEntrance() && !maze[x][y].isMyExit()) {
+                    pillarPositions.add(new int[]{x, y});
+                }
+            }
+
+            // Assign pillars to the selected positions
+            char[] pillars = {'A', 'P', 'E', 'I'};
+            Collections.shuffle(Arrays.asList(pillars));
+
+            for (int i = 0; i < 4; i++) {
+                int[] pos = pillarPositions.get(i);
+                maze[pos[0]][pos[1]].setMyItem(pillars[i]);
+                maze[pos[0]][pos[1]].setMyHasPillar(true);
             }
 
             // Place entrance and exit
@@ -54,13 +66,6 @@ public class Dungeon {
         }
     }
 
-    private void setUpPillars(Room theRoom, List<Character> thePillars) {
-        Collections.shuffle(thePillars); // Shuffle the pillars to randomize placement
-        if (!thePillars.isEmpty()) {
-            theRoom.setMyItem(thePillars.get(0));
-            thePillars.remove(0);
-        }
-    }
 
     private boolean dfs(int x, int y, boolean[][] visited) {
         if (x < 0 || x >= SIZE || y < 0 || y >= SIZE || visited[x][y])
@@ -70,7 +75,7 @@ public class Dungeon {
             myNumberOfExits++;
         } else if (maze[x][y].isMyEntrance()) {
             myNumberOfEntrances++;
-        } else if (maze[x][y].getMyHasPillar()) {
+        } else if(maze[x][y].getMyHasPillar()){
             myNumberOfPillars++;
         }
         if (myNumberOfEntrances > 1 || myNumberOfExits > 1 || myNumberOfPillars > 4) {
@@ -87,42 +92,34 @@ public class Dungeon {
 
     private boolean isTraversable() {
         boolean[][] visited = new boolean[SIZE][SIZE];
-        return dfs(0, 0, visited) && myNumberOfPillars == 4;
+        return dfs(0, 0, visited) && myNumberOfPillars==4;
     }
 
-    private void writeMazeToFile(String fileName) {
-        try (FileWriter writer = new FileWriter(fileName)) {
-            // Write the top parts of the rooms in the first row
-            StringBuilder topRow = new StringBuilder();
-            StringBuilder bottomRow = new StringBuilder();
-            StringBuilder middleRow = new StringBuilder();
 
-            for (int row = 0; row < maze.length; row++) {
-                for (int col = 0; col < maze[row].length; col++) {
-                    topRow.append(maze[row][col].getPartOfTheRoom(maze[row][col],0));
-                    middleRow.append(maze[row][col].getPartOfTheRoom(maze[row][col],1));
-                    bottomRow.append(maze[row][col].getPartOfTheRoom(maze[row][col],2));
-                }
-                writer.write(topRow.toString() + "\n");
-                writer.write(middleRow.toString() + "\n");
-                writer.write(bottomRow.toString() + "\n");
-                topRow.setLength(0);
-                bottomRow.setLength(0);
-                middleRow.setLength(0);
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < SIZE; i++) {
+            sb.append("+---".repeat(SIZE));
+            sb.append("+\n");
+            for (int j = 0; j < SIZE; j++) {
+                sb.append("| ");
+                sb.append(maze[i][j].getMyItem()).append(" ");
             }
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            sb.append("|\n");
         }
+        sb.append("+---".repeat(SIZE));
+        sb.append("+\n");
+        return sb.toString();
     }
+
     public static void main(String[] args) {
-       Dungeon d = new Dungeon();
-        for (int i = 0; i < d.maze.length; i++) {
-            for (int j = 0; j < d.maze[i].length; j++) {
-                System.out.print(d.maze[i][j]);
-            }
-            System.out.println();
+
+        for(int i=0;i< 10;i++){
+            Dungeon dungeon = new Dungeon();
+            System.out.println(dungeon);
         }
+
+
     }
 }

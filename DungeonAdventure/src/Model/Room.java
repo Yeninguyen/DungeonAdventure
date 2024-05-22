@@ -21,11 +21,7 @@ public class Room {
         if (randomValue < 0.10) {
             // 10% chance for multiple items (healing potion, pit, and vision potion)
             setUpMultipleItems();
-        } else if (randomValue < 0.25) {
-            // 25% chance for pillar
-            myHasPillar = true;
-            myItem = 'P';
-        } else if (randomValue < 0.35) {
+        }  else if (randomValue < 0.35) {
             // 10% chance for vision potion
             myHasVisionPotion = true;
             myItem = 'V';
@@ -52,56 +48,36 @@ public class Room {
         myHasVisionPotion = true;
         setMyItem('M');
     }
-    @Override
-//    public String toString() {
-//        StringBuilder sb = new StringBuilder();
-//
-//        if(myY == 0){
-//            sb.append("***").append("\n");
-//        } else{
-//            sb.append("*_*").append("\n");
-//        }
-//        if(myX == 0){
-//            sb.append("*").append(myItem).append("|").append("\n");
-//        }else if(myX == 3){
-//            sb.append("|").append(myItem).append("*").append("\n");
-//        }else{
-//            sb.append("|").append(myItem).append("|").append("\n");
-//        }
-//        if(myY==3){
-//            sb.append("***");
-//        } else{
-//            sb.append("*_*");
-//        }
-//        return sb.toString();
-//
-//    }
 
+    public void setMyHasPillar(boolean theHasPillar) {
+        myHasPillar = theHasPillar;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        if (myY == 0) {
-            sb.append("*******\n");
-        } else {
-            sb.append("***_***\n");
+        if(myY == 0){
+            sb.append("***").append("\n");
+        } else{
+            sb.append("*_*").append("\n");
         }
-
-        if (myX == 0) {
-            sb.append("*--").append(myItem).append("--|\n");
-        } else if (myX == 3) {
-            sb.append("|--").append(myItem).append("--*\n");
-        } else {
-            sb.append("|--").append(myItem).append("--|\n");
+        if(myX == 0){
+            sb.append("*").append(myItem).append("|").append("\n");
+        }else if(myX == 3){
+            sb.append("|").append(myItem).append("*").append("\n");
+        }else{
+            sb.append("|").append(myItem).append("|").append("\n");
         }
-
-        if (myY == 3) {
-            sb.append("*******").append("\n");
-        } else {
-            sb.append("***_***").append("\n");;
+        if(myY==3){
+            sb.append("***");
+        } else{
+            sb.append("*_*");
         }
-
         return sb.toString();
+
     }
+
     public void setMyHealingPotionAmount(final int theHealingPotion) {
         myHealingPotionAmount = theHealingPotion;
     }
@@ -171,15 +147,5 @@ public class Room {
         return myHasVisionPotion;
     }
 
-    public String getPartOfTheRoom(Room theRoom, int thePart) {
-        String roomString = theRoom.toString();
-        String[] lines = roomString.split("\n");
 
-        if (thePart >= 0 && thePart < lines.length) {
-            return lines[thePart];
-        } else {
-            return "Invalid part number";
-        }
-    }
 }
-
