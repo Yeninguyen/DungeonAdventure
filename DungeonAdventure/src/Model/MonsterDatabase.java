@@ -94,7 +94,7 @@ public class MonsterDatabase {
     }
    public static void main(String[] args) throws SQLException {
         MonsterDatabase monsterDatabase = new MonsterDatabase();
-        monsterDatabase.getMonster("Gremlin");
+        monsterDatabase.getMonster("Ogre");
    }
 
 }
