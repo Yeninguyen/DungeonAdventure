@@ -21,11 +21,7 @@ public class Room {
         if (randomValue < 0.10) {
             // 10% chance for multiple items (healing potion, pit, and vision potion)
             setUpMultipleItems();
-        } else if (randomValue < 0.25) {
-            // 25% chance for pillar
-            myHasPillar = true;
-            myItem = 'P';
-        } else if (randomValue < 0.35) {
+        }  else if (randomValue < 0.35) {
             // 10% chance for vision potion
             myHasVisionPotion = true;
             myItem = 'V';
@@ -52,6 +48,11 @@ public class Room {
         myHasVisionPotion = true;
         setMyItem('M');
     }
+
+    public void setMyHasPillar(boolean theHasPillar) {
+        myHasPillar = theHasPillar;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
