@@ -3,7 +3,7 @@ package Controller;
 import java.awt.image.BufferedImage;
 
 public class Tile {
-    private boolean mySolid;
+    private boolean mySolid = false;
     private BufferedImage myTileImage;
 
     public boolean isSolid() {
@@ -12,5 +12,15 @@ public class Tile {
 
     public BufferedImage getMyTileImage() {
         return myTileImage;
+    }
+
+    public void setMySolid(boolean mySolid) {
+        this.mySolid = mySolid;
+    }
+
+
+
+    public void setMyTileImage(BufferedImage myTileImage) {
+        this.myTileImage = myTileImage;
     }
 }

@@ -1,10 +1,12 @@
 package Model;
 
 
+import java.awt.*;
 
 public abstract class Hero extends DungeonCharacter {
 
 
+    private Rectangle myHitBox;
    private double myChanceToBlock;
    private int mySpecialMin;
    private int mySpecialMax;
@@ -73,6 +75,13 @@ public abstract class Hero extends DungeonCharacter {
         return myChanceForSpecial;
     }
 
+    public Rectangle getMyHitBox() {
+        return myHitBox;
+    }
+
+    public void setMyHitBox(Rectangle theHitBox) {
+        this.myHitBox = theHitBox;
+    }
 
     protected abstract void special(final DungeonCharacter theOther);
 

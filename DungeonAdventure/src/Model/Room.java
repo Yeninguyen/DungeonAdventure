@@ -57,26 +57,33 @@ public class Room {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
+        if(myItem == ' '){
+            myItem = 'N';
+        }
+
         if(myY == 0){
-            sb.append("***").append("\n");
+            sb.append("* * * * * ").append("\n");
         } else{
-            sb.append("*_*").append("\n");
+                sb.append("* * D * * ").append("\n");
+
         }
         if(myX == 0){
-            sb.append("*").append(myItem).append("|").append("\n");
-        }else if(myX == 3){
-            sb.append("|").append(myItem).append("*").append("\n");
+            sb.append("* - ").append(myItem).append(" - D ").append("\n");
+        }else if(myX == Dungeon.SIZE - 1){
+            sb.append("D - ").append(myItem).append(" - * ").append("\n");
         }else{
-            sb.append("|").append(myItem).append("|").append("\n");
+            sb.append("D - ").append(myItem).append(" - D ").append("\n");
         }
-        if(myY==3){
-            sb.append("***");
+        if(myY== Dungeon.SIZE - 1){
+            sb.append("* * * * * ").append("\n");
         } else{
-            sb.append("*_*");
+                sb.append("* * D * * ").append("\n");
         }
         return sb.toString();
 
     }
+
+
 
     public void setMyHealingPotionAmount(final int theHealingPotion) {
         myHealingPotionAmount = theHealingPotion;
@@ -148,4 +155,14 @@ public class Room {
     }
 
 
+    public String getPartOfTheRoom(Room theRoom, int thePart) {
+        String roomString = theRoom.toString();
+        String[] lines = roomString.split("\n");
+
+        if (thePart >= 0 && thePart < lines.length) {
+            return lines[thePart];
+        } else {
+            return "Invalid part number";
+        }
+    }
 }

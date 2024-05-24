@@ -85,7 +85,6 @@ public class GameControls implements KeyListener, MouseListener {
         }
         if (keyCode == KeyEvent.VK_SPACE) {
             mySpaceKeyPressed = true;
-            myGameUi.getMyCharacter().setAttacking(true);
         }
     }
 
@@ -94,23 +93,23 @@ public class GameControls implements KeyListener, MouseListener {
         int keyCode = theKeyEvent.getKeyCode();
         if (keyCode == KeyEvent.VK_UP) {
             myUpArrow = false;
+            myGameUi.getMyCharacter().setMoving(false);
         }
         if (keyCode == KeyEvent.VK_DOWN) {
             myDownArrow = false;
+            myGameUi.getMyCharacter().setMoving(false);
         }
         if (keyCode == KeyEvent.VK_LEFT) {
             myLeftArrow = false;
+            myGameUi.getMyCharacter().setMoving(false);
         }
         if (keyCode == KeyEvent.VK_RIGHT) {
             myRightArrow = false;
+            myGameUi.getMyCharacter().setMoving(false);
         }
         if (keyCode == KeyEvent.VK_SPACE) {
             mySpaceKeyPressed = false;
             myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(2);
-        }
-        if(keyCode == KeyEvent.VK_ENTER){
-            myGameUi.getMyCharacter().setMoving(false);
-            myGameUi.getMyCharacter().setMoving(true);
         }
     }
 

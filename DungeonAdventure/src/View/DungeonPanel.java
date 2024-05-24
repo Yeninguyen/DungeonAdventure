@@ -81,10 +81,7 @@ public class DungeonPanel extends JPanel implements Runnable {
     public void update() {
         if (gameState == playState) {
             myGameUi.updatePlayerLocation();
-        }else {
-            myGameUi.getMyCharacter().updateAnimation();
         }
-
     }
 
     @Override
