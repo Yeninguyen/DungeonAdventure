@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.Dungeon;
 import View.DungeonPanel;
 
 import javax.imageio.ImageIO;
@@ -43,7 +44,6 @@ public class GameUI {
 
     private Characters myCharacter;
     private TileManager myTileManager;
-
 
 
     public GameUI(DungeonPanel theDungeonPanel) {
@@ -165,11 +165,11 @@ public class GameUI {
 
 
     private void updateSelectionScreen(Graphics2D theGraphics2D) {
-        int width = myDungeonPanel.getMyTileSize() * 4;
-        int height = myDungeonPanel.getMyTileSize() * 4;
+        int width = myDungeonPanel.getMyTileSize() * 3;
+        int height = myDungeonPanel.getMyTileSize() * 3;
         if (myGameControls.isMyWarriorSelected()) {
             updateCheckboxSelection(theGraphics2D, myWarriorCheckBox);
-           theGraphics2D.drawImage((myCharacter.getMyCurrentAnimation()[0]),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
+           theGraphics2D.drawImage((myCharacter.getMyWarriorCurrentImage()),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
         }
 
         if (myGameControls.isMyPriestessSelected()) {
@@ -235,7 +235,6 @@ public class GameUI {
 
     public void updatePlayerLocation() {
         myCharacter.updatePlayerLocation();
-        myCharacter.updateAnimation();
     }
 
 
@@ -290,5 +289,10 @@ public class GameUI {
 
     public Characters getMyCharacter() {
         return myCharacter;
+    }
+
+
+    public TileManager getMyTileManager() {
+        return myTileManager;
     }
 }

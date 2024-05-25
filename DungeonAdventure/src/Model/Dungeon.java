@@ -1,21 +1,23 @@
 package Model;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 
 public class Dungeon {
     private final Room[][] maze;
-    private final int SIZE = 4;
+    public static final int SIZE = 8;
     private int myNumberOfEntrances;
     private int myNumberOfExits;
     private int myNumberOfPillars;
     public Dungeon() {
         maze = new Room[SIZE][SIZE];
         generateMaze();
+        writeMazeToFile();
 
     }
 
@@ -26,8 +28,8 @@ public class Dungeon {
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
                     maze[i][j] = new Room(); // This will automatically set up the room items
-                    maze[i][j].setMyX(i);
-                    maze[i][j].setMyY(j);
+                    maze[i][j].setMyX(j);
+                    maze[i][j].setMyY(i);
                 }
             }
 
@@ -43,7 +45,7 @@ public class Dungeon {
 
             // Assign pillars to the selected positions
             char[] pillars = {'A', 'P', 'E', 'I'};
-            Collections.shuffle(Arrays.asList(pillars));
+            Collections.shuffle(List.of(pillars));
 
             for (int i = 0; i < 4; i++) {
                 int[] pos = pillarPositions.get(i);
@@ -96,6 +98,41 @@ public class Dungeon {
     }
 
 
+    private void writeMazeToFile() {
+        try (FileWriter writer = new FileWriter("DungeonAdventure/src/Maps/Maze.txt")) {
+            // Write the top parts of the rooms in the first row
+            StringBuilder topRow = new StringBuilder();
+            StringBuilder bottomRow = new StringBuilder();
+            StringBuilder middleRow = new StringBuilder();
+            StringBuilder fillerRow = new StringBuilder();
+
+            String filler = "* - - - * ";
+            for (int i = 0; i < SIZE; i++) {
+                fillerRow.append(filler);
+            }
+
+            for (int row = 0; row < maze.length; row++) {
+                for (int col = 0; col < maze[row].length; col++) {
+                    topRow.append(maze[row][col].getPartOfTheRoom(maze[row][col], 0));
+                    middleRow.append(maze[row][col].getPartOfTheRoom(maze[row][col], 1));
+                    bottomRow.append(maze[row][col].getPartOfTheRoom(maze[row][col], 2));
+                }
+                writer.write(topRow.toString() + "\n");
+                writer.write(fillerRow.toString() + "\n");
+                writer.write(middleRow.toString() + "\n");
+                writer.write(fillerRow.toString() + "\n");
+                writer.write(bottomRow.toString() + "\n");
+                topRow.setLength(0);
+                bottomRow.setLength(0);
+                middleRow.setLength(0);
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -114,12 +151,6 @@ public class Dungeon {
     }
 
     public static void main(String[] args) {
-
-        for(int i=0;i< 10;i++){
-            Dungeon dungeon = new Dungeon();
-            System.out.println(dungeon);
-        }
-
-
+        new Dungeon();
     }
 }

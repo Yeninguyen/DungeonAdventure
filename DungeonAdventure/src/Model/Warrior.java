@@ -3,6 +3,7 @@ package Model;
 public class Warrior extends Hero{
     private static Warrior MyUniqueInstance;
 
+
     private Warrior(){
        super("Warrior",125,4,0.8,60,35,10,10,0.2, 75, 175,0.4);
 
