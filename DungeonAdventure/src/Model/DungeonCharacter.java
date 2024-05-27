@@ -1,5 +1,7 @@
 package Model;
 
+import java.awt.*;
+
 public abstract class DungeonCharacter {
     private String myName;
     private int myHitPoints;
@@ -10,6 +12,8 @@ public abstract class DungeonCharacter {
     private int myX;
     private int myY;
 
+
+
     DungeonCharacter(final String theName, final int theHitPoints, final int theAttackSpeed,
                             final double theChanceToHit, final int theMaxDamage, final int theMinDamage,
                      final int theX, final int theY){
@@ -19,6 +23,7 @@ public abstract class DungeonCharacter {
         setMyChanceToHit(theChanceToHit);
         setMyMaxDamage(theMaxDamage);
         setMyMinDamage(theMinDamage);
+
     }
 
 

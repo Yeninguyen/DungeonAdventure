@@ -18,6 +18,7 @@ public class DungeonPanel extends JPanel implements Runnable {
     private final int myWidth = myTileSize * myMaxScreenCol; // 1024
     private final int myHeight = myTileSize * myMaxScreenRow; // 768
 
+
     private final static int FPS = 60;
 
     // Camera
@@ -80,10 +81,7 @@ public class DungeonPanel extends JPanel implements Runnable {
     public void update() {
         if (gameState == playState) {
             myGameUi.updatePlayerLocation();
-        }else {
-            myGameUi.getMyCharacter().updateAnimation();
         }
-
     }
 
     @Override
