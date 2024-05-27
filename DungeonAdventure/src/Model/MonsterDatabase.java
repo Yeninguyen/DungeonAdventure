@@ -6,8 +6,11 @@ import java.sql.*;
 import java.util.Scanner;
 
 public class MonsterDatabase {
+    public static MonsterDatabase myUniqueInstance;
+    private MonsterDatabase() {
 
-    public static Monster getMonster(String theMonsterName) throws SQLException {
+    }
+    public Monster getMonster(String theMonsterName) throws SQLException {
         // Create an SQLiteDataSource object
         SQLiteDataSource ds = null;
         Monster monster = null;
@@ -79,8 +82,10 @@ public class MonsterDatabase {
                         ", MIN_DAMAGE = " + minDamage + ", MAX_DAMAGE = " + maxDamage +
                         ", CHANCE_TO_HEAL = " + chanceToHeal + ", MIN_HEAL_POINTS = " + minHealPoints +
                         ", MAX_HEAL_POINTS = " + maxHealPoints);
+                int x = (int) (Math.random() * Dungeon.getInstance().getSIZE());
+                int y = (int) (Math.random() * Dungeon.getInstance().getSIZE());
                monster = new Monster(name,hitPoints,attackSpeed,chanceToHit,maxDamage,minDamage,chanceToHeal,
-                        minHealPoints, maxHealPoints);
+                        minHealPoints, maxHealPoints,x,y);
             }
 
         } catch (SQLException e) {
@@ -91,8 +96,17 @@ public class MonsterDatabase {
         Scanner input = new Scanner(System.in);
         input.nextLine();
         return monster;
+
     }
-   public static void main(String[] args) throws SQLException {
+
+    public static MonsterDatabase getMyUniqueInstance() {
+        if (myUniqueInstance == null) {
+            myUniqueInstance = new MonsterDatabase();
+        }
+        return myUniqueInstance;
+    }
+
+    public static void main(String[] args) throws SQLException {
         MonsterDatabase monsterDatabase = new MonsterDatabase();
         monsterDatabase.getMonster("Gremlin");
    }

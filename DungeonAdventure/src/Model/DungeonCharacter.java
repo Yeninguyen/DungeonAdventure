@@ -31,19 +31,19 @@ public abstract class DungeonCharacter {
     }
 
     public void setMyY(final int theY) {
-       // if(theY < 0 || theY > 768) {
-         //   throw new IllegalArgumentException("Y must be between 0 and 768");
-       // }else{
+      // if(theY < 0 || theY > 768) {
+        //   throw new IllegalArgumentException("Y must be between 0 and 768");
+      //  }else{
             myY = theY;
-      //  }
+     //  }
     }
 
     public void setMyX(final int theX) {
-       //if(theX < 0 || theX > 1024) {
-         //  throw new IllegalArgumentException("X must be between 0 and 1024");
-       //}else{
+      // if(theX < 0 || theX > 1024) {
+      //    throw new IllegalArgumentException("X must be between 0 and 1024");
+      // }else{
            myX = theX;
-       //}
+      // }
     }
 
     void setMyMinDamage(final int theMinDamage) {

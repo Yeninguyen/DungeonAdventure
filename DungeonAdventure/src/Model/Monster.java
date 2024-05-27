@@ -10,8 +10,9 @@ public class Monster extends DungeonCharacter{
 
 
     protected Monster(final String theName, final int theHitPoints, final int theAttackSpeed, final double theChanceToHit,
-                    final int theMaxDamage, final int theMinDamage, final double theChanceToHeal, final int theMinHealPoints, final int theMaxHealPoints){
-        super(theName,theHitPoints,theAttackSpeed,theChanceToHit,theMaxDamage,theMinDamage,10,10);
+                    final int theMaxDamage, final int theMinDamage, final double theChanceToHeal, final int theMinHealPoints,
+                      final int theMaxHealPoints, final int theX, final int theY){
+        super(theName,theHitPoints,theAttackSpeed,theChanceToHit,theMaxDamage,theMinDamage,theX, theY);
         setMyChanceToHeal(theChanceToHeal);
         myMinHealPoints = theMinHealPoints;
         myMaxHealPoints = theMaxHealPoints;
@@ -65,7 +66,7 @@ public class Monster extends DungeonCharacter{
 public static Monster testMonsterInstance(String name, int hitPoints, int attackSpeed, double chanceToHit,
                                           int maxDamage, int minDamage, double chanceToHeal, int minHealPoints, int maxHealPoints){
         return new Monster(name, hitPoints, attackSpeed, chanceToHit,
-     maxDamage, minDamage, chanceToHeal, minHealPoints, maxHealPoints);
+     maxDamage, minDamage, chanceToHeal, minHealPoints, maxHealPoints,10,10);
 
 }
 }

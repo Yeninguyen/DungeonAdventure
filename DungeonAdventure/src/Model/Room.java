@@ -12,6 +12,7 @@ public class Room {
     private boolean myHasPillar;
 
 
+
     public Room() {
         setUpRoom();
     }
@@ -64,15 +65,18 @@ public class Room {
         }
         if(myX == 0){
             sb.append("*").append(myItem).append("|").append("\n");
-        }else if(myX == 3){
+        }else if(myX == Dungeon.getInstance().getSIZE()-1){
             sb.append("|").append(myItem).append("*").append("\n");
         }else{
             sb.append("|").append(myItem).append("|").append("\n");
         }
-        if(myY==3){
+        if(myY==Dungeon.getInstance().getSIZE()-1){
             sb.append("***");
+            sb.append("\n");
         } else{
             sb.append("*_*");
+            sb.append("\n");
+
         }
         return sb.toString();
 
