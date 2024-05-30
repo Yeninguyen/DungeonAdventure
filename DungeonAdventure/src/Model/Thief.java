@@ -1,5 +1,11 @@
 package Model;
 
+import javax.imageio.ImageIO;
+import java.io.IOException;
+import java.util.Objects;
+
+import static Model.PlayersConstants.*;
+
 public class Thief extends Hero{
     private static Thief myUniqueInstance;
     private Thief(){
@@ -36,6 +42,10 @@ public class Thief extends Hero{
         }
         return myUniqueInstance;
     }
+
+
+
+
     public static Thief Test_getMyUniqueInstance() {
         return new Thief();
     }

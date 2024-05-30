@@ -4,6 +4,7 @@ import Model.Dungeon;
 import View.DungeonPanel;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
@@ -21,6 +22,7 @@ public class GameUI {
 
     private Rectangle myEasyCheckBox;
     private Rectangle myMediumCheckBox;
+    private Rectangle myNameBox;
 
     private Rectangle mySelectButton;
 
@@ -124,6 +126,7 @@ public class GameUI {
         theGraphics2D.drawString("Easy", (myDungeonPanel.getMyTileSize() * 10), (int) (myDungeonPanel.getMyTileSize() * 3.4));
         theGraphics2D.drawString("Medium", (myDungeonPanel.getMyTileSize() * 10), (int) (myDungeonPanel.getMyTileSize() * 4.4));
         theGraphics2D.drawString("Hard", (myDungeonPanel.getMyTileSize() * 10), (int) (myDungeonPanel.getMyTileSize() * 5.4));
+        theGraphics2D.drawString("Enter Name: ", (int) (myDungeonPanel.getMyTileSize() * 9.5), (int) (myDungeonPanel.getMyTileSize() * 6.4));
 
         myWarriorCheckBox = new Rectangle((int) (myDungeonPanel.getMyTileSize() * 2.3), (int) (myDungeonPanel.getMyTileSize() * 3.2), 20, 20);
         myThiefCheckBox = new Rectangle((int) (myDungeonPanel.getMyTileSize() * 2.3), (int) (myDungeonPanel.getMyTileSize() * 4.2), 20, 20);
@@ -173,13 +176,16 @@ public class GameUI {
         }
 
         if (myGameControls.isMyPriestessSelected()) {
+
             updateCheckboxSelection(theGraphics2D, myPriestessCheckBox);
+            theGraphics2D.drawImage(myCharacter.getMyPriestessCurrentImage(), myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
            // theGraphics2D.drawImage(myPlayerImage, myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
-           // theGraphics2D.drawImage((myCharacter.getMyIdleAnimations()[0])[myCharacter.getMyAnimationIndex()]),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
+           //theGraphics2D.drawImage((myCharacter.getMyIdleAnimations()[0])[myCharacter.getMyAnimationIndex()]),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
         }
 
         if (myGameControls.isMyThiefSelected()) {
             updateCheckboxSelection(theGraphics2D, myThiefCheckBox);
+            theGraphics2D.drawImage(myCharacter.getMyThiefCurrentImage(), myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
            // theGraphics2D.drawImage(myPlayerImage, myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
         }
 

@@ -7,10 +7,10 @@ public abstract class Hero extends DungeonCharacter {
 
 
     private Rectangle myHitBox;
-   private double myChanceToBlock;
-   private int mySpecialMin;
-   private int mySpecialMax;
-   private double myChanceForSpecial;
+    private double myChanceToBlock;
+    private int mySpecialMin;
+    private int mySpecialMax;
+    private double myChanceForSpecial;
 
 
     protected Hero(final String theName, final int theHitPoints, final int theAttackSpeed,
@@ -18,11 +18,11 @@ public abstract class Hero extends DungeonCharacter {
                    final int theY, final double theChanceToBlock, final int theSpecialMin,
                    final int theSpecialMax, final double theChanceForSpecial) {
 
-         super(theName, theHitPoints, theAttackSpeed, theChanceToHit, theMaxDamage, theMinDamage, theX, theY);
-         setMyChanceToBlock(theChanceToBlock);
-         setMySpecialMax(theSpecialMax);
-         setMySpecialMin(theSpecialMin);
-         setMyChanceForSpecial(theChanceForSpecial);
+        super(theName, theHitPoints, theAttackSpeed, theChanceToHit, theMaxDamage, theMinDamage, theX, theY);
+        setMyChanceToBlock(theChanceToBlock);
+        setMySpecialMax(theSpecialMax);
+        setMySpecialMin(theSpecialMin);
+        setMyChanceForSpecial(theChanceForSpecial);
 
     }
 
