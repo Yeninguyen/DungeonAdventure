@@ -4,13 +4,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 
 public class Dungeon {
     private final Room[][] maze;
-    public static final int SIZE = 8;
+    public static final int SIZE = 4;
     private int myNumberOfEntrances;
     private int myNumberOfExits;
     private int myNumberOfPillars;
@@ -20,6 +21,7 @@ public class Dungeon {
         writeMazeToFile();
 
     }
+
 
     private void generateMaze() {
         boolean validMaze = false;
@@ -45,7 +47,7 @@ public class Dungeon {
 
             // Assign pillars to the selected positions
             char[] pillars = {'A', 'P', 'E', 'I'};
-            Collections.shuffle(List.of(pillars));
+            Collections.shuffle(Arrays.asList(pillars));
 
             for (int i = 0; i < 4; i++) {
                 int[] pos = pillarPositions.get(i);
@@ -53,9 +55,7 @@ public class Dungeon {
                 maze[pos[0]][pos[1]].setMyHasPillar(true);
             }
 
-            // Place entrance and exit
-            maze[0][0].setMyEntrance(true);
-            maze[SIZE - 1][SIZE - 1].setMyExit(true);
+            setEntranceAndExit();
 
             // Check if the maze is traversable
             if (isTraversable()) {
@@ -68,6 +68,28 @@ public class Dungeon {
         }
     }
 
+    private void setEntranceAndExit() {
+        int entranceX;
+        int entranceY = (int) (Math.random() * SIZE);
+        int exitX;
+        int exitY;
+        if(entranceY==0 || entranceY==SIZE-1) {
+            entranceX = (int) (Math.random() * SIZE);
+            exitY = SIZE - 1 - entranceY;
+            exitX = (int) (Math.random() * SIZE);
+        } else{
+            int[]indexes = new int []{0,SIZE-1};
+            int randomIndex = (int) (Math.random() * indexes.length);
+            entranceX = indexes[randomIndex];
+            exitX = SIZE - 1;
+            exitX -= entranceX;
+            exitY =  (int) (Math.random() * SIZE);
+        }
+
+        // Place entrance and exit
+        maze[entranceY][entranceX].setMyEntrance(true);
+        maze[exitY][exitX].setMyExit(true);
+    }
 
     private boolean dfs(int x, int y, boolean[][] visited) {
         if (x < 0 || x >= SIZE || y < 0 || y >= SIZE || visited[x][y])

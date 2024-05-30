@@ -1,15 +1,24 @@
 package Controller;
 
+import Model.Priestess;
+import Model.Thief;
 import Model.Warrior;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import static Controller.PlayersConstants.*;
+import java.nio.Buffer;
 import java.util.*;
 
 public class Characters {
+
+
+    private BufferedImage pillarP;
+    private BufferedImage pillarA;
+    private BufferedImage pillarI;
+    private BufferedImage pillarE;
 
     private boolean isMoving = false;
 
@@ -21,7 +30,9 @@ public class Characters {
 
     private final GameUI myGameUI;
 
-    private final Warrior myWarrior;
+    private  Warrior myWarrior;
+    private  Thief myTheif;
+    private  Priestess myPriestess;
 
     private BufferedImage myWarriorCurrentImage;
 
@@ -31,25 +42,58 @@ public class Characters {
 
     private Direction direction = Direction.EAST;
 
+    public static final int RUNNING_RIGHT = 1;
+    public static final int RUNNING_LEFT = 2;
+    public static final int RUNNING_DOWN = 3;
+    public static final int RUNNING_UP = 4;
 
 
-    public Characters(GameUI theGameUI) {
+    public Characters(final GameUI theGameUI) {
         myGameUI = theGameUI;
-        myWarrior = Model.Warrior.getInstance();
         myWarriorImage = new HashMap<>();
-        myWarrior.setMyY(myGameUI.getMyDungeonPanel().getMyTileSize() * 2);
-        myWarrior.setMyX(myGameUI.getMyDungeonPanel().getMyTileSize() * 2);
+
         load();
 
         screenX = myGameUI.getMyDungeonPanel().getMyWidth() / 2 - (myGameUI.getMyDungeonPanel().getMyTileSize() / 2);
         screenY = myGameUI.getMyDungeonPanel().getMyHeight() / 2 - (myGameUI.getMyDungeonPanel().getMyTileSize() / 2);
-        myWarrior.setMyHitBox(new Rectangle((int) myWarrior.getMyX(),  myWarrior.getMyY(), 28, 28));
         myWarriorCurrentImage = myWarriorImage.get(RUNNING_LEFT);
+        initHeroes();
+    }
+
+    public void initHeroes(){
+        //should be random depending on the entrance
+        int y = myGameUI.getMyDungeonPanel().getMyTileSize() * 2;
+        int x = myGameUI.getMyDungeonPanel().getMyTileSize() * 2;
+
+        int width = 40;
+        int height = 40;
+
+        myWarrior = Model.Warrior.getInstance();
+        myWarrior.setMyY(y);
+        myWarrior.setMyX(x);
+        myWarrior.setMyHitBox(new Rectangle((int) myWarrior.getMyX() + 10,  myWarrior.getMyY()+20, width, height));
+
+        myTheif = Model.Thief.getMyUniqueInstance();
+        myTheif.setMyY(y);
+        myTheif.setMyX(x);
+        myTheif.setMyHitBox(new Rectangle((int) myWarrior.getMyX() + 10,  myWarrior.getMyY()+20, width, height));
+
+
+
+        myPriestess = Model.Priestess.getMyUniqueInstance();
+        myPriestess.setMyY(y);
+        myPriestess.setMyX(x);
+        myPriestess.setMyHitBox(new Rectangle((int) myWarrior.getMyX() + 10,  myWarrior.getMyY()+20, width, height));
+
     }
 
 
     public void drawPlayer(Graphics2D theGraphics) {
+        //drawPillar(theGraphics);
         theGraphics.drawImage(myWarriorCurrentImage, screenX, screenY, 48, 48, null);
+        //drawHitBox(theGraphics);
+       // System.out.println(myGameUI.getMyTileManager().pillarARow);
+
     }
 
     public void updatePlayerLocation() {
@@ -58,6 +102,7 @@ public class Characters {
             if (myGameUI.getMyGameControls().isMyUpArrow()) {
                 direction = Direction.NORTH;
                 myWarriorCurrentImage = myWarriorImage.get(RUNNING_UP);
+
             } else if (myGameUI.getMyGameControls().isMyDownArrow()) {
                 direction = Direction.SOUTH;
                 myWarriorCurrentImage = myWarriorImage.get(RUNNING_DOWN);
@@ -99,6 +144,11 @@ public class Characters {
            myWarriorImage.put(RUNNING_RIGHT, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorRight.png"))));
            myWarriorImage.put(RUNNING_UP, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorUp.png"))));
            myWarriorImage.put(RUNNING_DOWN, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorDown.png"))));
+
+//           pillarP = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pillars/PillarP.png")));
+//           pillarA = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pillars/PillarA.png")));
+//           pillarE = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pillars/PillarE.png")));
+//           pillarI = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pillars/PillarI.png")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -128,10 +178,24 @@ public class Characters {
 
 
     public void updateHitBox() {
-        int playerX = (int) myWarrior.getMyX();
-        int playerY = (int) myWarrior.getMyY();
-        myWarrior.getMyHitBox().x = playerX;
-        myWarrior.getMyHitBox().y = playerY;
+        if(myGameUI.getMyGameControls().isMyWarriorSelected()) {
+            int playerX = (int) myWarrior.getMyX();
+            int playerY = (int) myWarrior.getMyY();
+            myWarrior.getMyHitBox().x = playerX;
+            myWarrior.getMyHitBox().y = playerY;
+        }
+        if(myGameUI.getMyGameControls().isMyPriestessSelected()) {
+            int playerX = (int) myPriestess.getMyX();
+            int playerY = (int) myPriestess.getMyY();
+            myPriestess.getMyHitBox().x = playerX;
+            myPriestess.getMyHitBox().y = playerY;
+        }
+        if(myGameUI.getMyGameControls().isMyThiefSelected()) {
+            int playerX = (int) myTheif.getMyX();
+            int playerY = (int) myTheif.getMyY();
+            myTheif.getMyHitBox().x = playerX;
+            myTheif.getMyHitBox().y = playerY;
+        }
     }
 
 
@@ -144,4 +208,20 @@ public class Characters {
     public BufferedImage getMyWarriorCurrentImage() {
         return myWarriorCurrentImage;
     }
+
+    public void drawPillar(Graphics2D theGraphics){
+        int x = 3 * 64;
+        int y = 3 * 64;
+        int bound = 64;
+        int screenX = x - myGameUI.getMyCharacter().getMyWarrior().getMyX() + myGameUI.getMyCharacter().getScreenX();
+        int screenY = y - myGameUI.getMyCharacter().getMyWarrior().getMyY() + myGameUI.getMyCharacter().getScreenY();
+
+        if(x + bound > myGameUI.getMyCharacter().getMyWarrior().getMyX() - myGameUI.getMyCharacter().getScreenX() &&
+                x  - bound < myGameUI.getMyCharacter().getMyWarrior().getMyX() + myGameUI.getMyCharacter().getScreenX() &&
+                y  + bound> myGameUI.getMyCharacter().getMyWarrior().getMyY() - myGameUI.getMyCharacter().getScreenY() &&
+                y  - bound< myGameUI.getMyCharacter().getMyWarrior().getMyY() + myGameUI.getMyCharacter().getScreenY()){
+            theGraphics.drawImage(pillarA, screenX, screenY, 32, 32, null);
+        }
+    }
+
 }
