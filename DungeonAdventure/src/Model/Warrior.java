@@ -9,9 +9,8 @@ public class Warrior extends Hero{
 
     }
     @Override
-    protected void special(DungeonCharacter theOther) {
-     double random = Math.random() +0.1;
-     if(random <= getMyChanceForSpecial()){
+    public void special(DungeonCharacter theOther) {
+     if(getMyRandomForSpecial() <= getMyChanceForSpecial()){
          int damage = (int) (Math.random() * (getMySpecialMax() - getMySpecialMin() + 1)) + getMySpecialMin();
          theOther.setMyHitPoints(theOther.getMyHitPoints()-damage);
          //turn this print statement into a gui component

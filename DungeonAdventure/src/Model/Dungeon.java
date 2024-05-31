@@ -35,7 +35,7 @@ public class Dungeon {
             // Initialize maze with empty rooms
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
-                    maze[i][j] = new Room(); // This will automatically set up the room items
+                    maze[i][j] = new Room(SIZE); // This will automatically set up the room items
                     maze[i][j].setMyX(j);
                     maze[i][j].setMyY(i);
                 }
@@ -98,7 +98,7 @@ public class Dungeon {
     }
 
 
-    private boolean dfs(int x, int y, boolean[][] visited) {
+    public boolean dfs(int x, int y, boolean[][] visited) {
         if (x < 0 || x >= SIZE || y < 0 || y >= SIZE || visited[x][y])
             return false;
         visited[x][y] = true;
@@ -122,7 +122,7 @@ public class Dungeon {
         return up || down || left || right;
     }
 
-    private boolean isTraversable() {
+    public boolean isTraversable() {
         boolean[][] visited = new boolean[SIZE][SIZE];
         return dfs(0, 0, visited) && myNumberOfPillars==4;
     }
@@ -150,18 +150,8 @@ public class Dungeon {
         }
         return myUniqueInstance;
     }
-
-    public static void main(String[] args) {
-      Dungeon d = new Dungeon();
-      System.out.println(d);
-        for (int i = 0; i < d.maze.length; i++) {
-            for (int j = 0; j < d.maze[i].length; j++) {
-                System.out.print(d.maze[i][j]);
-            }
-            System.out.println();
-        }
-
-
-
+    public static Dungeon get_TEST_instance(){
+        return new Dungeon();
     }
+
 }

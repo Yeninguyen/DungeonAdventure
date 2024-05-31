@@ -25,8 +25,8 @@ public class TileManager {
     private final String myMultiple = "M";
     private final String myPit = "X";
     private final String myEmpty = "N";
-    private final int row = Dungeon.SIZE * 5;
-    private final int col = Dungeon.SIZE * 5 ;
+    private final int row = Model.Dungeon.getInstance().getSIZE() * 5;
+    private final int col = Model.Dungeon.getInstance().getSIZE() * 5 ;
     GameUI myGameUi;
     private Map<String, Tile> myTile;
 
@@ -101,7 +101,7 @@ public class TileManager {
 
     public void loadMap(){
         try {
-            new Dungeon();
+            Model.Dungeon.getInstance();
             InputStream is = getClass().getResourceAsStream("/Maps/Maze.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 

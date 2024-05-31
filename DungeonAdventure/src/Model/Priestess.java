@@ -8,9 +8,8 @@ public class Priestess extends Hero{
                 0.3,50,100,0.6);
     }
     @Override
-    protected void special(DungeonCharacter theOther) {
-        double random = Math.random() ;
-        if(random <= getMyChanceForSpecial()){
+    public void special(DungeonCharacter theOther) {
+        if(getMyRandomForSpecial() <= getMyChanceForSpecial()){
             int healedPoints = (int) (Math.random() * (getMySpecialMax() - getMySpecialMin() + 1)) + getMySpecialMin();
             this.setMyHitPoints(getMyHitPoints()+healedPoints);
             //turn this print statement into a gui component
