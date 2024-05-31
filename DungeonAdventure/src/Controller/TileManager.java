@@ -37,9 +37,9 @@ public class TileManager {
 
     public TileManager(final GameUI theGameUi) {
         myGameUi = theGameUi;
-      //  myTiles = new Tile[3];
+        //  myTiles = new Tile[3];
         myTile = new HashMap<>();
-       // mapTileNum = new int[row][col];
+        // mapTileNum = new int[row][col];
         mapTileNums = new String[row][col];
         getTileImage();
         loadMap();
@@ -58,9 +58,13 @@ public class TileManager {
             Tile door = new Tile();
             door.setMyTileImage((ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Tiles/Door.png")))));
 
+//            Tile pillarP = new Tile();
+//            pillarP.setMyTileImage((ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/PillarP.png")))));
+
             myTile.put("*", rock);
             myTile.put("-", earth);
             myTile.put("D", door);
+            //myTile.put("P", pillarP);
 
         }catch (IOException e){
             e.printStackTrace();
@@ -77,7 +81,7 @@ public class TileManager {
 
             switch (title) {
                 case myHealthPotion, myVisionPotion, myEntrance, myPillarP, myPillarI,
-                        myPillarE, myExit, myMultiple, myPit, myEmpty, myPillarA -> title = "-";
+                     myPillarE, myExit, myMultiple, myPit, myEmpty, myPillarA -> title = "-";
             }
 
             int bound = myGameUi.getMyDungeonPanel().getMyTileSize();
@@ -89,10 +93,10 @@ public class TileManager {
             int screenY = y - myGameUi.getMyCharacter().getMyWarrior().getMyY() + myGameUi.getMyCharacter().getScreenY();
 
             if(x + bound > myGameUi.getMyCharacter().getMyWarrior().getMyX() - myGameUi.getMyCharacter().getScreenX() &&
-               x  - bound < myGameUi.getMyCharacter().getMyWarrior().getMyX() + myGameUi.getMyCharacter().getScreenX() &&
-               y  + bound> myGameUi.getMyCharacter().getMyWarrior().getMyY() - myGameUi.getMyCharacter().getScreenY() &&
-               y  - bound< myGameUi.getMyCharacter().getMyWarrior().getMyY() + myGameUi.getMyCharacter().getScreenY()){
-                    theGraphics.drawImage(myTile.get(title).getMyTileImage(), screenX, screenY, myGameUi.getMyDungeonPanel().getMyTileSize(), myGameUi.getMyDungeonPanel().getMyTileSize(), null);
+                    x  - bound < myGameUi.getMyCharacter().getMyWarrior().getMyX() + myGameUi.getMyCharacter().getScreenX() &&
+                    y  + bound> myGameUi.getMyCharacter().getMyWarrior().getMyY() - myGameUi.getMyCharacter().getScreenY() &&
+                    y  - bound< myGameUi.getMyCharacter().getMyWarrior().getMyY() + myGameUi.getMyCharacter().getScreenY()){
+                theGraphics.drawImage(myTile.get(title).getMyTileImage(), screenX, screenY, myGameUi.getMyDungeonPanel().getMyTileSize(), myGameUi.getMyDungeonPanel().getMyTileSize(), null);
             }
             row++;
             if(row == this.row){
@@ -142,7 +146,7 @@ public class TileManager {
                 }
             }
         }
-            return isTileSolid;
+        return isTileSolid;
 
     }
 

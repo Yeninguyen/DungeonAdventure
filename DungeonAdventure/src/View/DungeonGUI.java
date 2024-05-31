@@ -96,8 +96,7 @@ public class DungeonGUI extends JFrame {
                         "\nGame is Ctrl + Alt + G" + "\nHelp is Ctrl + Alt + H"
                         + "\nSave Game is Ctrl + S" +
                         "\nExit is Ctrl + E" + "\nAbout is Ctrl + A" + "\nRules is Ctrl + Z"
-                        + "\nShortcuts is Ctrl + F" + "\nRollDice Button is Ctrl + Alt + R" +
-                        "\nPlayAgain Button is Ctrl + Alt + P" + "\nSetBank Button is Ctrl + Alt + S ");
+                        + "\nShortcuts is Ctrl + F"  );
             }
         });
         about.setAccelerator(KeyStroke.getKeyStroke("control A"));
