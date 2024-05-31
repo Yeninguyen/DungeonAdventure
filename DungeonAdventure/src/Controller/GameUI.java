@@ -1,6 +1,5 @@
 package Controller;
 
-import Model.Dungeon;
 import View.DungeonPanel;
 
 import javax.imageio.ImageIO;
@@ -11,6 +10,8 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class GameUI {
+
+
     private RoundRectangle2D myStartRectangle;
     private RoundRectangle2D myQuitRectangle;
     private RoundRectangle2D myLoadRectangle;
@@ -23,6 +24,7 @@ public class GameUI {
     private Rectangle myMediumCheckBox;
 
     private Rectangle mySelectButton;
+    private Rectangle myUserNameBox;
 
 
     private Rectangle myHardCheckBox;
@@ -37,13 +39,14 @@ public class GameUI {
     private final String myLoadGameTitle = "LOAD GAME";
     private final String myQuitGameTitle = "QUIT GAME";
 
+    private String username = "";
 
 
     private BufferedImage selection;
 
 
-    private Characters myCharacter;
-    private TileManager myTileManager;
+    private final Characters myCharacter;
+    private final TileManager myTileManager;
 
 
     public GameUI(DungeonPanel theDungeonPanel) {
@@ -54,6 +57,7 @@ public class GameUI {
         theDungeonPanel.setFocusable(true);
         myCharacter = new Characters(this);
         myTileManager = new TileManager(this);
+
         loadImages();
     }
 
@@ -96,6 +100,7 @@ public class GameUI {
         String chooseHeroTitle = "Choose Your Hero";
         String ChooseDifficultyTitle = "Choose difficulty";
         String selectDoneTitle = "DONE";
+        String userNameTitle = "Enter name: ";
         theGraphics2D.setColor(Color.WHITE);
 
         Rectangle chooseHeroRectangle = new Rectangle(myDungeonPanel.getMyTileSize() * 2, myDungeonPanel.getMyTileSize() * 6);
@@ -113,7 +118,7 @@ public class GameUI {
         theGraphics2D.drawString(chooseHeroTitle, (int) (chooseHeroRectangle.getWidth() * 2) - myDungeonPanel.getMyTileSize() / 2, (int) (myDungeonPanel.getMyTileSize() * 2.5));
         theGraphics2D.drawString(ChooseDifficultyTitle, (int) (myDungeonPanel.getMyTileSize() * 10.5), (int) (myDungeonPanel.getMyTileSize() * 2.5));
         theGraphics2D.drawString(selectDoneTitle, (int) (myDungeonPanel.getMyTileSize() * 8.1), (int) (myDungeonPanel.getMyTileSize() * 9.8));
-
+        theGraphics2D.drawString(userNameTitle, (int)  (myDungeonPanel.getMyTileSize() * 9.2), (int) (myDungeonPanel.getMyTileSize() * 6.2));
 
         theGraphics2D.setFont(theGraphics2D.getFont().deriveFont(Font.PLAIN, 16F));
         theGraphics2D.drawString("Warrior", (myDungeonPanel.getMyTileSize() * 3), (int) (myDungeonPanel.getMyTileSize() * 3.4));
@@ -124,6 +129,8 @@ public class GameUI {
         theGraphics2D.drawString("Easy", (myDungeonPanel.getMyTileSize() * 10), (int) (myDungeonPanel.getMyTileSize() * 3.4));
         theGraphics2D.drawString("Medium", (myDungeonPanel.getMyTileSize() * 10), (int) (myDungeonPanel.getMyTileSize() * 4.4));
         theGraphics2D.drawString("Hard", (myDungeonPanel.getMyTileSize() * 10), (int) (myDungeonPanel.getMyTileSize() * 5.4));
+
+
 
         myWarriorCheckBox = new Rectangle((int) (myDungeonPanel.getMyTileSize() * 2.3), (int) (myDungeonPanel.getMyTileSize() * 3.2), 20, 20);
         myThiefCheckBox = new Rectangle((int) (myDungeonPanel.getMyTileSize() * 2.3), (int) (myDungeonPanel.getMyTileSize() * 4.2), 20, 20);
@@ -136,11 +143,15 @@ public class GameUI {
 
         mySelectButton = new Rectangle((int) (myDungeonPanel.getMyTileSize() * 7.5), (int) (myDungeonPanel.getMyTileSize() * 9.2), myDungeonPanel.getMyTileSize() * 2, myDungeonPanel.getMyTileSize());
 
+       myUserNameBox = new Rectangle((int) (myDungeonPanel.getMyTileSize() * 11.5), (int) (myDungeonPanel.getMyTileSize() * 5.8), myDungeonPanel.getMyTileSize() * 2, myDungeonPanel.getMyTileSize() / 2);
+
+
 
         theGraphics2D.draw(myWarriorCheckBox);
         theGraphics2D.draw(myThiefCheckBox);
         theGraphics2D.draw(myPriestessCheckBox);
 
+        theGraphics2D.draw(myUserNameBox);
 
         theGraphics2D.draw(myEasyCheckBox);
         theGraphics2D.draw(myMediumCheckBox);
@@ -199,6 +210,10 @@ public class GameUI {
             //    myCharacter.heroType(1);
             }
         }
+        if(myGameControls.isMyUsernameBoxSelected()) {
+            username = myGameControls.getUsername();
+        }
+        theGraphics2D.drawString(username, (myDungeonPanel.getMyTileSize() * 12), (int) (myDungeonPanel.getMyTileSize() * 6.2));
     }
 
 
@@ -294,5 +309,9 @@ public class GameUI {
 
     public TileManager getMyTileManager() {
         return myTileManager;
+    }
+
+    public Rectangle getMyUserNameBox() {
+        return myUserNameBox;
     }
 }

@@ -46,6 +46,7 @@ public class DungeonPanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         myGameUi = new GameUI(this);
         myGameSounds = new GameSounds();
+        drawButtons();
         startGameThread();
     }
 
@@ -77,6 +78,11 @@ public class DungeonPanel extends JPanel implements Runnable {
         }
     }
 
+    public void drawButtons(){
+        JTextField textField = new JTextField("Enter name:");
+        textField.setPreferredSize(new Dimension(100, 50));
+        this.add(textField);
+    }
 
     public void update() {
         if (gameState == playState) {

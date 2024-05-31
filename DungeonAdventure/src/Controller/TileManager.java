@@ -14,6 +14,9 @@ import java.util.Objects;
 
 public class TileManager {
 
+
+    public int pillarARow;
+    public int pillarACol;
     private final String myHealthPotion = "H";
     private final String myVisionPotion = "V";
     private final String myPillarP = "P";
@@ -110,6 +113,10 @@ public class TileManager {
                 for(int col = 0; col < this.col; col++) {
                     String[] numbers = line.split(" ");
                     String s = numbers[col];
+                    if(s.equals("A")){
+                       pillarARow = row;
+                       pillarACol = col;
+                    }
                     mapTileNums[row][col] = s;
                 }
             }
