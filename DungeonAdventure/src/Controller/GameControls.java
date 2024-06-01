@@ -7,7 +7,6 @@ import java.awt.event.MouseListener;
 
 public class GameControls implements KeyListener, MouseListener {
     private boolean myUpArrow;
-
     private boolean myDownArrow;
     private boolean myLeftArrow;
     private boolean myRightArrow;
@@ -29,6 +28,8 @@ public class GameControls implements KeyListener, MouseListener {
     private boolean mySpaceKeyPressed;
 
     private boolean mySelection;
+
+    private boolean myInventorySelected = false;
 
     public boolean isMySelection() {
         return mySelection;
@@ -99,6 +100,9 @@ public class GameControls implements KeyListener, MouseListener {
         if (keyCode == KeyEvent.VK_SPACE) {
             mySpaceKeyPressed = true;
         }
+        if(keyCode == KeyEvent.VK_ENTER){
+            myInventorySelected = true;
+        }
     }
 
     @Override
@@ -122,6 +126,9 @@ public class GameControls implements KeyListener, MouseListener {
         }
         if (keyCode == KeyEvent.VK_SPACE) {
             mySpaceKeyPressed = false;
+        }
+        if(keyCode == KeyEvent.VK_ENTER){
+            myInventorySelected = false;
         }
     }
 
@@ -279,5 +286,9 @@ public class GameControls implements KeyListener, MouseListener {
 
     public boolean isMyUsernameBoxSelected() {
         return myUsernameBoxSelected;
+    }
+
+    public boolean isMyInventorySelected() {
+        return myInventorySelected;
     }
 }

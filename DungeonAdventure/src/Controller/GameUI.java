@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.Dungeon;
 import View.DungeonPanel;
 
 import javax.imageio.ImageIO;
@@ -44,9 +45,12 @@ public class GameUI {
 
     private BufferedImage selection;
 
+    public int slotRow = 0;
+    public int slotCol = 0;
+
 
     private final Characters myCharacter;
-    private final TileManager myTileManager;
+    private final TileManager myTileManager = new TileManager(this);
 
 
     public GameUI(DungeonPanel theDungeonPanel) {
@@ -56,7 +60,6 @@ public class GameUI {
         theDungeonPanel.addMouseListener(myGameControls);
         theDungeonPanel.setFocusable(true);
         myCharacter = new Characters(this);
-        myTileManager = new TileManager(this);
 
         loadImages();
     }
@@ -76,6 +79,15 @@ public class GameUI {
     public void drawPlayer(Graphics2D theGraphics) {
          myTileManager.drawTiles(theGraphics);
          myCharacter.drawPlayer(theGraphics);
+
+        theGraphics.setColor(Color.WHITE);
+        if(myGameControls.isMyInventorySelected()) {
+            drawInventory(theGraphics);
+        }
+
+
+        theGraphics.setFont(theGraphics.getFont().deriveFont(Font.ITALIC, 20F));
+         theGraphics.drawString(getMyGameControls().getUsername(),  30, 60);
     }
 
     public void drawTitleScreen(Graphics2D theGraphics) {
@@ -187,10 +199,13 @@ public class GameUI {
             updateCheckboxSelection(theGraphics2D, myPriestessCheckBox);
            // theGraphics2D.drawImage(myPlayerImage, myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
            // theGraphics2D.drawImage((myCharacter.getMyIdleAnimations()[0])[myCharacter.getMyAnimationIndex()]),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
+            theGraphics2D.drawImage((myCharacter.getMyPriestessCurrentImage()),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
+
         }
 
         if (myGameControls.isMyThiefSelected()) {
             updateCheckboxSelection(theGraphics2D, myThiefCheckBox);
+            theGraphics2D.drawImage((myCharacter.getMyThiefCurrentImage()),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
            // theGraphics2D.drawImage(myPlayerImage, myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
         }
 
@@ -217,7 +232,78 @@ public class GameUI {
     }
 
 
+    public void drawInventory(Graphics2D theGraphics) {
+        String str = "X";
 
+        int x = 64 * 9;
+        int y = 64;
+        int width = 64 * 6;
+        int height = 64 * 5;
+        drawFrame(x, y, width, height, theGraphics);
+
+
+        final int slotXStart = x + 40;
+        final int slotYStart = y + 90;
+        final int slotSize = 64; // Assuming each slot has a
+        // size of 64 pixels
+
+        int slotX = slotXStart;
+        int slotY = slotYStart;
+
+        int slotIndex = 0;
+        int numSlotsPerRow = 3; // Assuming 3 slots per row
+
+
+
+        theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 30F));
+        theGraphics.drawString("Inventory", slotXStart + 70, slotYStart - 50);
+
+        for (SuperItems item : myDungeonPanel.myDefaultItems.values()) {
+            int cursorX = slotX;
+            int cursorY = slotY;
+
+            theGraphics.setStroke(new BasicStroke(3));
+            theGraphics.setColor(Color.WHITE);
+            theGraphics.drawRoundRect(cursorX, cursorY, slotSize + 30, slotSize, 10, 10);
+
+            theGraphics.drawImage(item.getImage(), cursorX, cursorY, slotSize, slotSize, null);
+
+            if (item.isCollision()) {
+                int val = myTileManager.getMyItemCollisionFrequency().get(item.getName());
+                theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 30F));
+                theGraphics.drawString(String.valueOf(val), cursorX + 50, cursorY + 50);
+                theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 20F));
+                //theGraphics.drawString(str, cursorX + 70, cursorY + 50);
+            } else {
+                theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 30F));
+                theGraphics.drawString("0" , cursorX + 50, cursorY + 50);
+                theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 20F));
+               // theGraphics.drawString(str, cursorX + 70, cursorY + 50);
+            }
+
+            slotIndex++;
+            if (slotIndex % numSlotsPerRow == 0) {
+                // Move to the next row
+                slotX = slotXStart;
+                slotY += slotSize + 50;
+            } else {
+                // Move to the next column
+                slotX += slotSize + 50; // Add extra spacing between slots if needed
+            }
+        }
+    }
+
+
+    public void drawFrame(int theX, int theY, int theWidth, int theHeight, Graphics2D theGraphics){
+        theGraphics.setColor(new Color(0, 0, 0, 210));
+        theGraphics.fillRoundRect(theX, theY, theWidth, theHeight, 35, 35);
+
+
+            theGraphics.setColor(new Color(255, 255, 255));
+            theGraphics.setStroke(new BasicStroke(5));
+            theGraphics.drawRoundRect(theX + 5, theY + 5, theWidth - 10, theHeight - 10, 25, 25);
+
+    }
 
 
     private void drawRoundedButton(Graphics2D g2d, RoundRectangle2D button, String buttonText) {
