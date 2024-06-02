@@ -4,7 +4,6 @@ import Model.Dungeon;
 import View.DungeonPanel;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
@@ -12,6 +11,8 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class GameUI {
+
+
     private RoundRectangle2D myStartRectangle;
     private RoundRectangle2D myQuitRectangle;
     private RoundRectangle2D myLoadRectangle;
@@ -22,9 +23,9 @@ public class GameUI {
 
     private Rectangle myEasyCheckBox;
     private Rectangle myMediumCheckBox;
-    private Rectangle myNameBox;
 
     private Rectangle mySelectButton;
+    private Rectangle myUserNameBox;
 
 
     private Rectangle myHardCheckBox;
@@ -35,17 +36,22 @@ public class GameUI {
 
     private final DungeonPanel myDungeonPanel;
     private final GameControls myGameControls;
+
     private final String myStartGameTitle = "NEW GAME";
     private final String myLoadGameTitle = "LOAD GAME";
     private final String myQuitGameTitle = "QUIT GAME";
 
+    private String username = "";
 
 
     private BufferedImage selection;
 
+    public int slotRow = 0;
+    public int slotCol = 0;
 
-    private Characters myCharacter;
-    private TileManager myTileManager;
+
+    private final Characters myCharacter;
+    private final TileManager myTileManager;
 
 
     public GameUI(DungeonPanel theDungeonPanel) {
@@ -54,8 +60,9 @@ public class GameUI {
         theDungeonPanel.addKeyListener(myGameControls);
         theDungeonPanel.addMouseListener(myGameControls);
         theDungeonPanel.setFocusable(true);
-        myCharacter = new Characters(this);
         myTileManager = new TileManager(this);
+        myCharacter = new Characters(this);
+
         loadImages();
     }
 
@@ -72,8 +79,17 @@ public class GameUI {
 
 
     public void drawPlayer(Graphics2D theGraphics) {
-         myTileManager.drawTiles(theGraphics);
-         myCharacter.drawPlayer(theGraphics);
+        myTileManager.drawTiles(theGraphics);
+        myCharacter.drawPlayer(theGraphics);
+
+        theGraphics.setColor(Color.WHITE);
+        if(myGameControls.isMyInventorySelected()) {
+            drawInventory(theGraphics);
+        }
+
+
+        theGraphics.setFont(theGraphics.getFont().deriveFont(Font.ITALIC, 20F));
+        theGraphics.drawString(getMyGameControls().getUsername(),  30, 60);
     }
 
     public void drawTitleScreen(Graphics2D theGraphics) {
@@ -98,6 +114,7 @@ public class GameUI {
         String chooseHeroTitle = "Choose Your Hero";
         String ChooseDifficultyTitle = "Choose difficulty";
         String selectDoneTitle = "DONE";
+        String userNameTitle = "Enter name: ";
         theGraphics2D.setColor(Color.WHITE);
 
         Rectangle chooseHeroRectangle = new Rectangle(myDungeonPanel.getMyTileSize() * 2, myDungeonPanel.getMyTileSize() * 6);
@@ -115,7 +132,7 @@ public class GameUI {
         theGraphics2D.drawString(chooseHeroTitle, (int) (chooseHeroRectangle.getWidth() * 2) - myDungeonPanel.getMyTileSize() / 2, (int) (myDungeonPanel.getMyTileSize() * 2.5));
         theGraphics2D.drawString(ChooseDifficultyTitle, (int) (myDungeonPanel.getMyTileSize() * 10.5), (int) (myDungeonPanel.getMyTileSize() * 2.5));
         theGraphics2D.drawString(selectDoneTitle, (int) (myDungeonPanel.getMyTileSize() * 8.1), (int) (myDungeonPanel.getMyTileSize() * 9.8));
-
+        theGraphics2D.drawString(userNameTitle, (int)  (myDungeonPanel.getMyTileSize() * 9.2), (int) (myDungeonPanel.getMyTileSize() * 6.2));
 
         theGraphics2D.setFont(theGraphics2D.getFont().deriveFont(Font.PLAIN, 16F));
         theGraphics2D.drawString("Warrior", (myDungeonPanel.getMyTileSize() * 3), (int) (myDungeonPanel.getMyTileSize() * 3.4));
@@ -126,7 +143,8 @@ public class GameUI {
         theGraphics2D.drawString("Easy", (myDungeonPanel.getMyTileSize() * 10), (int) (myDungeonPanel.getMyTileSize() * 3.4));
         theGraphics2D.drawString("Medium", (myDungeonPanel.getMyTileSize() * 10), (int) (myDungeonPanel.getMyTileSize() * 4.4));
         theGraphics2D.drawString("Hard", (myDungeonPanel.getMyTileSize() * 10), (int) (myDungeonPanel.getMyTileSize() * 5.4));
-        theGraphics2D.drawString("Enter Name: ", (int) (myDungeonPanel.getMyTileSize() * 9.5), (int) (myDungeonPanel.getMyTileSize() * 6.4));
+
+
 
         myWarriorCheckBox = new Rectangle((int) (myDungeonPanel.getMyTileSize() * 2.3), (int) (myDungeonPanel.getMyTileSize() * 3.2), 20, 20);
         myThiefCheckBox = new Rectangle((int) (myDungeonPanel.getMyTileSize() * 2.3), (int) (myDungeonPanel.getMyTileSize() * 4.2), 20, 20);
@@ -139,11 +157,15 @@ public class GameUI {
 
         mySelectButton = new Rectangle((int) (myDungeonPanel.getMyTileSize() * 7.5), (int) (myDungeonPanel.getMyTileSize() * 9.2), myDungeonPanel.getMyTileSize() * 2, myDungeonPanel.getMyTileSize());
 
+        myUserNameBox = new Rectangle((int) (myDungeonPanel.getMyTileSize() * 11.5), (int) (myDungeonPanel.getMyTileSize() * 5.8), myDungeonPanel.getMyTileSize() * 2, myDungeonPanel.getMyTileSize() / 2);
+
+
 
         theGraphics2D.draw(myWarriorCheckBox);
         theGraphics2D.draw(myThiefCheckBox);
         theGraphics2D.draw(myPriestessCheckBox);
 
+        theGraphics2D.draw(myUserNameBox);
 
         theGraphics2D.draw(myEasyCheckBox);
         theGraphics2D.draw(myMediumCheckBox);
@@ -172,28 +194,31 @@ public class GameUI {
         int height = myDungeonPanel.getMyTileSize() * 3;
         if (myGameControls.isMyWarriorSelected()) {
             updateCheckboxSelection(theGraphics2D, myWarriorCheckBox);
-           theGraphics2D.drawImage((myCharacter.getMyWarriorCurrentImage()),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
+            theGraphics2D.drawImage((myCharacter.getMyWarriorCurrentImage()),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
         }
 
         if (myGameControls.isMyPriestessSelected()) {
-
             updateCheckboxSelection(theGraphics2D, myPriestessCheckBox);
-            theGraphics2D.drawImage(myCharacter.getMyPriestessCurrentImage(), myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
-           // theGraphics2D.drawImage(myPlayerImage, myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
-           //theGraphics2D.drawImage((myCharacter.getMyIdleAnimations()[0])[myCharacter.getMyAnimationIndex()]),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
+            // theGraphics2D.drawImage(myPlayerImage, myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
+            // theGraphics2D.drawImage((myCharacter.getMyIdleAnimations()[0])[myCharacter.getMyAnimationIndex()]),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
+            theGraphics2D.drawImage((myCharacter.getMyPriestessCurrentImage()),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
+
         }
 
         if (myGameControls.isMyThiefSelected()) {
             updateCheckboxSelection(theGraphics2D, myThiefCheckBox);
-            theGraphics2D.drawImage(myCharacter.getMyThiefCurrentImage(), myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
-           // theGraphics2D.drawImage(myPlayerImage, myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
+            theGraphics2D.drawImage((myCharacter.getMyThiefCurrentImage()),myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
+            // theGraphics2D.drawImage(myPlayerImage, myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 2), width, height, null);
         }
 
         if (myGameControls.isMyEasySelected()) {
             updateCheckboxSelection(theGraphics2D, myEasyCheckBox);
+
+
         }
         if (myGameControls.isMyMediumSelected()) {
             updateCheckboxSelection(theGraphics2D, myMediumCheckBox);
+
         }
         if (myGameControls.isMyHardSelected()) {
             updateCheckboxSelection(theGraphics2D, myHardCheckBox);
@@ -202,13 +227,88 @@ public class GameUI {
         if (myGameControls.isMySelection()) {
             myDungeonPanel.setGameState(myDungeonPanel.getPlayState());
             if(myGameControls.isMyWarriorSelected()){
-            //    myCharacter.heroType(1);
+                //    myCharacter.heroType(1);
+            }
+        }
+        if(myGameControls.isMyUsernameBoxSelected()) {
+            username = myGameControls.getUsername();
+        }
+        theGraphics2D.drawString(username, (myDungeonPanel.getMyTileSize() * 12), (int) (myDungeonPanel.getMyTileSize() * 6.2));
+    }
+
+
+    public void drawInventory(Graphics2D theGraphics) {
+        String str = "X";
+
+        int x = 64 * 9;
+        int y = 64;
+        int width = 64 * 6;
+        int height = 64 * 5;
+        drawFrame(x, y, width, height, theGraphics);
+
+
+        final int slotXStart = x + 40;
+        final int slotYStart = y + 90;
+        final int slotSize = 64; // Assuming each slot has a
+        // size of 64 pixels
+
+        int slotX = slotXStart;
+        int slotY = slotYStart;
+
+        int slotIndex = 0;
+        int numSlotsPerRow = 3; // Assuming 3 slots per row
+
+
+
+        theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 30F));
+        theGraphics.drawString("Inventory", slotXStart + 70, slotYStart - 50);
+
+        for (SuperItems item : myDungeonPanel.myDefaultItems.values()) {
+            int cursorX = slotX;
+            int cursorY = slotY;
+
+            theGraphics.setStroke(new BasicStroke(3));
+            theGraphics.setColor(Color.WHITE);
+            theGraphics.drawRoundRect(cursorX, cursorY, slotSize + 30, slotSize, 10, 10);
+
+            theGraphics.drawImage(item.getImage(), cursorX, cursorY, slotSize, slotSize, null);
+
+            if (item.isCollision()) {
+                int val = myTileManager.getMyItemCollisionFrequency().get(item.getName());
+                theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 30F));
+                theGraphics.drawString(String.valueOf(val), cursorX + 50, cursorY + 50);
+                theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 20F));
+                //theGraphics.drawString(str, cursorX + 70, cursorY + 50);
+            } else {
+                theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 30F));
+                theGraphics.drawString("0" , cursorX + 50, cursorY + 50);
+                theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 20F));
+                // theGraphics.drawString(str, cursorX + 70, cursorY + 50);
+            }
+
+            slotIndex++;
+            if (slotIndex % numSlotsPerRow == 0) {
+                // Move to the next row
+                slotX = slotXStart;
+                slotY += slotSize + 50;
+            } else {
+                // Move to the next column
+                slotX += slotSize + 50; // Add extra spacing between slots if needed
             }
         }
     }
 
 
+    public void drawFrame(int theX, int theY, int theWidth, int theHeight, Graphics2D theGraphics){
+        theGraphics.setColor(new Color(0, 0, 0, 210));
+        theGraphics.fillRoundRect(theX, theY, theWidth, theHeight, 35, 35);
 
+
+        theGraphics.setColor(new Color(255, 255, 255));
+        theGraphics.setStroke(new BasicStroke(5));
+        theGraphics.drawRoundRect(theX + 5, theY + 5, theWidth - 10, theHeight - 10, 25, 25);
+
+    }
 
 
     private void drawRoundedButton(Graphics2D g2d, RoundRectangle2D button, String buttonText) {
@@ -301,4 +401,10 @@ public class GameUI {
     public TileManager getMyTileManager() {
         return myTileManager;
     }
+
+    public Rectangle getMyUserNameBox() {
+        return myUserNameBox;
+    }
+
+
 }

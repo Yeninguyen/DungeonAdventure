@@ -6,12 +6,18 @@ import Model.Warrior;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import static Model.PlayersConstants.*;
+import java.nio.Buffer;
 import java.util.*;
 
 public class Characters {
+
+
+    private int myX;
+    private int myY;
+
 
     private boolean isMoving = false;
 
@@ -23,90 +29,160 @@ public class Characters {
 
     private final GameUI myGameUI;
 
-    private final Warrior myWarrior;
-    private Priestess myPriestess;
-    private Thief myThief;
+    private  Warrior myWarrior;
+    private  Thief myTheif;
+    private  Priestess myPriestess;
+
     private BufferedImage myWarriorCurrentImage;
-    private BufferedImage myPriestessCurrentImage;
+    private Map<Integer, BufferedImage> myThiefImages;
     private BufferedImage myThiefCurrentImage;
+    private BufferedImage myPriestessCurrentImage;
+
+    private BufferedImage myHeroCurrentImage;
 
     private final Map<Integer, BufferedImage> myWarriorImage;
-    private final Map<Integer, BufferedImage> myPriestessImage;
-    private Map<Integer, BufferedImage> myThieftImage;
-
-
+    private final Map<Integer, BufferedImage> myPriestessImages;
 
 
     private Direction direction = Direction.EAST;
 
+    public static final int RUNNING_RIGHT = 1;
+    public static final int RUNNING_LEFT = 2;
+    public static final int RUNNING_DOWN = 3;
+    public static final int RUNNING_UP = 4;
 
-    public Characters(GameUI theGameUI) {
+
+    public Characters(final GameUI theGameUI) {
         myGameUI = theGameUI;
-
-        myPriestessImage = new HashMap<>();
-        myPriestess = Model.Priestess.getMyUniqueInstance();
-        myPriestess.setMyX(myGameUI.getMyDungeonPanel().getMyTileSize() * 2);
-        myPriestess.setMyY(myGameUI.getMyDungeonPanel().getMyTileSize() * 2);
-        myWarrior = Model.Warrior.getInstance();
         myWarriorImage = new HashMap<>();
-        myWarrior.setMyY(myGameUI.getMyDungeonPanel().getMyTileSize() * 12);
-        myWarrior.setMyX(myGameUI.getMyDungeonPanel().getMyTileSize() * 12);
-        myThief = Model.Thief.getMyUniqueInstance();
-        myThieftImage = new HashMap<>();
-        myThief.setMyY(myGameUI.getMyDungeonPanel().getMyTileSize() * 2);
-        myThief.setMyX(myGameUI.getMyDungeonPanel().getMyTileSize() * 2);
-        load();
+        myThiefImages = new HashMap<>();
+        myPriestessImages = new HashMap<>();
+
         screenX = myGameUI.getMyDungeonPanel().getMyWidth() / 2 - (myGameUI.getMyDungeonPanel().getMyTileSize() / 2);
         screenY = myGameUI.getMyDungeonPanel().getMyHeight() / 2 - (myGameUI.getMyDungeonPanel().getMyTileSize() / 2);
-        myWarrior.setMyHitBox(new Rectangle((int) myWarrior.getMyX(), myWarrior.getMyY(), 40, 40));
+        load();
         myWarriorCurrentImage = myWarriorImage.get(RUNNING_LEFT);
-        myPriestessCurrentImage = myPriestessImage.get(RUNNING_LEFT);
-        myThiefCurrentImage = myThieftImage.get(RUNNING_LEFT);
+        myThiefCurrentImage = myThiefImages.get(RUNNING_LEFT);
+        myPriestessCurrentImage = myPriestessImages.get(RUNNING_LEFT);
+        initHeroes();
+
 
     }
 
 
+    public void initHeroes(){
+        int x = myGameUI.getMyDungeonPanel().getMyTileSize() * myGameUI.getMyTileManager().entranceCol;
+        int y = myGameUI.getMyDungeonPanel().getMyTileSize() * myGameUI.getMyTileManager().entranceRow;
 
+        int width = 40;
+        int height = 40;
+
+
+
+
+        myWarrior = Model.Warrior.getInstance();
+        myWarrior.setMyY(y);
+        myWarrior.setMyX(x);
+        myWarrior.setMyHitBox(new Rectangle( myWarrior.getMyX() + 10,  myWarrior.getMyY()+20, width, height));
+
+
+        myTheif = Model.Thief.getMyUniqueInstance();
+        myTheif.setMyY(y);
+        myTheif.setMyX(x);
+        myTheif.setMyHitBox(new Rectangle( myTheif.getMyX() + 10,  myTheif.getMyY()+20, width, height));
+
+        myPriestess = Model.Priestess.getMyUniqueInstance();
+        myPriestess.setMyY(y);
+        myPriestess.setMyX(x);
+        myPriestess.setMyHitBox(new Rectangle((int) myPriestess.getMyX() + 10,  myPriestess.getMyY()+20, width, height));
+
+
+    }
 
 
     public void drawPlayer(Graphics2D theGraphics) {
-        if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
-            theGraphics.drawImage(myWarriorCurrentImage, screenX, screenY, 48, 48, null);
-        } else if (myGameUI.getMyGameControls().isMyThiefSelected()) {
-            theGraphics.drawImage(myThiefCurrentImage, screenX, screenY, 48, 48, null);
-        } else {
-            theGraphics.drawImage(myPriestessCurrentImage, screenX, screenY, 48, 48, null);
+        //drawPillar(theGraphics);
+        if(myGameUI.getMyGameControls().isMyWarriorSelected()){
+            theGraphics.drawImage(myHeroCurrentImage, screenX, screenY, 40, 40, null);
+        }else if (myGameUI.getMyGameControls().isMyThiefSelected()){
+            theGraphics.drawImage(myHeroCurrentImage, screenX - 10, screenY - 10, 70, 70, null);
+        }else if (myGameUI.getMyGameControls().isMyPriestessSelected()){
+            theGraphics.drawImage(myHeroCurrentImage, screenX - 20, screenY - 30, 70, 70, null);
         }
+
+        //drawHitBox(theGraphics);
+        // System.out.println(myGameUI.getMyTileManager().pillarARow);
 
     }
 
-    public void updatePlayerLocation() {
-        if (isMoving) {
 
+
+    public void updatePlayerLocation() {
+        if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
+            myHeroCurrentImage = myWarriorCurrentImage;
+        } else if (myGameUI.getMyGameControls().isMyThiefSelected()) {
+            myHeroCurrentImage = myThiefCurrentImage;
+        }else if(myGameUI.getMyGameControls().isMyPriestessSelected()){
+            myHeroCurrentImage = myPriestessCurrentImage;
+        }
+
+        if (isMoving) {
             if (myGameUI.getMyGameControls().isMyUpArrow()) {
                 direction = Direction.NORTH;
-                myWarriorCurrentImage = myWarriorImage.get(RUNNING_UP);
-                myPriestessCurrentImage = myPriestessImage.get(RUNNING_UP);
-                myThiefCurrentImage = myThieftImage.get(RUNNING_UP);
-
+                if (myGameUI.getMyGameControls().isMyThiefSelected()) {
+                    myHeroCurrentImage = myThiefImages.get(RUNNING_UP);
+                } else if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
+                    myHeroCurrentImage = myWarriorImage.get(RUNNING_UP);
+                } else if(myGameUI.getMyGameControls().isMyPriestessSelected()){
+                    myHeroCurrentImage = myPriestessImages.get(RUNNING_UP);
+                }
             } else if (myGameUI.getMyGameControls().isMyDownArrow()) {
                 direction = Direction.SOUTH;
-                myWarriorCurrentImage = myWarriorImage.get(RUNNING_DOWN);
-                myPriestessCurrentImage = myPriestessImage.get(RUNNING_DOWN);
-                myThiefCurrentImage = myThieftImage.get(RUNNING_DOWN);
+                if (myGameUI.getMyGameControls().isMyThiefSelected()) {
+                    myHeroCurrentImage = myThiefImages.get(RUNNING_DOWN);
+                } else if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
+                    myHeroCurrentImage = myWarriorImage.get(RUNNING_DOWN);
+                }
+                else if(myGameUI.getMyGameControls().isMyPriestessSelected()){
+                    myHeroCurrentImage = myPriestessImages.get(RUNNING_DOWN);
+                }
             } else if (myGameUI.getMyGameControls().isMyLeftArrow()) {
                 direction = Direction.WEST;
-                myWarriorCurrentImage = myWarriorImage.get(RUNNING_LEFT);
-                myPriestessCurrentImage = myPriestessImage.get(RUNNING_LEFT);
-                myThiefCurrentImage = myThieftImage.get(RUNNING_LEFT);
+                if (myGameUI.getMyGameControls().isMyThiefSelected()) {
+                    myHeroCurrentImage = myThiefImages.get(RUNNING_LEFT);
+                } else if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
+                    myHeroCurrentImage = myWarriorImage.get(RUNNING_LEFT);
+                }
+                else if(myGameUI.getMyGameControls().isMyPriestessSelected()){
+                    myHeroCurrentImage = myPriestessImages.get(RUNNING_LEFT);
+                }
             } else if (myGameUI.getMyGameControls().isMyRightArrow()) {
                 direction = Direction.EAST;
-                myWarriorCurrentImage = myWarriorImage.get(RUNNING_RIGHT);
-                myPriestessCurrentImage = myPriestessImage.get(RUNNING_RIGHT);
-                myThiefCurrentImage = myThieftImage.get(RUNNING_RIGHT);
+                if (myGameUI.getMyGameControls().isMyThiefSelected()) {
+                    myHeroCurrentImage = myThiefImages.get(RUNNING_RIGHT);
+                } else if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
+                    myHeroCurrentImage = myWarriorImage.get(RUNNING_RIGHT);
+                }
+                else if(myGameUI.getMyGameControls().isMyPriestessSelected()){
+                    myHeroCurrentImage = myPriestessImages.get(RUNNING_RIGHT);
+                }
             }
-            int newX = myWarrior.getMyX();
-            int newY = myWarrior.getMyY();
+
+            int newX = 0;
+            int newY = 0;
+
+            if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
+                newX = myWarrior.getMyX();
+                newY = myWarrior.getMyY();
+            }
+            if (myGameUI.getMyGameControls().isMyThiefSelected()) {
+                newX = myTheif.getMyX();
+                newY = myTheif.getMyY();
+            }
+            if (myGameUI.getMyGameControls().isMyPriestessSelected()) {
+                newX = myPriestess.getMyX();
+                newY = myPriestess.getMyY();
+            }
 
             switch (direction) {
                 case NORTH -> newY -= playerSpeed;
@@ -115,15 +191,58 @@ public class Characters {
                 case EAST -> newX += playerSpeed;
             }
 
-            myWarrior.getMyHitBox().x = newX;
-            myWarrior.getMyHitBox().y = newY;
-            if (!myGameUI.getMyTileManager().isTileCollision(myWarrior.getMyHitBox())) {
-                myWarrior.setMyX(newX);
-                myWarrior.setMyY(newY);
+            if (myGameUI.getMyGameControls().isMyThiefSelected()) {
+                myTheif.getMyHitBox().x = newX;
+                myTheif.getMyHitBox().y = newY;
+                if (!myGameUI.getMyTileManager().isTileCollision(myTheif.getMyHitBox())) {
+                    myTheif.setMyX(newX);
+                    myTheif.setMyY(newY);
+                }
+            }
+            if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
+                myWarrior.getMyHitBox().x = newX;
+                myWarrior.getMyHitBox().y = newY;
+                if (!myGameUI.getMyTileManager().isTileCollision(myWarrior.getMyHitBox())) {
+                    myWarrior.setMyX(newX);
+                    myWarrior.setMyY(newY);
+                }
+            }
+            if (myGameUI.getMyGameControls().isMyPriestessSelected()) {
+                myPriestess.getMyHitBox().x = newX;
+                myPriestess.getMyHitBox().y = newY;
+                if (!myGameUI.getMyTileManager().isTileCollision(myPriestess.getMyHitBox())) {
+                    myPriestess.setMyX(newX);
+                    myPriestess.setMyY(newY);
+                }
+            }
+
+            updateHitBox();
+        } else {
+            // Set the appropriate image when not moving
+            if (myGameUI.getMyGameControls().isMyThiefSelected()) {
+                switch (direction) {
+                    case NORTH -> myHeroCurrentImage = myThiefImages.get(RUNNING_UP);
+                    case SOUTH -> myHeroCurrentImage = myThiefImages.get(RUNNING_DOWN);
+                    case WEST -> myHeroCurrentImage = myThiefImages.get(RUNNING_LEFT);
+                    case EAST -> myHeroCurrentImage = myThiefImages.get(RUNNING_RIGHT);
+                }
+            } else if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
+                switch (direction) {
+                    case NORTH -> myHeroCurrentImage = myWarriorImage.get(RUNNING_UP);
+                    case SOUTH -> myHeroCurrentImage = myWarriorImage.get(RUNNING_DOWN);
+                    case WEST -> myHeroCurrentImage = myWarriorImage.get(RUNNING_LEFT);
+                    case EAST -> myHeroCurrentImage = myWarriorImage.get(RUNNING_RIGHT);
+                }
+            }
+            else if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
+                switch (direction) {
+                    case NORTH -> myHeroCurrentImage = myPriestessImages.get(RUNNING_UP);
+                    case SOUTH -> myHeroCurrentImage = myPriestessImages.get(RUNNING_DOWN);
+                    case WEST -> myHeroCurrentImage = myPriestessImages.get(RUNNING_LEFT);
+                    case EAST -> myHeroCurrentImage = myPriestessImages.get(RUNNING_RIGHT);
+                }
             }
         }
-
-        updateHitBox();
     }
 
 
@@ -133,20 +252,22 @@ public class Characters {
             myWarriorImage.put(RUNNING_RIGHT, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorRight.png"))));
             myWarriorImage.put(RUNNING_UP, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorUp.png"))));
             myWarriorImage.put(RUNNING_DOWN, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/WarriorImages/WarriorDown.png"))));
-            myPriestessImage.put(RUNNING_LEFT, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Priestess/PriestessLeft.png"))));
-            myPriestessImage.put(RUNNING_RIGHT, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Priestess/PriestessRight.png"))));
-            myPriestessImage.put(RUNNING_UP, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Priestess/PriestessUp.png"))));
-            myPriestessImage.put(RUNNING_DOWN, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Priestess/PriestessDown.png"))));
-            myThieftImage.put(RUNNING_LEFT, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Thief/ThiefLeft.png"))));
-            myThieftImage.put(RUNNING_RIGHT, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Thief/ThiefRight.png"))));
-            myThieftImage.put(RUNNING_UP, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Thief/ThiefUp.png"))));
-            myThieftImage.put(RUNNING_DOWN, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Thief/ThiefDown.png"))));
+
+            myThiefImages.put(RUNNING_LEFT, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Thief/ThiefLeft.png"))));
+            myThiefImages.put(RUNNING_RIGHT, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Thief/ThiefRight.png"))));
+            myThiefImages.put(RUNNING_UP, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Thief/ThiefUp.png"))));
+            myThiefImages.put(RUNNING_DOWN, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Thief/ThiefDown.png"))));
+
+
+            myPriestessImages.put(RUNNING_LEFT, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Priestess/PriestessLeft.png"))));
+            myPriestessImages.put(RUNNING_RIGHT, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Priestess/PriestessRight.png"))));
+            myPriestessImages.put(RUNNING_UP, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Priestess/PriestessUp.png"))));
+            myPriestessImages.put(RUNNING_DOWN, ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Priestess/PriestessDown.png"))));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
 
 
     public void setMoving(boolean moving) {
@@ -171,12 +292,25 @@ public class Characters {
     }
 
 
-
     public void updateHitBox() {
-        int playerX = (int) myWarrior.getMyX();
-        int playerY = (int) myWarrior.getMyY();
-        myWarrior.getMyHitBox().x = playerX;
-        myWarrior.getMyHitBox().y = playerY;
+        if(myGameUI.getMyGameControls().isMyWarriorSelected()) {
+            int playerX = (int) myWarrior.getMyX();
+            int playerY = (int) myWarrior.getMyY();
+            myWarrior.getMyHitBox().x = playerX;
+            myWarrior.getMyHitBox().y = playerY;
+        }
+        if(myGameUI.getMyGameControls().isMyPriestessSelected()) {
+            int playerX = (int) myPriestess.getMyX();
+            int playerY = (int) myPriestess.getMyY();
+            myPriestess.getMyHitBox().x = playerX;
+            myPriestess.getMyHitBox().y = playerY;
+        }
+        if(myGameUI.getMyGameControls().isMyThiefSelected()) {
+            int playerX = (int) myTheif.getMyX();
+            int playerY = (int) myTheif.getMyY();
+            myTheif.getMyHitBox().x = playerX;
+            myTheif.getMyHitBox().y = playerY;
+        }
     }
 
 
@@ -188,183 +322,39 @@ public class Characters {
 
     public BufferedImage getMyWarriorCurrentImage() {
         return myWarriorCurrentImage;
-    }
 
-    public BufferedImage getMyPriestessCurrentImage() {
-        return myPriestessCurrentImage;
     }
 
     public BufferedImage getMyThiefCurrentImage() {
         return myThiefCurrentImage;
     }
-}
 
-//import Model.Hero;
-//import Model.Priestess;
-//import Model.Thief;
-//import Model.Warrior;
-//
-//import javax.imageio.ImageIO;
-//import java.awt.*;
-//import java.awt.image.BufferedImage;
-//import java.io.IOException;
-//import java.util.*;
-//import java.util.List;
-//
-//import static Model.PlayersConstants.*;
-//
-//public class Characters {
-//
-//    private boolean isMoving = false;
-//    private int playerSpeed = 4;
-//    private Rectangle myHealthBar;
-//
-//    private final int screenY;
-//    private final int screenX;
-//
-//    private final GameUI myGameUI;
-//
-//    private final Warrior myWarrior;
-//    private Priestess myPriestess;
-//    private Thief myThief;
-//
-//    private BufferedImage myWarriorCurrentImage;
-//    private BufferedImage myPriestessCurrentImage;
-//    private BufferedImage myThiefCurrentImage;
-//
-//    private final List<Hero> characters = new ArrayList<>();
-//    private Hero currentCharacter;
-//
-//    private Direction direction = Direction.EAST;
-//
-//    public Characters(GameUI theGameUI) {
-//        myGameUI = theGameUI;
-//
-//        screenX = myGameUI.getMyDungeonPanel().getMyWidth() / 2 - (myGameUI.getMyDungeonPanel().getMyTileSize() / 2);
-//        screenY = myGameUI.getMyDungeonPanel().getMyHeight() / 2 - (myGameUI.getMyDungeonPanel().getMyTileSize() / 2);
-//
-//        myWarrior = Warrior.getInstance();
-//        myPriestess = Priestess.getMyUniqueInstance();
-//        myThief = Thief.getMyUniqueInstance();
-//
-//        initializeCharacters();
-//
-//        // Set initial current character
-//        currentCharacter = characters.get(0);
-//        myWarriorCurrentImage = myWarrior.getMyCurrentImage();
-//        myPriestessCurrentImage = myPriestess.getMyCurrentImage();
-//        myThiefCurrentImage = myThief.getMyCurrentImage();
-////        myWarriorCurrentImage = myWarriorImage.get(RUNNING_LEFT);
-////        myPriestessCurrentImage = myPriestessImage.get(RUNNING_LEFT);
-////        myThiefCurrentImage = myThieftImage.get(RUNNING_LEFT);
-//    }
-//
-//    private void initializeCharacters() {
-//        myPriestess.setMyX(myGameUI.getMyDungeonPanel().getMyTileSize() * 2);
-//        myPriestess.setMyY(myGameUI.getMyDungeonPanel().getMyTileSize() * 2);
-//        myWarrior.setMyY(myGameUI.getMyDungeonPanel().getMyTileSize() * 2);
-//        myWarrior.setMyX(myGameUI.getMyDungeonPanel().getMyTileSize() * 2);
-//        myThief.setMyY(myGameUI.getMyDungeonPanel().getMyTileSize() * 2);
-//        myThief.setMyX(myGameUI.getMyDungeonPanel().getMyTileSize() * 2);
-//
-//        characters.add(myWarrior);
-//        characters.add(myPriestess);
-//        characters.add(myThief);
-//
-//        loadCharacterImages();
-//    }
-//
-//    private void loadCharacterImages() {
-//        for (Hero character : characters) {
-//            try {
-//                character.loadImages();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-//
-//    public void drawPlayer(Graphics2D theGraphics) {
-//        theGraphics.drawImage(currentCharacter.getMyCurrentImage(), screenX, screenY, 48, 48, null);
-//    }
-//
-//    public void updatePlayerLocation() {
-//        if (isMoving) {
-//            if (myGameUI.getMyGameControls().isMyUpArrow()) {
-//                direction = Direction.NORTH;
-//                currentCharacter.setMyCurrentImage(currentCharacter.getMyImages().get(RUNNING_UP));
-//            } else if (myGameUI.getMyGameControls().isMyDownArrow()) {
-//                direction = Direction.SOUTH;
-//                currentCharacter.setMyCurrentImage(currentCharacter.getMyImages().get(RUNNING_DOWN));
-//            } else if (myGameUI.getMyGameControls().isMyLeftArrow()) {
-//                direction = Direction.WEST;
-//                currentCharacter.setMyCurrentImage(currentCharacter.getMyImages().get(RUNNING_LEFT));
-//            } else if (myGameUI.getMyGameControls().isMyRightArrow()) {
-//                direction = Direction.EAST;
-//                currentCharacter.setMyCurrentImage(currentCharacter.getMyImages().get(RUNNING_RIGHT));
-//            }
-//
-//            int newX = currentCharacter.getMyX();
-//            int newY = currentCharacter.getMyY();
-//
-//            switch (direction) {
-//                case NORTH -> newY -= playerSpeed;
-//                case SOUTH -> newY += playerSpeed;
-//                case WEST -> newX -= playerSpeed;
-//                case EAST -> newX += playerSpeed;
-//            }
-//
-//            currentCharacter.getMyHitBox().x = newX;
-//            currentCharacter.getMyHitBox().y = newY;
-//            if (!myGameUI.getMyTileManager().isTileCollision(currentCharacter.getMyHitBox())) {
-//                currentCharacter.setMyX(newX);
-//                currentCharacter.setMyY(newY);
-//            }
-//        }
-//        updateHitBox();
-//    }
-//
-//    public void setMoving(boolean moving) {
-//        isMoving = moving;
-//    }
-//
-//    public int getScreenY() {
-//        return screenY;
-//    }
-//
-//    public int getScreenX() {
-//        return screenX;
-//    }
-//
-//    public Warrior getMyWarrior() {
-//        return myWarrior;
-//    }
-//
-//    public Direction getDirection() {
-//        return direction;
-//    }
-//
-//    public void updateHitBox() {
-//        int playerX = currentCharacter.getMyX();
-//        int playerY = currentCharacter.getMyY();
-//        currentCharacter.getMyHitBox().x = playerX;
-//        currentCharacter.getMyHitBox().y = playerY;
-//    }
-//
-//    public void drawHitBox(Graphics2D theGraphics) {
-//        // debugging
-//        theGraphics.setColor(Color.RED);
-//        theGraphics.drawRect(screenX, screenY, currentCharacter.getMyHitBox().width, currentCharacter.getMyHitBox().height);
-//    }
-//
-//    public BufferedImage getMyWarriorCurrentImage() {
-//        return myWarriorCurrentImage;
-//    }
-//
-//    public BufferedImage getMyPriestessCurrentImage() {
-//        return myPriestessCurrentImage;
-//    }
-//
-//    public BufferedImage getMyThiefCurrentImage() {
-//        return myThiefCurrentImage;
-//    }
+    public int getMyX() {
+        if(myGameUI.getMyGameControls().isMyWarriorSelected()){
+            return myWarrior.getMyX();
+        }else if (myGameUI.getMyGameControls().isMyThiefSelected()){
+            return myTheif.getMyX();
+        }else if (myGameUI.getMyGameControls().isMyPriestessSelected()) {
+            return myPriestess.getMyX();
+        }else{
+            return  0;
+        }
+
+    }
+
+    public int getMyY() {
+        if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
+            return myWarrior.getMyY();
+        } else if (myGameUI.getMyGameControls().isMyThiefSelected()) {
+            return myTheif.getMyY();
+        } else if (myGameUI.getMyGameControls().isMyPriestessSelected()) {
+            return myPriestess.getMyY();
+        }else{
+            return  0;
+        }
+    }
+
+    public BufferedImage getMyPriestessCurrentImage() {
+        return myPriestessCurrentImage;
+    }
+}

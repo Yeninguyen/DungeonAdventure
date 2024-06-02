@@ -3,16 +3,36 @@ package Controller;
 import Model.Dungeon;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class TileManager {
+
+
+    public int entranceRow;
+    public int entranceCol;
+
+    public int pillarPRow;
+    public int pillarPCol;
+
+    private int[] myPillarACoordinates;
+    private int[] myPillarPCoordinates;
+    private int[] myPillarICoordinates;
+    private int[] myPillarECoordinates;
+    private int[] myHealthPotionCoordinates;
+    private int[] myVisionPotionCoordinates;
+    private ArrayList<Integer> myVisionPotionCoordinatesList;
+    private ArrayList<Integer> myHealthPotionCoordinatesList;
+    private int[] myMultipleCoordinates;
+
+    private Map<String, Integer> myItemCollisionFrequency;
+
 
     private final String myHealthPotion = "H";
     private final String myVisionPotion = "V";
@@ -25,8 +45,8 @@ public class TileManager {
     private final String myMultiple = "M";
     private final String myPit = "X";
     private final String myEmpty = "N";
-    private final int row = Dungeon.SIZE * 5;
-    private final int col = Dungeon.SIZE * 5 ;
+    private final int myRow = Dungeon.getInstance().getSIZE() * 5;
+    private final int myCol = Dungeon.getInstance().getSIZE() * 5 ;
     GameUI myGameUi;
     private Map<String, Tile> myTile;
 
@@ -37,7 +57,11 @@ public class TileManager {
         //  myTiles = new Tile[3];
         myTile = new HashMap<>();
         // mapTileNum = new int[row][col];
-        mapTileNums = new String[row][col];
+        generateDungeon();
+        myVisionPotionCoordinatesList = new ArrayList<>();
+        myHealthPotionCoordinatesList = new ArrayList<>();
+        myItemCollisionFrequency = new HashMap<>();
+        mapTileNums = new String[myRow][myCol];
         getTileImage();
         loadMap();
     }
@@ -55,13 +79,9 @@ public class TileManager {
             Tile door = new Tile();
             door.setMyTileImage((ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Tiles/Door.png")))));
 
-//            Tile pillarP = new Tile();
-//            pillarP.setMyTileImage((ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/PillarP.png")))));
-
             myTile.put("*", rock);
             myTile.put("-", earth);
             myTile.put("D", door);
-            //myTile.put("P", pillarP);
 
         }catch (IOException e){
             e.printStackTrace();
@@ -73,7 +93,7 @@ public class TileManager {
         int col = 0;
 
 
-        while (row < this.row && col < this.col) {
+        while (row < this.myRow && col < this.myCol) {
             String title = mapTileNums[row][col];
 
             switch (title) {
@@ -86,38 +106,81 @@ public class TileManager {
             int x = col * myGameUi.getMyDungeonPanel().getMyTileSize();
             int y = row * myGameUi.getMyDungeonPanel().getMyTileSize();
 
-            int screenX = x - myGameUi.getMyCharacter().getMyWarrior().getMyX() + myGameUi.getMyCharacter().getScreenX();
-            int screenY = y - myGameUi.getMyCharacter().getMyWarrior().getMyY() + myGameUi.getMyCharacter().getScreenY();
+            int screenX = x - myGameUi.getMyCharacter().getMyX() + myGameUi.getMyCharacter().getScreenX();
+            int screenY = y - myGameUi.getMyCharacter().getMyY() + myGameUi.getMyCharacter().getScreenY();
 
-            if(x + bound > myGameUi.getMyCharacter().getMyWarrior().getMyX() - myGameUi.getMyCharacter().getScreenX() &&
-                    x  - bound < myGameUi.getMyCharacter().getMyWarrior().getMyX() + myGameUi.getMyCharacter().getScreenX() &&
-                    y  + bound> myGameUi.getMyCharacter().getMyWarrior().getMyY() - myGameUi.getMyCharacter().getScreenY() &&
-                    y  - bound< myGameUi.getMyCharacter().getMyWarrior().getMyY() + myGameUi.getMyCharacter().getScreenY()){
-                theGraphics.drawImage(myTile.get(title).getMyTileImage(), screenX, screenY, myGameUi.getMyDungeonPanel().getMyTileSize(), myGameUi.getMyDungeonPanel().getMyTileSize(), null);
+            if(x + bound > myGameUi.getMyCharacter().getMyX() - myGameUi.getMyCharacter().getScreenX() &&
+                    x  - bound < myGameUi.getMyCharacter().getMyX() + myGameUi.getMyCharacter().getScreenX() &&
+                    y  + bound> myGameUi.getMyCharacter().getMyY() - myGameUi.getMyCharacter().getScreenY() &&
+                    y  - bound< myGameUi.getMyCharacter().getMyY() + myGameUi.getMyCharacter().getScreenY()){
+                theGraphics.drawImage(myTile.get(title).getMyTileImage(), screenX, screenY, myGameUi.getMyDungeonPanel().getMyTileSize() - 1, myGameUi.getMyDungeonPanel().getMyTileSize() - 1, null);
             }
             row++;
-            if(row == this.row){
+            if(row == this.myRow){
                 row = 0;
                 col++;
             }
         }
     }
 
-    public void loadMap(){
-        try {
-            new Dungeon();
-            InputStream is = getClass().getResourceAsStream("/Maps/Maze.txt");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-            for(int row = 0; row < this.row; row++) {
+    public void generateDungeon(){
+        Dungeon dungeon = new Dungeon();
+        String path = "Maze.txt";
+        dungeon.writeMazeToFile(path);
+    }
+    public void loadMap(){
+        try (BufferedReader reader = new BufferedReader(new FileReader(("DungeonAdventure/src/Maps/Maze.txt")))){
+            for(int row = 0; row < this.myRow; row++) { // 20
                 String line = reader.readLine();
-                for(int col = 0; col < this.col; col++) {
-                    String[] numbers = line.split(" ");
+                for(int col = 0; col < this.myCol; col++) { // 20
+                    String[] numbers = line.split(" "); // * * A *
                     String s = numbers[col];
+                    if(s.equals("i")){
+                        entranceRow = row;
+                        entranceCol = col;
+                    }
+                    if(s.equals("M")){
+                        myMultipleCoordinates = new int[2];
+                        myMultipleCoordinates[0] = row;
+                        myMultipleCoordinates[1] = col;
+                    }
+                    if(s.equals("A")){
+                        myPillarACoordinates = new int[2];
+                        myPillarACoordinates[0] = row;
+                        myPillarACoordinates[1] = col;
+                    }
+                    if(s.equals("I")){
+                        myPillarICoordinates = new int[2];
+                        myPillarICoordinates[0] = row;
+                        myPillarICoordinates[1] = col;
+                    }
+
+                    if(s.equals("E")){
+                        myPillarECoordinates = new int[2];
+                        myPillarECoordinates[0] = row;
+                        myPillarECoordinates[1] = col;
+                    }
+
+                    if(s.equals("H")){
+                        myHealthPotionCoordinatesList.add(row);
+                        myHealthPotionCoordinatesList.add(col);
+                    }
+                    if(s.equals("V")){
+                        myVisionPotionCoordinatesList.add(row);
+                        myVisionPotionCoordinatesList.add(col);
+                    }
+
+                    if(s.equals("P")){
+                        myPillarPCoordinates = new int[2];
+                        myPillarPCoordinates[0] = row;
+                        myPillarPCoordinates[1] = col;
+                    }
                     mapTileNums[row][col] = s;
                 }
+
             }
-            reader.close();
+
         } catch (IOException e) {
 
             e.printStackTrace();
@@ -139,10 +202,64 @@ public class TileManager {
                 }
             }
         }
-        return isTileSolid;
 
+        List<SuperItems> itemsCopy = new ArrayList<>(myGameUi.getMyDungeonPanel().myItems);
+        for (SuperItems item : itemsCopy) {
+            if (item.solidArea.intersects(hitbox)) {
+                // Handle collision with the item
+                // You can perform actions based on the item's name or type
+
+                System.out.println("Collision with item: " + item.getName());
+                if(!item.getName().equals("M")) {
+                    myGameUi.getMyDungeonPanel().myDefaultItems.get(item.getName()).setCollision(true);
+                    myItemCollisionFrequency.put(item.getName(), myItemCollisionFrequency.getOrDefault(item.getName(), 0) + 1);
+                }
+
+                myGameUi.getMyDungeonPanel().myItems.remove(item);
+
+            }
+        }
+        return isTileSolid;
     }
 
 
+    public int[] getMyPillarACoordinates() {
+        return myPillarACoordinates;
+    }
 
+    public int[] getMyPillarPCoordinates() {
+        return myPillarPCoordinates;
+    }
+
+    public int[] getMyPillarICoordinates() {
+        return myPillarICoordinates;
+    }
+
+    public int[] getMyPillarECoordinates() {
+        return myPillarECoordinates;
+    }
+
+    public int[] getMyHealthPotionCoordinates() {
+        return myHealthPotionCoordinates;
+    }
+
+    public int[] getMyVisionPotionCoordinates() {
+        return myVisionPotionCoordinates;
+    }
+
+    public int[] getMyMultipleCoordinates() {
+        return myMultipleCoordinates;
+    }
+
+    public ArrayList<Integer> getMyVisionPotionCoordinatesList() {
+        return myVisionPotionCoordinatesList;
+    }
+
+    public ArrayList<Integer> getMyHealthPotionCoordinatesList() {
+        return myHealthPotionCoordinatesList;
+    }
+
+    public Map<String, Integer> getMyItemCollisionFrequency() {
+        return myItemCollisionFrequency;
+    }
 }

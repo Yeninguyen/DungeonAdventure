@@ -1,5 +1,7 @@
 package Controller;
 
+import View.DungeonPanel;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -7,7 +9,6 @@ import java.awt.event.MouseListener;
 
 public class GameControls implements KeyListener, MouseListener {
     private boolean myUpArrow;
-
     private boolean myDownArrow;
     private boolean myLeftArrow;
     private boolean myRightArrow;
@@ -24,16 +25,23 @@ public class GameControls implements KeyListener, MouseListener {
     private boolean myMediumSelected;
     private boolean myHardSelected;
 
+    private boolean myUsernameBoxSelected;
 
     private boolean mySpaceKeyPressed;
 
     private boolean mySelection;
 
+    private boolean myInventorySelected = false;
+
     public boolean isMySelection() {
         return mySelection;
     }
 
-    private GameUI myGameUi;
+    private final GameUI myGameUi;
+    private DungeonPanel dungeonPanel;
+
+
+    private final StringBuilder userName = new StringBuilder();
 
     public GameControls(GameUI thePlayerUI) {
         myGameUi = thePlayerUI;
@@ -58,7 +66,16 @@ public class GameControls implements KeyListener, MouseListener {
 
     @Override
     public void keyTyped(KeyEvent theKeyEvent) {
-
+        if (myUsernameBoxSelected) {
+            char keyChar = theKeyEvent.getKeyChar();
+            if (Character.isLetterOrDigit(keyChar)) {
+                userName.append(keyChar); // Append the typed character to the username
+            } else if (keyChar == KeyEvent.VK_SPACE) {
+                userName.append(" ");
+            } else if (keyChar == KeyEvent.VK_BACK_SPACE && userName.length() > 0) {
+                userName.deleteCharAt(userName.length() - 1); // Remove the last character if backspace is pressed
+            }
+        }
     }
 
     // Character movement
@@ -86,6 +103,10 @@ public class GameControls implements KeyListener, MouseListener {
         if (keyCode == KeyEvent.VK_SPACE) {
             mySpaceKeyPressed = true;
         }
+        if(keyCode == KeyEvent.VK_ENTER){
+            myInventorySelected = true;
+        }
+
     }
 
     @Override
@@ -109,7 +130,9 @@ public class GameControls implements KeyListener, MouseListener {
         }
         if (keyCode == KeyEvent.VK_SPACE) {
             mySpaceKeyPressed = false;
-            myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(2);
+        }
+        if(keyCode == KeyEvent.VK_ENTER){
+            myInventorySelected = false;
         }
     }
 
@@ -129,6 +152,7 @@ public class GameControls implements KeyListener, MouseListener {
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
 
             }
+
             if (myGameUi.getMyLoadRectangle().contains(e.getPoint())) {
                 myStartGameClicked = false;
                 myLoadGameClicked = true;
@@ -148,20 +172,26 @@ public class GameControls implements KeyListener, MouseListener {
                 myWarriorSelected = true;
                 myThiefSelected = false;
                 myPriestessSelected = false;
+                myUsernameBoxSelected = false;
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(2);
-
+            }
+            if (myGameUi.getMyUserNameBox().contains(e.getPoint())){
+                myUsernameBoxSelected = true;
+                myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
             }
             if (myGameUi.getMyThiefCheckBox().contains(e.getPoint())) {
                 myWarriorSelected = false;
                 myThiefSelected = true;
                 myPriestessSelected = false;
+                myUsernameBoxSelected = false;
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
             }
             if (myGameUi.getMyPriestessCheckBox().contains(e.getPoint())) {
                 myWarriorSelected = false;
                 myThiefSelected = false;
                 myPriestessSelected = true;
+                myUsernameBoxSelected = false;
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
 
             }
@@ -170,6 +200,7 @@ public class GameControls implements KeyListener, MouseListener {
                 myEasySelected = true;
                 myMediumSelected = false;
                 myHardSelected = false;
+                myUsernameBoxSelected = false;
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
 
             }
@@ -177,6 +208,7 @@ public class GameControls implements KeyListener, MouseListener {
                 myEasySelected = false;
                 myMediumSelected = true;
                 myHardSelected = false;
+                myUsernameBoxSelected = false;
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
 
             }
@@ -184,11 +216,13 @@ public class GameControls implements KeyListener, MouseListener {
                 myEasySelected = false;
                 myMediumSelected = false;
                 myHardSelected = true;
+                myUsernameBoxSelected = false;
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
 
             }
             if (myGameUi.getMySelectButton().contains(e.getPoint())) {
                 mySelection = true;
+                myUsernameBoxSelected = false;
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
             }
 
@@ -250,5 +284,15 @@ public class GameControls implements KeyListener, MouseListener {
     public boolean isMySpaceKeyPressed() {
         return mySpaceKeyPressed;
     }
+    public String getUsername() {
+        return userName.toString();
+    }
 
+    public boolean isMyUsernameBoxSelected() {
+        return myUsernameBoxSelected;
+    }
+
+    public boolean isMyInventorySelected() {
+        return myInventorySelected;
+    }
 }

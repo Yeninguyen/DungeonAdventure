@@ -1,12 +1,17 @@
+
 package View;
 
-import Controller.GameSounds;
-import Controller.GameUI;
-import Controller.Items;
-import Controller.SuperItems;
+import Controller.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.http.HttpHeaders;
+import java.util.*;
+import java.util.List;
 
 
 public class DungeonPanel extends JPanel implements Runnable {
@@ -14,6 +19,7 @@ public class DungeonPanel extends JPanel implements Runnable {
     private static final int myOriginalTileSize = 16; // 16px   // 704 x
     public static final int myTileSize = myOriginalTileSize * 4; // 64 pixel
     private final int myMaxScreenCol = 16; // 16
+
 
 
     private final int myMaxScreenRow = 12; // 12
@@ -39,11 +45,19 @@ public class DungeonPanel extends JPanel implements Runnable {
     private final GameUI myGameUi;
 
     private final GameSounds myGameSounds;
+    private  GameControls myGameControls;
 
 
     private Thread gameThread;
+    Lighting lighting;
+    public List<SuperItems> myItems;
+    public Map<String, SuperItems> myDefaultItems;
+    private final SuperItems[] myPillarItems = new SuperItems[6];
 
-    private SuperItems obj[] = new SuperItems[6];
+    // Mini-Map properties
+    private final int miniMapSize = 135; // Size of the mini-map
+    private final float miniMapScale = 0.1f; // Scale factor for the mini-map
+    private BufferedImage miniMapImage; // Image to draw the mini-map
 
 
     public DungeonPanel() {
@@ -51,9 +65,15 @@ public class DungeonPanel extends JPanel implements Runnable {
         this.setPreferredSize(new Dimension(myWidth, myHeight));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
+        myDefaultItems = new HashMap<>();
+
         myGameUi = new GameUI(this);
-        myGameSounds = new GameSounds();
+
+        myItems = new ArrayList<>();
         setObjects();
+        setLighting();
+        myGameSounds = new GameSounds();
+        initMiniMap();
         startGameThread();
     }
 
@@ -71,7 +91,6 @@ public class DungeonPanel extends JPanel implements Runnable {
         long prevTime = System.nanoTime();
         long currTime;
         while (gameThread != null) {
-      //      System.out.println(gameState);
             currTime = System.nanoTime();
             delta += (currTime - prevTime) / interval;
 
@@ -79,6 +98,8 @@ public class DungeonPanel extends JPanel implements Runnable {
 
             if (delta >= 1) {
                 update();
+                lighting.update();
+                updateMiniMap();
                 repaint();
                 delta--;
             }
@@ -96,35 +117,184 @@ public class DungeonPanel extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D graphics2D = (Graphics2D) g;
+
         if (gameState == playState) {
             myGameUi.drawPlayer(graphics2D);
+            for (SuperItems myPillarItem : myItems) {
+                if (myPillarItem != null) {
+                    myPillarItem.draw(graphics2D);
+                }
+            }
+
+            drawLight(graphics2D);
+
+            updateMiniMap();
+            graphics2D.drawImage(miniMapImage, getWidth() - miniMapSize - 10, 10, null); // Adjust position as needed
+
+
         } else if (gameState == selectionState) {
             myGameUi.drawCharacterSelection(graphics2D);
         } else if (gameState == myBeginningState) {
             myGameUi.drawTitleScreen(graphics2D);
         }
-
-        for (int i = 0; i < obj.length; i++)
-
-    {
-        if (obj[i] != null) {
-            obj[i].draw(graphics2D);
-        }
-    }
         graphics2D.dispose();
     }
 
-    public void setObjects() {
-        obj[0] = new Items();
-        obj[0].setGameUI(myGameUi);  // Ensure this is called before any draw method
-        obj[0].worldX = 38 * myTileSize;
-        obj[0].worldY = 7 * myTileSize;
+    public void initMiniMap() {
+        miniMapImage = new BufferedImage(miniMapSize, miniMapSize, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = miniMapImage.createGraphics();
+        g2d.setColor(Color.BLACK);
+        g2d.fillRect(0, 0, miniMapSize, miniMapSize);
+        g2d.dispose();
+    }
 
-//        obj[1].worldX = 2 * myTileSize;
-//        obj[1].worldY = 7 * myTileSize;
+    private void updateMiniMap() {
+        Graphics2D g2d = miniMapImage.createGraphics();
+
+        // Clear the mini-map
+        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.fillRect(0, 0, miniMapSize, miniMapSize);
+
+        // Draw dungeon elements (e.g., walls, items) on the mini-map
+        for (SuperItems item : myItems) {
+            int x = (int) (item.getWorldX() * miniMapScale);
+            int y = (int) (item.getWorldY() * miniMapScale);
+            g2d.setColor(Color.BLUE); // Set color for items
+            g2d.fillRect(x, y, 4, 4); // Draw item as a small square
+        }
+
+        // Draw player position on the mini-map
+        int playerX = (int) (myGameUi.getMyCharacter().getMyX() * miniMapScale);
+        int playerY = (int) (myGameUi.getMyCharacter().getMyY() * miniMapScale);
+        g2d.setColor(Color.RED); // Set color for the player
+        g2d.fillRect(playerX, playerY, 6, 6); // Draw player as a small square
+
+        g2d.dispose();
+    }
+
+    public void setObjects() {
+
+        BufferedImage visionPotionImg = null;
+        BufferedImage healthPotionImg = null;
+        SuperItems pillarP = new SuperItems(myGameUi);
+        SuperItems pillarA = new SuperItems(myGameUi);
+        SuperItems pillarE = new SuperItems(myGameUi);
+        SuperItems pillarI = new SuperItems(myGameUi);
+        SuperItems multipleItems = new SuperItems(myGameUi);
+        pillarP.setName("P");
+        pillarA.setName("A");
+        pillarE.setName("E");
+        pillarI.setName("I");
+        multipleItems.setName("M");
+
+        try {
+            pillarP.setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/PillarP.png"))));
+            pillarA.setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/PillarA.png"))));
+            pillarE.setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/PillarE.png"))));
+            pillarI.setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/PillarI.png"))));
+            visionPotionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/VisionPotion.png")));
+            healthPotionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/HealthPotion.png")));
+            multipleItems.setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/MultipleItems.png"))));
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        myDefaultItems.put(pillarE.getName(), pillarE);
+        myDefaultItems.put(pillarI.getName(), pillarI);
+        myDefaultItems.put(pillarP.getName(), pillarP);
+        myDefaultItems.put(pillarA.getName(), pillarA);
+//        myDefaultItems.put(healthPotion.getName(), healthPotion);
+//        myDefaultItems.put(visionPotion.getName(), visionPotion);
+
+        if (myGameUi.getMyTileManager().getMyMultipleCoordinates() != null) {
+            multipleItems.setWorldY(myGameUi.getMyTileManager().getMyMultipleCoordinates()[0] * myTileSize);
+            multipleItems.setWorldX(myGameUi.getMyTileManager().getMyMultipleCoordinates()[1] * myTileSize);
+            multipleItems.solidArea.x = multipleItems.getWorldX() + multipleItems.soldAreaDefaultX;
+            multipleItems.solidArea.y = multipleItems.getWorldY() + multipleItems.solidAreaDefaultY;
+            multipleItems.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            multipleItems.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            myItems.add(multipleItems);
+        }
+
+        if (myGameUi.getMyTileManager().getMyPillarPCoordinates() != null) {
+            pillarP.setWorldY(myGameUi.getMyTileManager().getMyPillarPCoordinates()[0] * myTileSize);
+            pillarP.setWorldX(myGameUi.getMyTileManager().getMyPillarPCoordinates()[1] * myTileSize);
+            pillarP.solidArea.x = pillarP.getWorldX() + pillarP.soldAreaDefaultX;
+            pillarP.solidArea.y = pillarP.getWorldY() + pillarP.solidAreaDefaultY;
+            pillarP.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            pillarP.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            myItems.add(pillarP);
+        }
+
+        if (myGameUi.getMyTileManager().getMyPillarACoordinates() != null) {
+            pillarA.setWorldY(myGameUi.getMyTileManager().getMyPillarACoordinates()[0] * myTileSize);
+            pillarA.setWorldX(myGameUi.getMyTileManager().getMyPillarACoordinates()[1] * myTileSize);
+            pillarA.solidArea.x = pillarA.getWorldX() + pillarA.soldAreaDefaultX;
+            pillarA.solidArea.y = pillarA.getWorldY() + pillarA.solidAreaDefaultY;
+            pillarA.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            pillarA.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            myItems.add(pillarA);
+        }
+
+        if (myGameUi.getMyTileManager().getMyPillarECoordinates() != null) {
+            pillarE.setWorldY(myGameUi.getMyTileManager().getMyPillarECoordinates()[0] * myTileSize);
+            pillarE.setWorldX(myGameUi.getMyTileManager().getMyPillarECoordinates()[1] * myTileSize);
+            pillarE.solidArea.x = pillarE.getWorldX() + pillarE.soldAreaDefaultX;
+            pillarE.solidArea.y = pillarE.getWorldY() + pillarE.solidAreaDefaultY;
+            pillarE.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            pillarE.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            myItems.add(pillarE);
+        }
+
+        if (myGameUi.getMyTileManager().getMyPillarICoordinates() != null) {
+            pillarI.setWorldY(myGameUi.getMyTileManager().getMyPillarICoordinates()[0] * myTileSize);
+            pillarI.setWorldX(myGameUi.getMyTileManager().getMyPillarICoordinates()[1] * myTileSize);
+            pillarI.solidArea.x = pillarI.getWorldX() + pillarI.soldAreaDefaultX;
+            pillarI.solidArea.y = pillarI.getWorldY() + pillarI.solidAreaDefaultY;
+            pillarI.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            pillarI.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            myItems.add(pillarI);
+        }
+
+        for (int i = 0; i < myGameUi.getMyTileManager().getMyVisionPotionCoordinatesList().size(); i += 2) {
+            SuperItems visionPotion = new SuperItems(myGameUi);
+            visionPotion.setName("V");
+            visionPotion.setImage(visionPotionImg);
+            visionPotion.setWorldY(myGameUi.getMyTileManager().getMyVisionPotionCoordinatesList().get(i) * 64);
+            visionPotion.setWorldX(myGameUi.getMyTileManager().getMyVisionPotionCoordinatesList().get(i + 1) * 64);
+            visionPotion.solidArea.x = visionPotion.getWorldX() + visionPotion.soldAreaDefaultX;
+            visionPotion.solidArea.y = visionPotion.getWorldY() + visionPotion.solidAreaDefaultY;
+            visionPotion.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            visionPotion.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            myItems.add(visionPotion);
+            myDefaultItems.put("V", visionPotion);
+        }
+        for (int i = 0; i < myGameUi.getMyTileManager().getMyHealthPotionCoordinatesList().size(); i += 2) {
+            SuperItems healthPotion = new SuperItems(myGameUi);
+            healthPotion.setName("H");
+            healthPotion.setImage(healthPotionImg);
+            healthPotion.setWorldY(myGameUi.getMyTileManager().getMyHealthPotionCoordinatesList().get(i) * 64);
+            healthPotion.setWorldX(myGameUi.getMyTileManager().getMyHealthPotionCoordinatesList().get(i + 1) * 64);
+            healthPotion.solidArea.x = healthPotion.getWorldX() + healthPotion.soldAreaDefaultX;
+            healthPotion.solidArea.y = healthPotion.getWorldY() + healthPotion.solidAreaDefaultY;
+            healthPotion.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            healthPotion.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            myItems.add(healthPotion);
+            myDefaultItems.put("H", healthPotion);
+        }
+
 
     }
 
+    public void setLighting() {
+        lighting = new Lighting(myGameUi,350);
+    }
+
+    public void drawLight(Graphics2D g) {
+        lighting.draw(g);
+    }
 
 
     public int getMyBeginningState() {
@@ -186,6 +356,7 @@ public class DungeonPanel extends JPanel implements Runnable {
     }
 
 
-
-
+    public GameUI getMyGameUi() {
+        return myGameUi;
+    }
 }
