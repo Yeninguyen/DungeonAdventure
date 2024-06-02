@@ -9,9 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.http.HttpHeaders;
 import java.util.*;
 import java.util.List;
 
@@ -53,7 +51,6 @@ public class DungeonPanel extends JPanel implements Runnable {
 
     public List<SuperItems> myItems;
     public Map<String, SuperItems> myDefaultItems;
-    private final SuperItems[] myPillarItems = new SuperItems[6];
 
 
     public DungeonPanel() {
@@ -64,7 +61,6 @@ public class DungeonPanel extends JPanel implements Runnable {
         myDefaultItems = new HashMap<>();
         myGameUi = new GameUI(this);
         myItems = new ArrayList<>();
-        setObjects();
         myGameSounds = new GameSounds();
         startGameThread();
     }
@@ -121,9 +117,6 @@ public class DungeonPanel extends JPanel implements Runnable {
         } else if (gameState == myBeginningState) {
             myGameUi.drawTitleScreen(graphics2D);
         }
-
-
-
         graphics2D.dispose();
     }
 
@@ -242,7 +235,6 @@ public class DungeonPanel extends JPanel implements Runnable {
 
 
     }
-
 
 
     public int getMyBeginningState() {

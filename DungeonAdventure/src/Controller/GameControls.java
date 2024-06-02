@@ -78,7 +78,6 @@ public class GameControls implements KeyListener, MouseListener {
     // Character movement
     @Override
     public void keyPressed(KeyEvent theKeyEvent) {
-
         int keyCode = theKeyEvent.getKeyCode();
         if (keyCode == KeyEvent.VK_UP) {
             myUpArrow = true;

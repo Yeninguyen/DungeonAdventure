@@ -11,23 +11,23 @@ import java.util.List;
 
 
 public class Dungeon {
-    private final Room[][] maze;
-    public static final int SIZE = 8;
+    private Room[][] maze;
+    public static int SIZE = 3;
     private int myNumberOfEntrances;
     private int myNumberOfExits;
     private int myNumberOfPillars;
     public Dungeon() {
-        maze = new Room[SIZE][SIZE];
-        generateMaze();
     }
 
 
-    private void generateMaze() {
+    public void generateMaze(int theSize) {
+        SIZE = theSize;
+        maze = new Room[theSize][theSize];
         boolean validMaze = false;
         while (!validMaze) {
             // Initialize maze with empty rooms
-            for (int i = 0; i < SIZE; i++) {
-                for (int j = 0; j < SIZE; j++) {
+            for (int i = 0; i < theSize; i++) {
+                for (int j = 0; j < theSize; j++) {
                     maze[i][j] = new Room(); // This will automatically set up the room items
                     maze[i][j].setMyX(j);
                     maze[i][j].setMyY(i);
