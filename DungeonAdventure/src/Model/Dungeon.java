@@ -1,5 +1,6 @@
 package Model;
 
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,8 +18,6 @@ public class Dungeon {
     public Dungeon() {
         maze = new Room[SIZE][SIZE];
         generateMaze();
-        writeMazeToFile();
-
     }
 
     private void generateMaze() {
@@ -98,8 +97,8 @@ public class Dungeon {
     }
 
 
-    private void writeMazeToFile() {
-        try (FileWriter writer = new FileWriter("DungeonAdventure/src/Maps/Maze.txt")) {
+    public void writeMazeToFile(String theFilePath) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("DungeonAdventure/src/Maps/" + theFilePath))) {
             // Write the top parts of the rooms in the first row
             StringBuilder topRow = new StringBuilder();
             StringBuilder bottomRow = new StringBuilder();
