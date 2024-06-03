@@ -11,7 +11,7 @@ public class DungeonAdventure {
     private Dungeon myDungeon;
     private DungeonCharacter myHero;
     private DungeonAdventure() {
-        myDungeon = Dungeon.getInstance();
+        myDungeon = Model.Dungeon.getInstance();
     }
     public void setMyHero(DungeonCharacter theHero) {
         myHero = theHero;

@@ -29,6 +29,9 @@ public class TileManager {
     private int[] myVisionPotionCoordinates;
     private ArrayList<Integer> myVisionPotionCoordinatesList;
     private ArrayList<Integer> myHealthPotionCoordinatesList;
+    private ArrayList<Integer> myOgreCoordinatesList;
+    private ArrayList<Integer> myGremlinCoordinatesList;
+    private ArrayList<Integer> mySkeletonCoordinatesList;
     private int[] myMultipleCoordinates;
 
     private Map<String, Integer> myItemCollisionFrequency;
@@ -45,8 +48,11 @@ public class TileManager {
     private final String myMultiple = "M";
     private final String myPit = "X";
     private final String myEmpty = "N";
-    private final int myRow = Dungeon.SIZE * 5;
-    private final int myCol = Dungeon.SIZE * 5 ;
+    private final String myOgre = "O";
+    private final String myGremlin = "G";
+    private final String mySkeleton = "S";
+    private final int myRow = Model.Dungeon.getInstance().getSIZE() * 5;
+    private final int myCol = Model.Dungeon.getInstance().getSIZE() * 5 ;
     GameUI myGameUi;
     private Map<String, Tile> myTile;
 
@@ -60,6 +66,9 @@ public class TileManager {
         generateDungeon();
         myVisionPotionCoordinatesList = new ArrayList<>();
         myHealthPotionCoordinatesList = new ArrayList<>();
+        myOgreCoordinatesList = new ArrayList<>();
+        myGremlinCoordinatesList = new ArrayList<>();
+        mySkeletonCoordinatesList = new ArrayList<>();
         myItemCollisionFrequency = new HashMap<>();
         mapTileNums = new String[myRow][myCol];
         getTileImage();
@@ -98,7 +107,8 @@ public class TileManager {
 
             switch (title) {
                 case myHealthPotion, myVisionPotion, myEntrance, myPillarP, myPillarI,
-                        myPillarE, myExit, myMultiple, myPit, myEmpty, myPillarA -> title = "-";
+                        myPillarE, myExit, myMultiple, myPit, myEmpty,
+                     myPillarA, myOgre, myGremlin, mySkeleton -> title = "-";
             }
 
             int bound = myGameUi.getMyDungeonPanel().getMyTileSize();
@@ -125,7 +135,7 @@ public class TileManager {
 
 
     public void generateDungeon(){
-        Dungeon dungeon = new Dungeon();
+        Dungeon dungeon = Model.Dungeon.getInstance();
         String path = "Maze.txt";
         dungeon.writeMazeToFile(path);
     }
@@ -170,7 +180,18 @@ public class TileManager {
                         myVisionPotionCoordinatesList.add(row);
                         myVisionPotionCoordinatesList.add(col);
                     }
-
+                    if(s.equals("O")){
+                        myOgreCoordinatesList.add(row);
+                        myOgreCoordinatesList.add(col);
+                    }
+                    if(s.equals("G")){
+                        myGremlinCoordinatesList.add(row);
+                        myGremlinCoordinatesList.add(col);
+                    }
+                    if(s.equals("S")){
+                        mySkeletonCoordinatesList.add(row);
+                        mySkeletonCoordinatesList.add(col);
+                    }
                     if(s.equals("P")){
                         myPillarPCoordinates = new int[2];
                         myPillarPCoordinates[0] = row;
@@ -259,7 +280,19 @@ public class TileManager {
         return myHealthPotionCoordinatesList;
     }
 
+    public ArrayList<Integer> getMyOgreCoordinatesList() {
+        return myOgreCoordinatesList;
+    }
+
     public Map<String, Integer> getMyItemCollisionFrequency() {
         return myItemCollisionFrequency;
+    }
+
+    public ArrayList<Integer> getMySkeletonCoordinatesList() {
+        return mySkeletonCoordinatesList;
+    }
+
+    public ArrayList<Integer> getMyGremlinCoordinatesList() {
+        return myGremlinCoordinatesList;
     }
 }

@@ -1,5 +1,8 @@
 package Model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Room {
     private int myHealingPotionAmount;
     private int myPitAmount;
@@ -12,13 +15,41 @@ public class Room {
     private boolean myHasVisionPotion;
     private boolean myHasPillar;
     private double myRandom;
+    private double myChanceForMonster;
+    private boolean myHasMonster;
+    private String myMonsterName;
+    private final static ArrayList<String> MONSTER_NAMES = new ArrayList<>(Arrays.asList("Ogre","Gremlin","Skeleton"));
 
+    public void setMyMonsterName(String theMonsterName) {
+        myMonsterName = theMonsterName;
+    }
+
+    public void setMyHasMonster(boolean theHasMonster) {
+        myHasMonster = theHasMonster;
+    }
+
+    public String getMyMonsterName() {
+        return myMonsterName;
+    }
+
+    public boolean getMyHasMonster() {
+        return myHasMonster;
+    }
+
+    public double getMyChanceForMonster() {
+        return myChanceForMonster;
+    }
 
     public Room(int theBorderSize) {
+        setMyChanceForMonster(Math.random());
         setMyRandom(Math.random());
         setMyBorderSize(theBorderSize);
         setUpRoom();
 
+    }
+
+    private void setMyChanceForMonster(double theChanceForMonster) {
+        myChanceForMonster = theChanceForMonster;
     }
 
     private void setMyRandom(double theRandom) {
@@ -43,7 +74,12 @@ public class Room {
             myItem = 'H';
         } else{
             //20 percent chance for empty room
-            myItem = ' ';
+            myItem = 'N';
+        }
+        if(myChanceForMonster < 0.15 && !isMyEntrance()) {
+            setMyHasMonster(true);
+            setMyMonsterName(MONSTER_NAMES.get((int) (Math.random() * MONSTER_NAMES.size())));
+
         }
 
 
@@ -53,9 +89,6 @@ public class Room {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        if(myItem == ' '){
-            myItem = 'N';
-        }
 
         if(myY == 0){
             sb.append("* * * * * ").append("\n");
@@ -179,4 +212,5 @@ public class Room {
             return "Invalid part number";
         }
     }
+
 }

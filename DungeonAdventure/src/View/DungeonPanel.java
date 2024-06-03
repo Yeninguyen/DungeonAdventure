@@ -128,7 +128,9 @@ public class DungeonPanel extends JPanel implements Runnable {
     }
 
     public void setObjects() {
-
+        BufferedImage ogreImg = null;
+        BufferedImage gremlinImg = null;
+        BufferedImage skeletonImg = null;
         BufferedImage visionPotionImg = null;
         BufferedImage healthPotionImg = null;
         SuperItems pillarP = new SuperItems(myGameUi);
@@ -140,7 +142,7 @@ public class DungeonPanel extends JPanel implements Runnable {
         pillarA.setName("A");
         pillarE.setName("E");
         pillarI.setName("I");
-       multipleItems.setName("M");
+        multipleItems.setName("M");
 
         try {
             pillarP.setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/PillarP.png"))));
@@ -150,8 +152,9 @@ public class DungeonPanel extends JPanel implements Runnable {
             visionPotionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/VisionPotion.png")));
             healthPotionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/HealthPotion.png")));
             multipleItems.setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/MultipleItems.png"))));
-
-
+            gremlinImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/MonsterImages/Gremlin.png")));
+            ogreImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/MonsterImages/Ogre.png")));
+            skeletonImg =  ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/MonsterImages/Skeleton.png")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -160,6 +163,7 @@ public class DungeonPanel extends JPanel implements Runnable {
         myDefaultItems.put(pillarI.getName(), pillarI);
         myDefaultItems.put(pillarP.getName(), pillarP);
         myDefaultItems.put(pillarA.getName(), pillarA);
+
 //        myDefaultItems.put(healthPotion.getName(), healthPotion);
 //        myDefaultItems.put(visionPotion.getName(), visionPotion);
 
@@ -238,6 +242,48 @@ public class DungeonPanel extends JPanel implements Runnable {
             healthPotion.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
             myItems.add(healthPotion);
             myDefaultItems.put("H", healthPotion);
+        }
+        for (int i = 0; i < myGameUi.getMyTileManager().getMyOgreCoordinatesList().size(); i += 2) {
+            SuperItems ogre = new SuperItems(myGameUi);
+            ogre.setName("Ogre");
+            ogre.setImage(ogreImg);
+            ogre.setWorldY(myGameUi.getMyTileManager().getMyOgreCoordinatesList().get(i) * 64);
+            ogre.setWorldX(myGameUi.getMyTileManager().getMyOgreCoordinatesList().get(i + 1) * 64);
+            ogre.solidArea.x = ogre.getWorldX() + ogre.soldAreaDefaultX;
+            ogre.solidArea.y = ogre.getWorldY() + ogre.solidAreaDefaultY;
+            ogre.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            ogre.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            myItems.add(ogre);
+            myDefaultItems.put("O", ogre);
+        }
+
+        for (int i = 0; i < myGameUi.getMyTileManager().getMyGremlinCoordinatesList().size(); i += 2) {
+            SuperItems gremlin = new SuperItems(myGameUi);
+            gremlin.setName("Gremlin");
+            gremlin.setImage(gremlinImg);
+            gremlin.setWorldY(myGameUi.getMyTileManager().getMyGremlinCoordinatesList().get(i) * 64);
+            gremlin.setWorldX(myGameUi.getMyTileManager().getMyGremlinCoordinatesList().get(i + 1) * 64);
+            gremlin.solidArea.x = gremlin.getWorldX() + gremlin.soldAreaDefaultX;
+            gremlin.solidArea.y = gremlin.getWorldY() + gremlin.solidAreaDefaultY;
+            gremlin.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            gremlin.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            myItems.add(gremlin);
+            myDefaultItems.put("G", gremlin);
+        }
+
+
+        for (int i = 0; i < myGameUi.getMyTileManager().getMySkeletonCoordinatesList().size(); i += 2) {
+            SuperItems skeleton = new SuperItems(myGameUi);
+            skeleton.setName("Skeleton");
+            skeleton.setImage(skeletonImg);
+            skeleton.setWorldY(myGameUi.getMyTileManager().getMySkeletonCoordinatesList().get(i) * 64);
+            skeleton.setWorldX(myGameUi.getMyTileManager().getMySkeletonCoordinatesList().get(i + 1) * 64);
+            skeleton.solidArea.x = skeleton.getWorldX() + skeleton.soldAreaDefaultX;
+            skeleton.solidArea.y = skeleton.getWorldY() + skeleton.solidAreaDefaultY;
+            skeleton.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            skeleton.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            myItems.add(skeleton);
+            myDefaultItems.put("S", skeleton);
         }
 
 
