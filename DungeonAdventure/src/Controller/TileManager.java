@@ -6,11 +6,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class TileManager {
 
@@ -18,7 +15,7 @@ public class TileManager {
     public int entranceRow;
     public int entranceCol;
 
-    public final Map<String, String> monsterRooms;
+
     private int[] myPillarACoordinates;
     private int[] myPillarPCoordinates;
     private int[] myPillarICoordinates;
@@ -33,6 +30,8 @@ public class TileManager {
     private ArrayList<Integer> myOgreCoordinatesList;
     private ArrayList<Integer> myGremlinCoordinatesList;
     private ArrayList<Integer> mySkeletonCoordinatesList;
+
+    private boolean myMonsterBattle = false;
 
 
     private final String myHealthPotion = "H";
@@ -54,7 +53,11 @@ public class TileManager {
     GameUI myGameUi;
     private final Map<String, Tile> myTile;
 
+
+
     private String[][] mapTileNums;
+
+    Monsters myMonster;
 
     public TileManager(final GameUI theGameUi) {
         myGameUi = theGameUi;
@@ -65,7 +68,6 @@ public class TileManager {
         mySkeletonCoordinatesList = new ArrayList<>();
         myGremlinCoordinatesList = new ArrayList<>();
         myItemCollisionFrequency = new HashMap<>();
-        monsterRooms = new HashMap<>();
         getTileImage();
     }
 
@@ -181,20 +183,14 @@ public class TileManager {
                 if(s.equals("O")){
                     myOgreCoordinatesList.add(row);
                     myOgreCoordinatesList.add(col);
-                    String roomCoordinate = row + "," + col;
-                    monsterRooms.put(roomCoordinate, "Ogre");
                 }
                 if(s.equals("G")){
                     myGremlinCoordinatesList.add(row);
                     myGremlinCoordinatesList.add(col);
-                    String roomCoordinate = row + "," + col;
-                    monsterRooms.put(roomCoordinate, "Gremlin");
                 }
                 if(s.equals("S")){
                     mySkeletonCoordinatesList.add(row);
                     mySkeletonCoordinatesList.add(col);
-                    String roomCoordinate = row + "," + col;
-                    monsterRooms.put(roomCoordinate, "Skeleton");
                 }
                 if(s.equals("P")){
                     myPillarPCoordinates = new int[2];
@@ -203,7 +199,6 @@ public class TileManager {
                 }
                     mapTileNums[row][col] = s;
                 }
-
             }
 
         } catch (IOException e) {
@@ -212,9 +207,11 @@ public class TileManager {
         }
 
         myGameUi.getMyDungeonPanel().setObjects();
+       // monsterCoordinates();
         myGameUi.getMyCharacter().initHeroes();
 
     }
+
 
     public boolean isTileCollision(final Rectangle theHitBox) {
         int x1 = theHitBox.x / myGameUi.getMyDungeonPanel().getMyTileSize();
@@ -232,13 +229,19 @@ public class TileManager {
             }
         }
 
+//        for(Monsters monster : monsters){
+//            if(monster.solidArea.intersects(theHitBox)){
+//                System.out.println("player collided with a " +  monster.getMonsterType());
+//            }
+//        }
+
         List<SuperItems> itemsCopy = new ArrayList<>(myGameUi.getMyDungeonPanel().myItems);
         for (SuperItems item : itemsCopy) {
             if (item.solidArea.intersects(theHitBox)) {
                 // Handle collision with the item
                 // You can perform actions based on the item's name or type
 
-                System.out.println("Collision with item: " + item.getName());
+                System.out.println("Collision with item: " + item.getName() + " at row, col " + item.getWorldX() + " " + item.getWorldY() );
                 if(!item.getName().equals("M")) {
                     if(myGameUi.getMyDungeonPanel().myDefaultItems.containsKey(item.getName())) {
                         myGameUi.getMyDungeonPanel().myDefaultItems.get(item.getName()).setCollision(true);
@@ -246,18 +249,36 @@ public class TileManager {
                     }
                 }
 
-//                if(myGameUi.getMyGameControls().isMyVisionPotionSelected()){
-//                    if(myItemCollisionFrequency.get("V") > 0){
-//                        myItemCollisionFrequency.put(myItemCollisionFrequency.getOrDefault(("V"), 0),  -1);
-//                    }
-//                }
-
 
                 myGameUi.getMyDungeonPanel().myItems.remove(item);
 
             }
+
+            List<Monsters> monsterCopy = new ArrayList<>(myGameUi.getMyDungeonPanel().myMonsters);
+            for (Monsters monster: monsterCopy) {
+                if(monster.solidArea.intersects(theHitBox)){
+                    if(myGameUi.getMyDungeonPanel().getMyDefaultMonsters().containsKey(monster.getMonsterType())) {
+                        myGameUi.getMyDungeonPanel().getMyDefaultMonsters().get(monster.getMonsterType()).setCollision(true);
+                        System.out.println("Collided with monster " + monster.getMonsterType() + " at row, col " + monster.getX() + " " + monster.getY());
+                        myGameUi.getMyDungeonPanel().myMonsters.remove(monster);
+                    }
+                }
+            }
         }
+
             return isTileSolid;
+    }
+
+    public void drawMonsterEncountered(Graphics2D theGraphics){
+        int x = myGameUi.getMyDungeonPanel().getMyWidth() / 2 - 64;
+        int y = myGameUi.getMyDungeonPanel().getMyHeight() / 2 - 64;
+        for (Monsters monster: myGameUi.getMyDungeonPanel().getMyDefaultMonsters().values()) {
+            if(monster.isCollision()){
+                myGameUi.drawFrame(x,y, 300, 300, theGraphics);
+                theGraphics.drawString("Monster encountered " + monster.getMonsterType(), x + 100, y +150);
+            }
+        }
+
     }
 
 
@@ -304,5 +325,13 @@ public class TileManager {
 
     public ArrayList<Integer> getMySkeletonCoordinatesList() {
         return mySkeletonCoordinatesList;
+    }
+
+    public String[][] getMapTileNums() {
+        return mapTileNums;
+    }
+
+    public boolean isMyMonsterBattle() {
+        return myMonsterBattle;
     }
 }

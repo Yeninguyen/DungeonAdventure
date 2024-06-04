@@ -104,10 +104,10 @@ public class Characters {
         }else if (myGameUI.getMyGameControls().isMyPriestessSelected()){
             theGraphics.drawImage(myHeroCurrentImage, screenX - 20, screenY - 30, 70, 70, null);
         }
-        theGraphics.setColor(Color.RED);
-        theGraphics.fill(myHealthBarRect);
-        theGraphics.setColor(Color.BLACK);
-        theGraphics.draw(myOuterHealthBarRect);
+//        theGraphics.setColor(Color.RED);
+//        theGraphics.fill(myHealthBarRect);
+//        theGraphics.setColor(Color.BLACK);
+//        theGraphics.draw(myOuterHealthBarRect);
 
         //drawHitBox(theGraphics);
        // System.out.println(myGameUI.getMyTileManager().pillarARow);
@@ -373,4 +373,15 @@ public class Characters {
 //        JOptionPane.showMessageDialog(null, "You encountered a " + monsterType + "!");
 //    }
 
+    public Rectangle getHitBox(){
+        if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
+            return myWarrior.getMyHitBox();
+        } else if (myGameUI.getMyGameControls().isMyThiefSelected()) {
+            return myThief.getMyHitBox();
+        } else if (myGameUI.getMyGameControls().isMyPriestessSelected()) {
+            return myPriestess.getMyHitBox();
+        }else{
+            return  null;
+        }
+    }
 }

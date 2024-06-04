@@ -1,7 +1,11 @@
 package Controller;
 
+import Model.Monster;
+import Model.MonsterDatabase;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.sql.SQLException;
 
 public class SuperItems {
     private BufferedImage image;
@@ -14,9 +18,11 @@ public class SuperItems {
 
     public Rectangle solidArea = new Rectangle(0,0,40,40);
 
+    private Monster myMonster;
 
     public SuperItems(GameUI myGameUI) {
         this.myGameUI = myGameUI;
+        init();
     }
 
     public void draw(Graphics2D theGraphics2D) {
@@ -30,7 +36,17 @@ public class SuperItems {
                 worldY  - bound< myGameUI.getMyCharacter().getMyY() + myGameUI.getMyCharacter().getScreenY()){
             theGraphics2D.drawImage(image, screenX + 10, screenY + 10, myGameUI.getMyDungeonPanel().getMyTileSize() - 30, myGameUI.getMyDungeonPanel().getMyTileSize() - 30, null);
         }
+    }
 
+    private void init()  {
+
+        // Create a Monster instance from the database
+        myMonster = null;
+        try {
+            myMonster = MonsterDatabase.getMonster(name);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public BufferedImage getImage() {

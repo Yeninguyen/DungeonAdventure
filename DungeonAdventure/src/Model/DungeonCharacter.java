@@ -15,7 +15,7 @@ public abstract class DungeonCharacter {
 
 
     DungeonCharacter(final String theName, final int theHitPoints, final int theAttackSpeed,
-                            final double theChanceToHit, final int theMaxDamage, final int theMinDamage,
+                     final double theChanceToHit, final int theMaxDamage, final int theMinDamage,
                      final int theX, final int theY){
         setMyName(theName);
         setMyHitPoints(theHitPoints);
@@ -36,19 +36,19 @@ public abstract class DungeonCharacter {
     }
 
     public void setMyY(final int theY) {
-       // if(theY < 0 || theY > 768) {
-         //   throw new IllegalArgumentException("Y must be between 0 and 768");
-       // }else{
-            myY = theY;
-      //  }
+        // if(theY < 0 || theY > 768) {
+        //   throw new IllegalArgumentException("Y must be between 0 and 768");
+        // }else{
+        myY = theY;
+        //  }
     }
 
     public void setMyX(final int theX) {
-       //if(theX < 0 || theX > 1024) {
-         //  throw new IllegalArgumentException("X must be between 0 and 1024");
-       //}else{
-           myX = theX;
-       //}
+        //if(theX < 0 || theX > 1024) {
+        //  throw new IllegalArgumentException("X must be between 0 and 1024");
+        //}else{
+        myX = theX;
+        //}
     }
 
     void setMyMinDamage(final int theMinDamage) {
@@ -57,7 +57,7 @@ public abstract class DungeonCharacter {
         }
         myMinDamage = theMinDamage;
     }
-   void setMyMaxDamage(final int theMaxDamage) {
+    void setMyMaxDamage(final int theMaxDamage) {
         if(theMaxDamage < 0 ) {
             throw new IllegalArgumentException("Max damage must be greater than 0");
         }

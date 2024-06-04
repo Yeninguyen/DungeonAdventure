@@ -37,7 +37,6 @@ public class Lighting {
 
         // Create and apply the radial gradient paint
         int radius = (int) (theCircleSize * myScale); // Adjust the radius here
-        System.out.println(myScale);
         RadialGradientPaint gradientPaint = new RadialGradientPaint(centerX, centerY, radius, fractions, colors);
         g2d.setPaint(gradientPaint);
         g2d.fillRect(0, 0, gameUI.getMyDungeonPanel().getMyWidth(), gameUI.getMyDungeonPanel().getMyHeight());
@@ -48,7 +47,7 @@ public class Lighting {
 
         if (myVisionPotionUsed) {
           //  filterAlpha = 0f;
-            myScale = 2.5;
+            myScale = 4;
             if (System.currentTimeMillis() - myVisionTimer >= myVisionDuration) {
                 myVisionPotionUsed = false;
                 //      filterAlpha = 1f;
@@ -56,7 +55,7 @@ public class Lighting {
             }
             }
         else {
-                myScale = 2.5;
+                myScale = 4;
 
             }
         }

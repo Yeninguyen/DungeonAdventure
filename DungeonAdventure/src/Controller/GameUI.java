@@ -8,13 +8,13 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.List;
 
 public class GameUI {
 
 
+    int size;
     private Map<String, Rectangle> itemRectangles;
     private RoundRectangle2D myInventoryRectangle;
 
@@ -36,7 +36,6 @@ public class GameUI {
     private Rectangle myHardCheckBox;
 
 
-    public int size;
 
 
     private BufferedImage background;
@@ -59,6 +58,9 @@ public class GameUI {
 
     private Dungeon myDungeon;
 
+    private Monsters monsters;
+
+
 
     public GameUI(DungeonPanel theDungeonPanel) {
         myDungeonPanel = theDungeonPanel;
@@ -68,9 +70,9 @@ public class GameUI {
         theDungeonPanel.addMouseListener(myGameControls);
         theDungeonPanel.setFocusable(true);
         myCharacter = new Characters(this);
-
         loadImages();
     }
+
 
 
 
@@ -88,12 +90,13 @@ public class GameUI {
     public void drawPlayer(Graphics2D theGraphics) {
         myTileManager.drawTiles(theGraphics);
         myCharacter.drawPlayer(theGraphics);
-
+       myTileManager.drawMonsterEncountered(theGraphics);
         theGraphics.setColor(Color.WHITE);
 
 
         theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 15F));
         theGraphics.drawString(getMyGameControls().getUsername(), myCharacter.getScreenX() - 2, myCharacter.getScreenY() - 20);
+        //myTileManager.updateAndRenderMonsters(theGraphics);
     }
 
     public void drawTitleScreen(Graphics2D theGraphics) {
@@ -391,6 +394,7 @@ public class GameUI {
 
     public void updatePlayerLocation() {
         myCharacter.updatePlayerLocation();
+        //monsterCoordinates();
     }
 
 

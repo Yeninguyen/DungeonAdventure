@@ -1,4 +1,3 @@
-
 package Model;
 
 import java.util.ArrayList;
@@ -15,6 +14,10 @@ public class Room {
     private char myItem;
     private boolean myHasVisionPotion;
     private boolean myHasPillar;
+    private double myChanceForMultipleItems;
+    private double myChanceForHealingPotion;
+    private double myChanceForVisionPotion;
+    private double myChanceForPit;
     private double myRandom;
     private double myChanceForMonster;
     private boolean myHasMonster;
@@ -45,8 +48,37 @@ public class Room {
         setMyChanceForMonster(Math.random());
         setMyRandom(Math.random());
         setMyBorderSize(theBorderSize);
+        setUpChances(theBorderSize);
         setUpRoom();
 
+    }
+
+    private void setUpChances(int theBorderSize) {
+        myChanceForMultipleItems = 0.10;
+
+        switch (theBorderSize) {
+            case 3:
+                myChanceForMonster = 0.8;
+                myChanceForHealingPotion = 0.65;
+                myChanceForVisionPotion = 0.3;
+                myChanceForPit = 0.45;
+                break;
+            case 6:
+                myChanceForMonster = 0.85;
+                myChanceForHealingPotion = 0.6;
+                myChanceForVisionPotion = 0.25;
+                myChanceForPit = 0.45;
+                break;
+            case 8:
+                myChanceForMonster = 0.90;
+                myChanceForHealingPotion = 0.55;
+                myChanceForVisionPotion = 0.1;
+                myChanceForPit = 0.4;
+                break;
+            default:
+                // Handle invalid border size if needed
+                break;
+        }
     }
 
     private void setMyChanceForMonster(double theChanceForMonster) {
@@ -58,22 +90,22 @@ public class Room {
     }
 
     private void setUpRoom() {
-        if (myRandom < 0.10) {
+        if (myRandom < myChanceForMultipleItems) {
             // 10% chance for multiple items (healing potion, pit, and vision potion)
             setUpMultipleItems();
-        }  else if (myRandom < 0.35) {
+        }  else if (myRandom < myChanceForVisionPotion) {
             // 10% chance for vision potion
             setMyVisionPotion(true);
             myItem = 'V';
-        } else if (myRandom < 0.55) {
+        } else if (myRandom < myChanceForPit) {
             // 20% chance for pit
             myPitAmount = (int) (Math.random() * 20) + 1;
             myItem = 'X';
-        } else if(myRandom < 0.80){
+        } else if(myRandom < myChanceForHealingPotion){
             // 25% chance for healing potion
             myHealingPotionAmount = (int) (Math.random() * 11) + 10;
             myItem = 'H';
-        } else if(myRandom < 0.95){
+        } else if(myRandom < myChanceForMonster){
             //20 percent chance for empty room
             setMyHasMonster(true);
             setMyMonsterName(MONSTER_NAMES.get((int) (Math.random() * MONSTER_NAMES.size())));
