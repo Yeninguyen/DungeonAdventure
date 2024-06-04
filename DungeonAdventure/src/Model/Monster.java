@@ -7,7 +7,7 @@ public class Monster extends DungeonCharacter{
     private double myChanceToHeal;
     private int myMinHealPoints;
     private int myMaxHealPoints;
-    private double myRandomToHeal;
+
 
 
     protected Monster(final String theName, final int theHitPoints, final int theAttackSpeed, final double theChanceToHit,
@@ -17,7 +17,6 @@ public class Monster extends DungeonCharacter{
         setMyChanceToHeal(theChanceToHeal);
         setMyMinHealPoints(theMinHealPoints);
         setMyMaxHealPoints(theMaxHealPoints);
-        setMyRandomToHeal(Math.random());
 
 
     }
@@ -44,13 +43,6 @@ public class Monster extends DungeonCharacter{
             myChanceToHeal = theChanceToHeal;
         }
     }
-    public void setMyRandomToHeal(final double theRandomToHeal) {
-        if(theRandomToHeal < 0.0 || theRandomToHeal > 1.0){
-            throw new IllegalArgumentException("The random to heal must be between 0.0 and 1.0");
-        } else{
-            myRandomToHeal = theRandomToHeal;
-        }
-    }
 
     public double getMyChanceToHeal() {
         return myChanceToHeal;
@@ -63,15 +55,14 @@ public class Monster extends DungeonCharacter{
     public int getMyMinHealPoints() {
         return myMinHealPoints;
     }
-    public double getRandomToHeal() {
-        return myRandomToHeal;
-    }
+
 
     public void heal(){
-        if(myRandomToHeal <= myChanceToHeal){
+        double random = Math.random();
+        if(random <= myChanceToHeal){
             int healAmount =  (int) (Math.random() * (myMaxHealPoints - myMinHealPoints + 1)) + myMinHealPoints;
             setMyHitPoints(getMyHitPoints()+healAmount);
-            System.out.println(getMyName() + " Successfully healed for " + healAmount + " points");
+            System.out.println(getMyName() + "Monster Successfully healed for " + healAmount + " points"); // display on gui
         }
     }
 

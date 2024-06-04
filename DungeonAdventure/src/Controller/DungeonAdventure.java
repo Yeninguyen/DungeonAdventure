@@ -9,19 +9,20 @@ import java.sql.SQLException;
 
 public class DungeonAdventure {
     private Dungeon myDungeon;
-    private DungeonCharacter myHero;
+    private DungeonCharacter myCharacter;
     private DungeonAdventure() {
         myDungeon = Model.Dungeon.getInstance();
     }
-    public void setMyHero(DungeonCharacter theHero) {
-        myHero = theHero;
-    }
+
     public void battle(DungeonCharacter theOther){
-        int numberOfAttacks = myHero.getMyAttackSpeed()/ theOther.getMyAttackSpeed();
+        int numberOfAttacks = Math.min(myCharacter.getMyAttackSpeed()/ theOther.getMyAttackSpeed(),1);
         while(numberOfAttacks > 0){
-            myHero.attack(theOther);
+            myCharacter.attack(theOther);
             numberOfAttacks--;
         }
+    }
+    public void setMyCharacter(DungeonCharacter theHero) {
+        myCharacter = theHero;
     }
     public void placeMonsters() throws SQLException {
         MonsterDatabase monsterDatabase = MonsterDatabase.getMyUniqueInstance();
@@ -30,7 +31,7 @@ public class DungeonAdventure {
         monsterDatabase.getMonster(monsters[monsterIndex]);
     }
     public void printCurrentRoom(){
-        Room currentRoom = myDungeon.getMaze()[myHero.getMyX()][myHero.getMyY()];
+        Room currentRoom = myDungeon.getMaze()[myCharacter.getMyX()][myCharacter.getMyY()];
         System.out.println(currentRoom);
     }
 }

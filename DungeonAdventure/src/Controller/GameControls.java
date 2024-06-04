@@ -29,7 +29,11 @@ public class GameControls implements KeyListener, MouseListener {
 
     private boolean mySelection;
 
-    private boolean myInventorySelected = false;
+    private boolean myInventorySelected;
+
+    private boolean myVisionPotionSelected;
+    private boolean myHealthPotionSelected;
+
 
     public boolean isMySelection() {
         return mySelection;
@@ -78,7 +82,6 @@ public class GameControls implements KeyListener, MouseListener {
     // Character movement
     @Override
     public void keyPressed(KeyEvent theKeyEvent) {
-
         int keyCode = theKeyEvent.getKeyCode();
         if (keyCode == KeyEvent.VK_UP) {
             myUpArrow = true;
@@ -102,6 +105,17 @@ public class GameControls implements KeyListener, MouseListener {
         }
         if(keyCode == KeyEvent.VK_ENTER){
             myInventorySelected = true;
+        }
+        if (myInventorySelected) {
+            if (myGameUi.getItemRectangles().size() > 1) {
+                if (keyCode == KeyEvent.VK_V) {
+                    myVisionPotionSelected = true;
+                }
+                if (keyCode == KeyEvent.VK_H) {
+                    myHealthPotionSelected = true;
+
+                }
+            }
         }
     }
 
@@ -129,6 +143,13 @@ public class GameControls implements KeyListener, MouseListener {
         }
         if(keyCode == KeyEvent.VK_ENTER){
             myInventorySelected = false;
+        }
+        if(keyCode == KeyEvent.VK_V){
+            myVisionPotionSelected = false;
+
+        }
+        if(keyCode == KeyEvent.VK_H){
+            myHealthPotionSelected = false;
         }
     }
 
@@ -163,7 +184,7 @@ public class GameControls implements KeyListener, MouseListener {
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
 
             }
-        } else {
+        } else if(myGameUi.getMyDungeonPanel().getGameState() == myGameUi.getMyDungeonPanel().getSelectionState()){
             if (myGameUi.getMyWarriorCheckBox() != null && myGameUi.getMyWarriorCheckBox().contains(e.getPoint())) {
                 myWarriorSelected = true;
                 myThiefSelected = false;
@@ -222,6 +243,22 @@ public class GameControls implements KeyListener, MouseListener {
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
             }
 
+        }else {
+            if (myGameUi.getMyInventoryRectangle().contains(e.getPoint())) {
+                myInventorySelected = true;
+            }
+            if(myInventorySelected) {
+                if (myGameUi.getItemRectangles().containsKey("V")) {
+                    if (myGameUi.getItemRectangles().get("V").contains(e.getPoint())) {
+                        myVisionPotionSelected = true;
+                    }
+                }
+                if (myGameUi.getItemRectangles().containsKey("H")) {
+                    if (myGameUi.getItemRectangles().get("H").contains(e.getPoint())) {
+                        myHealthPotionSelected = true;
+                    }
+                }
+            }
         }
         myGameUi.getMyDungeonPanel().repaint();
 
@@ -229,7 +266,15 @@ public class GameControls implements KeyListener, MouseListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        if (myGameUi.getMyDungeonPanel().getGameState() == myGameUi.getMyDungeonPanel().getPlayState() && myGameUi.getItemRectangles().size() > 1) {
+            if (myGameUi.getItemRectangles().containsKey("V") && myGameUi.getItemRectangles().get("V").contains(e.getPoint())) {
+                myVisionPotionSelected = false;
+            }
+            if (myGameUi.getItemRectangles().containsKey("H") && myGameUi.getItemRectangles().get("H").contains(e.getPoint())) {
+                myHealthPotionSelected = false;
+            }
+        }
+        myGameUi.getMyDungeonPanel().repaint();
     }
 
     @Override
@@ -290,5 +335,21 @@ public class GameControls implements KeyListener, MouseListener {
 
     public boolean isMyInventorySelected() {
         return myInventorySelected;
+    }
+
+    public boolean isMyVisionPotionSelected() {
+        return myVisionPotionSelected;
+    }
+
+    public boolean isMyHealthPotionSelected() {
+        return myHealthPotionSelected;
+    }
+
+    public void setMyVisionPotionSelected(boolean myVisionPotionSelected) {
+        this.myVisionPotionSelected = myVisionPotionSelected;
+    }
+
+    public void setMyHealthPotionSelected(boolean myHealthPotionSelected) {
+        this.myHealthPotionSelected = myHealthPotionSelected;
     }
 }

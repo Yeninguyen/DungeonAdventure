@@ -132,7 +132,11 @@ public abstract class DungeonCharacter {
     public void attack(final DungeonCharacter theOther){
         if(myRandom <= myChanceToHit) {
             int damage = (int) (Math.random() * (myMaxDamage - myMinDamage + 1)) + myMinDamage;
+            System.out.println(theOther.getMyName() + "succesfully attacked for " + damage + "points"); //display on gui
             theOther.setMyHitPoints(theOther.getMyHitPoints()-damage);
+            if(theOther instanceof Monster){
+                ((Monster) theOther).heal();
+            }
         }
     }
 }
