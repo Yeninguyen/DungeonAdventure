@@ -50,8 +50,7 @@ public class Lighting {
     public void update() {
         filterAlpha = 1f;
         if (myVisionPotionUsed) {
-              filterAlpha = 0f;
-            myScale = 2;
+                myScale = 3;
             if (System.currentTimeMillis() - myVisionTimer >= myVisionDuration) {
                 myVisionPotionUsed = false;
                 filterAlpha = 1f;

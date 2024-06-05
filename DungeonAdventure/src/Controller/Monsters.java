@@ -59,8 +59,8 @@ public class Monsters {
             theGraphics2D.drawImage(myMonsterImage, screenX, screenY, gameUI.getMyDungeonPanel().getMyTileSize(), gameUI.getMyDungeonPanel().getMyTileSize(), null);
 
         }
-        theGraphics2D.setColor(Color.RED); // Set the color for the solid area rectangle
-        theGraphics2D.drawRect(solidAreaScreenX, solidAreaScreenY, solidArea.width, solidArea.height);
+        //theGraphics2D.setColor(Color.RED); // Set the color for the solid area rectangle
+        //theGraphics2D.drawRect(solidAreaScreenX, solidAreaScreenY, solidArea.width, solidArea.height);
     }
 
     public void handleMonsterEncounter(Monsters monster) {
