@@ -15,6 +15,7 @@ public class Lighting {
     private final int day = 1;
     private double myScale = 1;
     private boolean myVisionPotionUsed;
+    private boolean myHealthPotionUsed;
 
     public Lighting(GameUI theGameUI) {
         this.gameUI = theGameUI;
@@ -115,5 +116,9 @@ public class Lighting {
 
     public void setMyScale(int myScale) {
         this.myScale = myScale;
+    }
+
+    public void setMyHealthPotionUsed(boolean theHealthPotionUsed) {
+        myHealthPotionUsed = theHealthPotionUsed;
     }
 }

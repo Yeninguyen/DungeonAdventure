@@ -49,6 +49,7 @@ public class Characters {
     private final Map<Integer, BufferedImage> myPriestessImages;
 
 
+    private int myMaxHeroHitPoint;
     private Direction direction = Direction.EAST;
 
     public static final int RUNNING_RIGHT = 1;
@@ -401,14 +402,26 @@ public class Characters {
         DungeonCharacter hero = null;
         if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
             hero = myWarrior;
+            setMyMaxHeroHitPoint(hero.getMyHitPoints());
         } else if (myGameUI.getMyGameControls().isMyThiefSelected()) {
             hero = myThief;
+            setMyMaxHeroHitPoint(hero.getMyHitPoints());
         } else if (myGameUI.getMyGameControls().isMyPriestessSelected()) {
             hero = myPriestess;
+            setMyMaxHeroHitPoint(hero.getMyHitPoints());
         }
+
         return hero;
     }
     public boolean isMoving() {
         return isMoving;
+    }
+
+    public int getMyMaxHeroHitPoint() {
+        return myMaxHeroHitPoint;
+    }
+
+    public void setMyMaxHeroHitPoint(int myMaxHeroHitPoint) {
+        this.myMaxHeroHitPoint = myMaxHeroHitPoint;
     }
 }

@@ -14,6 +14,8 @@ public abstract class DungeonCharacter {
 
 
 
+
+
     DungeonCharacter(final String theName, final int theHitPoints, final int theAttackSpeed,
                      final double theChanceToHit, final int theMaxDamage, final int theMinDamage,
                      final int theX, final int theY){
@@ -71,7 +73,7 @@ public abstract class DungeonCharacter {
         myAttackSpeed = theAttackSpeed;
     }
 
-    void setMyHitPoints(final int theHealthPoints) {
+    public void setMyHitPoints(final int theHealthPoints) {
         myHitPoints = theHealthPoints;
     }
 
@@ -112,6 +114,8 @@ public abstract class DungeonCharacter {
     public int getMyY() {
         return myY;
     }
+
+
     public void attack(final DungeonCharacter theOther){
         double random = Math.random();
         if(random <= myChanceToHit) {

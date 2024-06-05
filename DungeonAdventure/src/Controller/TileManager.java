@@ -238,6 +238,7 @@ public class TileManager {
        // monsterCoordinates();
         myGameUi.getMyCharacter().initHeroes();
 
+
     }
 
 
@@ -301,7 +302,7 @@ public class TileManager {
                         System.out.println("Collided with monster " + monster.getMonsterType() + " at row, col " + monster.getX() + " " + monster.getY());
                         monsterEncountered = monster;
                         // Check if the player's character has defeated the monster
-                        if ((monsterEncountered.getMyMonster().getMyHitPoints() <= 0)) {
+                        if ((myGameUi.getMyCharacter().getCharacterType().getMyHitPoints() > 0 && monsterEncountered.getMyMonster().getMyHitPoints() <= 0)) {
                             // Player has defeated the monster, remove it from the list
                             myGameUi.getMyDungeonPanel().myMonsters.remove(monster);
                         }else if(myGameUi.getMyCharacter().getCharacterType().getMyHitPoints() <= 0){

@@ -344,12 +344,18 @@ public class GameUI {
                 // ... (remove the code that sets isMyVisionPotionUsed to false when val == 0)
             }
             if (myGameControls.isMyHealthPotionSelected() && myTileManager.getMyItemCollisionFrequency().containsKey("H")) {
-                int val = myTileManager.getMyItemCollisionFrequency().get("H");
-                if(val > 0) {
-                    val --;
-                    myTileManager.getMyItemCollisionFrequency().put("H", val);
-                    myGameControls.setMyHealthPotionSelected(false);
+                if(myCharacter.getCharacterType().getMyHitPoints() < myCharacter.getMyMaxHeroHitPoint()){
+                    int val = myTileManager.getMyItemCollisionFrequency().get("H");
+                    if(val > 0) {
+                        val --;
+                        System.out.println(myCharacter.getCharacterType().getMyHitPoints());
+                        myCharacter.getCharacterType().setMyHitPoints(myCharacter.getMyMaxHeroHitPoint());
+                        System.out.println(myCharacter.getCharacterType().getMyHitPoints());
+                        myTileManager.getMyItemCollisionFrequency().put("H", val);
+                        myGameControls.setMyHealthPotionSelected(false);
+                    }
                 }
+
 
             }
         }
