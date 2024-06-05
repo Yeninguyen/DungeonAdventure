@@ -136,7 +136,10 @@ public class DungeonPanel extends JPanel implements Runnable {
                 }
             }
             if(myGameUi.getMyTileManager().isMyWin()){
-                drawGameOverScreen(graphics2D);
+                drawGameOverScreen(graphics2D, "You win!");
+            }
+            if(myGameUi.getMyTileManager().gameOver){
+                drawGameOverScreen(graphics2D, "Game Over!");
             }
             myLighting.draw(graphics2D);
             updateMiniMap();
@@ -366,9 +369,9 @@ public class DungeonPanel extends JPanel implements Runnable {
 
     }
 
-    public void drawGameOverScreen(Graphics2D theGraphics) {
+    public void drawGameOverScreen(Graphics2D theGraphics, String theTitle) {
 
-        String text = "You won!";
+        String text = theTitle;
         theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 35F));
         theGraphics.setColor(Color.WHITE);
         int x = getXforCenteredText(theGraphics, text);

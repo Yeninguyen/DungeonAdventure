@@ -1,12 +1,14 @@
 package Controller;
 
 import Model.Dungeon;
+import Model.DungeonCharacter;
 import Model.Monster;
 
 import javax.imageio.ImageIO;
 import javax.print.attribute.standard.MediaSize;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.util.*;
@@ -267,8 +269,8 @@ public class TileManager {
             if (item.solidArea.intersects(theHitBox)) {
                 // Handle collision with the item
                 // You can perform actions based on the item's name or type
-                System.out.println("Collision with item: " + item.getName() + " at row, col " + item.getWorldX() + " " + item.getWorldY() );
-                if(!item.getName().equals("M")) {
+                System.out.println("Collision with item: " + item.getName() + " at row, col " + item.getWorldX() + " " + item.getWorldY());
+                if (!item.getName().equals("M")) {
                     if (item.getName().equals("o")) {
                         if (myItemCollisionFrequency.containsKey(myPillarA) && myItemCollisionFrequency.containsKey(myPillarE) &&
                                 myItemCollisionFrequency.containsKey(myPillarI) && myItemCollisionFrequency.containsKey(myPillarP)) {
@@ -289,18 +291,22 @@ public class TileManager {
                 }
 
 
-
             }
 
             List<Monsters> monsterCopy = new ArrayList<>(myGameUi.getMyDungeonPanel().myMonsters);
-            for (Monsters monster: monsterCopy) {
+            for (Monsters monster : monsterCopy) {
                 if (monster.solidArea.intersects(theHitBox)) {
                     if (myGameUi.getMyDungeonPanel().getMyDefaultMonsters().containsKey(monster.getMonsterType())) {
                         myGameUi.getMyDungeonPanel().getMyDefaultMonsters().get(monster.getMonsterType()).setCollision(true);
                         System.out.println("Collided with monster " + monster.getMonsterType() + " at row, col " + monster.getX() + " " + monster.getY());
-                        monsterEncountered = monster; // Set the monster encountered
-                        monsterEncounterTime = System.currentTimeMillis(); // Set the encounter time
-                        myGameUi.getMyDungeonPanel().myMonsters.remove(monster);
+                        monsterEncountered = monster;
+                        // Check if the player's character has defeated the monster
+                        if ((monsterEncountered.getMyMonster().getMyHitPoints() <= 0)) {
+                            // Player has defeated the monster, remove it from the list
+                            myGameUi.getMyDungeonPanel().myMonsters.remove(monster);
+                        }else if(myGameUi.getMyCharacter().getCharacterType().getMyHitPoints() <= 0){
+                            gameOver = true;
+                        }
                     }
                 }
             }
@@ -308,85 +314,201 @@ public class TileManager {
             return isTileSolid;
     }
 
+
+    private String battleResultMessage;
+    private boolean battleCalculated = false;
+
+    private void drawBattleWindow(Graphics2D g2) {
+        int x = myGameUi.getMyDungeonPanel().getMyWidth() / 2;
+        int y = myGameUi.getMyDungeonPanel().getMyHeight() / 2 - 200;
+
+        myGameUi.drawFrame(x, y, 450, 400, g2);
+        myCloseBattleWindow = new Rectangle(x + 20, y + 20, 20, 20);
+        g2.setColor(new Color(255, 255, 255));
+        g2.setStroke(new BasicStroke(5));
+
+        myGameUi.updateCheckboxSelection(g2, myCloseBattleWindow);
+        g2.setColor(new Color(0, 0, 0, 0));
+        g2.fill(myCloseBattleWindow);
+        int textX = x + 60;
+        int textY = y + 40;
+
+        g2.setColor(Color.WHITE);
+        g2.drawString("You encountered an " + monsterEncountered.getMyMonster().getMyName(), textX, textY);
+    }
     public void drawMonsterEncounter(Graphics2D g2) {
         if (monsterEncountered != null && !myGameUi.getMyGameControls().isMyCloseBattleWindow()) {
+            // Use an off-screen image for double buffering
+            BufferedImage offScreen = new BufferedImage(myGameUi.getMyDungeonPanel().getMyWidth(),
+                    myGameUi.getMyDungeonPanel().getMyHeight(),
+                    BufferedImage.TYPE_INT_ARGB);
+            Graphics2D offScreenG2 = offScreen.createGraphics();
 
+            // Draw the battle window on the off-screen image
+            drawBattleWindow(offScreenG2);
 
-            int x = myGameUi.getMyDungeonPanel().getMyWidth() / 2;
-            int y = myGameUi.getMyDungeonPanel().getMyHeight() / 2 - 200;
-
-
-            myGameUi.drawFrame(x, y, 350, 400, g2);
-            myCloseBattleWindow = new Rectangle(x + 20, y + 20, 20, 20);
-            g2.setColor(new Color(255, 255, 255)); // Set the color for the closeWindowRectangle outline
-            g2.setStroke(new BasicStroke(5));
-
-            myGameUi.updateCheckboxSelection(g2, myCloseBattleWindow);
-            // Set the color to a fully transparent color for the closeWindowRectangle fill
-            g2.setColor(new Color(0, 0, 0, 0)); // Transparent black color
-            g2.fill(myCloseBattleWindow);
-            int textX = x + 60;
-            int textY = y + 40;
-
-
-            g2.setColor(Color.WHITE);
-            g2.drawString("You encountered an " + monsterEncountered.getMyMonster().getMyName(), textX , textY);
-
-            double attackOrder = Math.random();
-            int beforeBattle = 0;
-            int afterBattle = 0;
-            if(attackOrder < 0.5){
-                myDungeonAdventurer.battle(myGameUi.getMyCharacter().getCharacterType(), monsterEncountered.getMyMonster());
-                beforeBattle = (monsterEncountered.getMyMonster().getMyHitPoints());
-                afterBattle = (monsterEncountered.getMyMonster().getMyHitPoints());
-
-                if(beforeBattle < afterBattle){
-                    g2.drawString("You successfully battled with " + monsterEncountered.getMonsterType() +
-                            " you dealt " + (afterBattle - beforeBattle), textX , textY + 30);
-                }else{
-                    g2.drawString("You unsuccessfully battled with " + monsterEncountered.getMonsterType() +
-                            " you dealt " + (beforeBattle - afterBattle), textX , textY + 50);
-                }
-
-            }else{
-                myDungeonAdventurer.battle(monsterEncountered.getMyMonster(),  myGameUi.getMyCharacter().getCharacterType());
-                beforeBattle = ( myGameUi.getMyCharacter().getCharacterType().getMyHitPoints());
-                afterBattle = ( myGameUi.getMyCharacter().getCharacterType().getMyHitPoints());
-
-                if(beforeBattle < afterBattle){
-                    g2.drawString(monsterEncountered.getMonsterType() + " successfully battled with "  +  myGameUi.getMyCharacter().getCharacterType().getMyName()+
-                             monsterEncountered.getMonsterType() + "  dealt " + (afterBattle - beforeBattle), textX , textY + 30);
-                }else{
-                    g2.drawString(monsterEncountered.getMonsterType() + " unsuccessfully battled with "  +  myGameUi.getMyCharacter().getCharacterType().getMyName()+
-                            monsterEncountered.getMonsterType() + "  dealt " + (afterBattle - beforeBattle), textX , textY + 30);
-                }
-
+            // Calculate the battle result only once
+            if (!battleCalculated) {
+                calculateBattleResult();
+                battleCalculated = true;
             }
-//            Monster currMonster = ;
 
+            // Display the stored battle result on the off-screen image
+            drawBattleResult(offScreenG2);
 
-
-
-            //myDungeonAdventurer.battle(myGameUi.getMyCharacter().getCharacterType());
-
-         //   myGameUi.getMyCharacter().getCharacterType().attack(monsterEncountered.getMyMonster());
-            //changes.firePropertyChange("battle", myGameUi.);
-
+            // Copy the off-screen image to the actual graphics context
+            g2.drawImage(offScreen, 0, 0, null);
 
             myGameUi.getMyCharacter().setMoving(false); // Set the character to frozen state
             myGameUi.getMyCharacter().setPlayerSpeed(0);
+            offScreenG2.dispose();
+        } else {
+            monsterEncountered = null;
+            monsterEncounterTime = 0;
+            if (!gameOver) {
+                myGameUi.getMyCharacter().setPlayerSpeed(4);
+            }
+            battleCalculated = false; // Reset the flag for the next encounter
+        }
+    }
 
+        // Other existing fields and methods
+
+//        public boolean battle(DungeonCharacter attacker, DungeonCharacter defender) {
+//            // Calculate the attack logic
+//            int beforeBattle = defender.getMyHitPoints();
+//            attacker.attack(defender);  // Assuming attack method reduces hit points of the defender
+//            int afterBattle = defender.getMyHitPoints();
+//            return beforeBattle > afterBattle;
+//        }
+    private void calculateBattleResult() {
+        StringBuilder resultMessage = new StringBuilder();
+        int beforeBattle, afterBattle;
+
+        while (myGameUi.getMyCharacter().getCharacterType().getMyHitPoints() > 0 && monsterEncountered.getMyMonster().getMyHitPoints() > 0) {
+            if ( Math.random() < 0.5) {
+                // Character attacks
+                beforeBattle = monsterEncountered.getMyMonster().getMyHitPoints();
+               // boolean characterAttackSuccess = battle(myGameUi.getMyCharacter().getCharacterType(), monsterEncountered.getMyMonster());
+                myDungeonAdventurer.battle(myGameUi.getMyCharacter().getCharacterType(), monsterEncountered.getMyMonster());
+                afterBattle = monsterEncountered.getMyMonster().getMyHitPoints();
+
+                boolean characterAttackSuccess = beforeBattle > afterBattle;
+                if (characterAttackSuccess) {
+                    resultMessage.append("You successfully battled with ")
+                            .append(monsterEncountered.getMonsterType())
+                            .append(" and dealt ")
+                            .append(beforeBattle - afterBattle)
+                            .append(" damage.")
+                            .append("\n");
+                } else {
+                    resultMessage.append("You unsuccessfully battled with ")
+                            .append(monsterEncountered.getMonsterType())
+                            .append(".")
+                            .append("\n");
+                }
             } else {
-                monsterEncountered = null;
-                monsterEncounterTime = 0;
-                if(!gameOver){
-                    myGameUi.getMyCharacter().setPlayerSpeed(4);
+                // Monster attacks
+                beforeBattle = myGameUi.getMyCharacter().getCharacterType().getMyHitPoints();
+                 myDungeonAdventurer.battle(monsterEncountered.getMyMonster(), myGameUi.getMyCharacter().getCharacterType());
+                afterBattle = myGameUi.getMyCharacter().getCharacterType().getMyHitPoints();
 
+                boolean monsterAttackSuccess = beforeBattle > afterBattle;
+                if (monsterAttackSuccess) {
+                    resultMessage.append(monsterEncountered.getMonsterType())
+                            .append(" successfully battled with ")
+                            .append(myGameUi.getMyCharacter().getCharacterType().getMyName())
+                            .append(" and dealt ")
+                            .append(beforeBattle - afterBattle)
+                            .append(" damage.")
+                            .append("\n");
+                } else {
+                    resultMessage.append(monsterEncountered.getMonsterType())
+                            .append(" unsuccessfully battled with ")
+                            .append(myGameUi.getMyCharacter().getCharacterType().getMyName())
+                            .append(".")
+                            .append("\n");
                 }
             }
 
+        }
 
+        if (myGameUi.getMyCharacter().getCharacterType().getMyHitPoints() <= 0) {
+            resultMessage.append("You have been defeated by ").append(monsterEncountered.getMonsterType()).append(".\n");
+        } else if(monsterEncountered.getMyMonster().getMyHitPoints() <= 0) {
+            resultMessage.append("You have defeated ").append(monsterEncountered.getMonsterType()).append(".\n");
+            resultMessage.append("Your current hit point is ").append(myGameUi.getMyCharacter().getCharacterType().getMyHitPoints());
+        }
+
+
+
+
+        battleResultMessage = resultMessage.toString();
     }
+
+//    private void calculateBattleResult() {
+//        StringBuilder resultMessage = new StringBuilder();
+//        int beforeBattle, afterBattle;
+//
+//
+//
+//            if (Math.random() < 0.5) {
+//                // Character attacks
+//                beforeBattle = monsterEncountered.getMyMonster().getMyHitPoints();
+//
+//                myDungeonAdventurer.battle(myGameUi.getMyCharacter().getCharacterType(), monsterEncountered.getMyMonster());
+//                afterBattle = monsterEncountered.getMyMonster().getMyHitPoints();
+//
+//                    resultMessage.append("You  battled with ")
+//                            .append(monsterEncountered.getMonsterType())
+//                            .append(" and dealt ")
+//                            .append(beforeBattle - afterBattle)
+//                            .append(" damage.")
+//                            .append("\n");
+//                }
+//
+//             else {
+//                // Monster attacks
+//                beforeBattle = myGameUi.getMyCharacter().getCharacterType().getMyHitPoints();
+//                myDungeonAdventurer.battle(monsterEncountered.getMyMonster(), myGameUi.getMyCharacter().getCharacterType());
+//                afterBattle = myGameUi.getMyCharacter().getCharacterType().getMyHitPoints();
+//                    resultMessage.append(monsterEncountered.getMonsterType())
+//                            .append(" battled with ")
+//                            .append(myGameUi.getMyCharacter().getCharacterType().getMyName())
+//                            .append(" and dealt ")
+//                            .append(beforeBattle - afterBattle)
+//                            .append(" damage.")
+//                            .append("\n");
+//                }
+//
+//
+//        if (myGameUi.getMyCharacter().getCharacterType().getMyHitPoints() <= 0) {
+//            resultMessage.append("You have been defeated by ").append(monsterEncountered.getMonsterType()).append(".\n");
+//        } else if(monsterEncountered.getMyMonster().getMyHitPoints() <= 0){
+//            resultMessage.append("You have defeated ").append(monsterEncountered.getMonsterType()).append(".\n");
+//
+//        }else{
+//            resultMessage.append("Your current hit point is ").append(myGameUi.getMyCharacter().getCharacterType().getMyHitPoints());
+//        }
+//
+//        battleResultMessage = resultMessage.toString();
+//    }
+//
+
+    // Initial Y coordinate for the first message
+
+    private void drawBattleResult(Graphics g) {
+        int y = myGameUi.getMyDungeonPanel().getMyHeight() / 2 - 200;
+        int textY = y + 70;
+        int x = myGameUi.getMyDungeonPanel().getMyWidth() / 2;
+        int textX =  x + 60;
+        String[] messages = battleResultMessage.split("\n");
+        for (String message : messages) {
+            g.drawString(message, textX, textY);
+            textY += 20; // Increase Y coordinate for the next message
+        }
+    }
+
 
 
 

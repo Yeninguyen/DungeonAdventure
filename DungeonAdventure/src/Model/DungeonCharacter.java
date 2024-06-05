@@ -116,7 +116,8 @@ public abstract class DungeonCharacter {
         double random = Math.random();
         if(random <= myChanceToHit) {
             int damage = (int) (Math.random() * (getMyMaxDamage() - getMyMinDamage() + 1)) + getMyMinDamage();
-            theOther.setMyHitPoints(theOther.getMyHitPoints()-damage);
+            int newHitPoint = theOther.getMyHitPoints()-damage;
+            theOther.setMyHitPoints(newHitPoint);
         }
     }
 }
