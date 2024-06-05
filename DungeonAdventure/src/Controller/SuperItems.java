@@ -20,6 +20,9 @@ public class SuperItems {
 
     private Monster myMonster;
 
+    private static SuperItems myInstance;
+
+
     public SuperItems(GameUI myGameUI) {
         this.myGameUI = myGameUI;
         init();

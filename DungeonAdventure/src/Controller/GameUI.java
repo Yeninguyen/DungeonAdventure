@@ -9,13 +9,12 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 
 public class GameUI {
-
-
     int size;
     private Map<String, Rectangle> itemRectangles;
+
+    private Rectangle myCloseWindowRectangle;
     private RoundRectangle2D myInventoryRectangle;
 
     private RoundRectangle2D myStartRectangle;
@@ -33,6 +32,7 @@ public class GameUI {
     private Rectangle myUserNameBox;
 
 
+    private static GameUI myInstance;
     private Rectangle myHardCheckBox;
 
 
@@ -41,7 +41,7 @@ public class GameUI {
     private BufferedImage background;
 
 
-    private final DungeonPanel myDungeonPanel;
+
     private final GameControls myGameControls;
     private final String myStartGameTitle = "NEW GAME";
     private final String myLoadGameTitle = "LOAD GAME";
@@ -51,14 +51,15 @@ public class GameUI {
 
 
     private BufferedImage selection;
+    private BufferedImage gameOver;
 
 
+    private final DungeonPanel myDungeonPanel;
     private  final Characters myCharacter;
     private final TileManager myTileManager = new TileManager(this);
-
     private Dungeon myDungeon;
 
-    private Monsters monsters;
+
 
 
 
@@ -80,6 +81,7 @@ public class GameUI {
         try {
             background = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Backgrounds/StartGameBackground.png")));
             selection = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Backgrounds/CharacterSelection.png")));
+            gameOver = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Backgrounds/GameOver.png")));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -87,10 +89,10 @@ public class GameUI {
     }
 
 
+
     public void drawPlayer(Graphics2D theGraphics) {
         myTileManager.drawTiles(theGraphics);
         myCharacter.drawPlayer(theGraphics);
-       myTileManager.drawMonsterEncountered(theGraphics);
         theGraphics.setColor(Color.WHITE);
 
 
@@ -186,7 +188,8 @@ public class GameUI {
 
     }
 
-    private void updateCheckboxSelection(Graphics2D g2d, Rectangle checkbox) {
+    public void updateCheckboxSelection(Graphics2D g2d, Rectangle checkbox) {
+        g2d.setColor(Color.WHITE);
         g2d.drawLine(checkbox.x + 1, checkbox.y + 1, checkbox.x + 17, checkbox.y + 17);
         g2d.drawLine(checkbox.x + 17, checkbox.y + 1, checkbox.x + 1, checkbox.y + 17);
     }
@@ -257,7 +260,18 @@ public class GameUI {
         int y = 64;
         int width = 64 * 6;
         int height = 64 * 5;
+
+
+
         drawFrame(x, y, width, height, theGraphics);
+        myCloseWindowRectangle = new Rectangle(x + 20, y + 20, 20, 20);
+        theGraphics.setColor(new Color(255, 255, 255)); // Set the color for the closeWindowRectangle outline
+        theGraphics.setStroke(new BasicStroke(5));
+
+        updateCheckboxSelection(theGraphics, myCloseWindowRectangle);
+        // Set the color to a fully transparent color for the closeWindowRectangle fill
+        theGraphics.setColor(new Color(0, 0, 0, 0)); // Transparent black color
+        theGraphics.fill(myCloseWindowRectangle);
 
 
         final int slotXStart = x + 40;
@@ -353,13 +367,12 @@ public class GameUI {
     }
 
     public void drawFrame(int theX, int theY, int theWidth, int theHeight, Graphics2D theGraphics) {
+
         theGraphics.setColor(new Color(0, 0, 0, 255));
         theGraphics.fillRoundRect(theX, theY, theWidth, theHeight, 35, 35);
-
-
-        theGraphics.setColor(new Color(255, 255, 255));
-        theGraphics.setStroke(new BasicStroke(5));
         theGraphics.drawRoundRect(theX + 5, theY + 5, theWidth - 10, theHeight - 10, 25, 25);
+
+
 
     }
 
@@ -394,7 +407,6 @@ public class GameUI {
 
     public void updatePlayerLocation() {
         myCharacter.updatePlayerLocation();
-        //monsterCoordinates();
     }
 
 
@@ -473,6 +485,12 @@ public class GameUI {
     }
 
 
+    public BufferedImage getGameOver() {
+        return gameOver;
+    }
 
+    public Rectangle getMyCloseWindowRectangle() {
+        return myCloseWindowRectangle;
+    }
 
 }

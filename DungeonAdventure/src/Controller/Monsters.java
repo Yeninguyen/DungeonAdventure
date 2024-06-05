@@ -1,36 +1,41 @@
 package Controller;
 
+import Model.DungeonCharacter;
 import Model.Monster;
 import Model.MonsterDatabase;
 
-import javax.imageio.ImageIO;
+
+
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+
 
 public class Monsters {
-    private int x, y;
-    private double directionX, directionY;
-    private double speed;
-    private  String monsterType;
-    private  GameUI gameUI;
 
+
+
+    private int x, y;
+    private double speed;
+    private String monsterType;
+    private final GameUI gameUI;
+
+    private long encounterTime;
 
     private Monster myMonster;
+
     private boolean isAlive;
 
-    public int soldAreaDefaultX = 0, solidAreaDefaultY = 0;
     public Rectangle solidArea = new Rectangle(0,0,40,40);
 
     private BufferedImage myMonsterImage;
 
     private boolean collision = false;
+
+    private static Monsters myInstance;
+
+
 
 
     public Monsters(GameUI gameUI, String theMonsterType) {
@@ -44,22 +49,31 @@ public class Monsters {
         int screenX = x - gameUI.getMyCharacter().getMyX() + gameUI.getMyCharacter().getScreenX();
         int screenY = y - gameUI.getMyCharacter().getMyY() + gameUI.getMyCharacter().getScreenY();
 
-        if(x + bound > gameUI.getMyCharacter().getMyX() - gameUI.getMyCharacter().getScreenX() &&
-                x - bound < gameUI.getMyCharacter().getMyX() + gameUI.getMyCharacter().getScreenX() &&
-                y  + bound> gameUI.getMyCharacter().getMyY() - gameUI.getMyCharacter().getScreenY() &&
-                y  - bound< gameUI.getMyCharacter().getMyY() + gameUI.getMyCharacter().getScreenY()){
-            theGraphics2D.drawImage(myMonsterImage, screenX, screenY, gameUI.getMyDungeonPanel().getMyTileSize(), gameUI.getMyDungeonPanel().getMyTileSize(), null);
-          //  theGraphics2D.drawRect(solidArea.x, solidArea.y, solidArea.width, solidArea.height);
-        }
+        int solidAreaScreenX = screenX - solidArea.x;
+        int solidAreaScreenY = screenY - solidArea.y;
 
+        if (x + bound > gameUI.getMyCharacter().getMyX() - gameUI.getMyCharacter().getScreenX() &&
+                x - bound < gameUI.getMyCharacter().getMyX() + gameUI.getMyCharacter().getScreenX() &&
+                y + bound > gameUI.getMyCharacter().getMyY() - gameUI.getMyCharacter().getScreenY() &&
+                y - bound < gameUI.getMyCharacter().getMyY() + gameUI.getMyCharacter().getScreenY()) {
+            theGraphics2D.drawImage(myMonsterImage, screenX, screenY, gameUI.getMyDungeonPanel().getMyTileSize(), gameUI.getMyDungeonPanel().getMyTileSize(), null);
+
+        }
+        theGraphics2D.setColor(Color.RED); // Set the color for the solid area rectangle
+        theGraphics2D.drawRect(solidAreaScreenX, solidAreaScreenY, solidArea.width, solidArea.height);
+    }
+
+    public void handleMonsterEncounter(Monsters monster) {
+        monster.encounterTime = System.currentTimeMillis();
+        // Add any additional logic or effects you want for the monster encounter
     }
 
     private void init()  {
         isAlive = true;
         // Create a Monster instance from the database
-        myMonster = null;
         try {
             myMonster = MonsterDatabase.getMonster(monsterType);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -81,13 +95,6 @@ public class Monsters {
         this.y = y;
     }
 
-    public int getDirectionX() {
-        return (int) directionX;
-    }
-
-    public int getDirectionY() {
-        return (int) directionY;
-    }
 
     public int getSpeed() {
         return (int) speed;
@@ -110,6 +117,7 @@ public class Monsters {
     }
 
     public Monster getMyMonster() {
+        System.out.println(myMonster.getMyHitPoints());
         return myMonster;
     }
 
@@ -123,5 +131,13 @@ public class Monsters {
 
     public void setCollision(boolean collision) {
         this.collision = collision;
+    }
+
+    public Rectangle getSolidArea() {
+        return solidArea;
+    }
+
+    public void setMonsterType(String monsterType) {
+        this.monsterType = monsterType;
     }
 }

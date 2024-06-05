@@ -3,6 +3,16 @@ package Controller;
 import java.awt.image.BufferedImage;
 
 public class Tile {
+
+
+    private static Tile myInstance;
+
+    public static Tile getMyInstance() {
+        if(myInstance == null){
+            myInstance = new Tile();
+        }
+        return myInstance;
+    }
     private boolean mySolid = false;
     private BufferedImage myTileImage;
 

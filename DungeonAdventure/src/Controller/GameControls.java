@@ -6,6 +6,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class GameControls implements KeyListener, MouseListener {
+
+
+    private static GameControls myInstance;
+
+
     private boolean myUpArrow;
     private boolean myDownArrow;
     private boolean myLeftArrow;
@@ -34,6 +39,10 @@ public class GameControls implements KeyListener, MouseListener {
     private boolean myVisionPotionSelected;
     private boolean myHealthPotionSelected;
 
+    private boolean isMyStartOverGameClicked;
+    private boolean myCloseInventory;
+    private boolean myCloseBattleWindow;
+
 
     public boolean isMySelection() {
         return mySelection;
@@ -44,7 +53,7 @@ public class GameControls implements KeyListener, MouseListener {
 
     private final StringBuilder userName = new StringBuilder();
 
-    public GameControls(GameUI thePlayerUI) {
+    GameControls(GameUI thePlayerUI) {
         myGameUi = thePlayerUI;
     }
 
@@ -107,6 +116,7 @@ public class GameControls implements KeyListener, MouseListener {
             myInventorySelected = true;
         }
         if (myInventorySelected) {
+            myCloseInventory = false;
             if (myGameUi.getItemRectangles().size() > 1) {
                 if (keyCode == KeyEvent.VK_V) {
                     myVisionPotionSelected = true;
@@ -244,10 +254,14 @@ public class GameControls implements KeyListener, MouseListener {
             }
 
         }else {
-            if (myGameUi.getMyInventoryRectangle().contains(e.getPoint())) {
+            if (myGameUi.getMyInventoryRectangle() != null && myGameUi.getMyInventoryRectangle().contains(e.getPoint())) {
                 myInventorySelected = true;
             }
+            if(myGameUi.getMyTileManager().getMyCloseBattleWindow() != null && myGameUi.getMyTileManager().getMyCloseBattleWindow().contains(e.getPoint())){
+                myCloseBattleWindow = true;
+            }
             if(myInventorySelected) {
+                myCloseInventory = false;
                 if (myGameUi.getItemRectangles().containsKey("V")) {
                     if (myGameUi.getItemRectangles().get("V").contains(e.getPoint())) {
                         myVisionPotionSelected = true;
@@ -258,6 +272,11 @@ public class GameControls implements KeyListener, MouseListener {
                             myHealthPotionSelected = true;
                         }
                 }
+
+            }
+            if(myGameUi.getMyCloseWindowRectangle() != null  && myGameUi.getMyCloseWindowRectangle().contains(e.getPoint())){
+                myCloseInventory = true;
+                myInventorySelected = false;
             }
         }
         myGameUi.getMyDungeonPanel().repaint();
@@ -266,12 +285,15 @@ public class GameControls implements KeyListener, MouseListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (myGameUi.getMyDungeonPanel().getGameState() == myGameUi.getMyDungeonPanel().getPlayState() && myGameUi.getItemRectangles().size() > 1) {
+        if (myGameUi.getMyDungeonPanel().getGameState() == myGameUi.getMyDungeonPanel().getPlayState()) {
             if (myGameUi.getItemRectangles().containsKey("V") && myGameUi.getItemRectangles().get("V").contains(e.getPoint())) {
                 myVisionPotionSelected = false;
             }
             if (myGameUi.getItemRectangles().containsKey("H") && myGameUi.getItemRectangles().get("H").contains(e.getPoint())) {
                myHealthPotionSelected = false;
+            }
+            if(myGameUi.getMyTileManager().getMyCloseBattleWindow() != null && myGameUi.getMyTileManager().getMyCloseBattleWindow().contains(e.getPoint())){
+                myCloseBattleWindow = false;
             }
         }
         myGameUi.getMyDungeonPanel().repaint();
@@ -351,5 +373,21 @@ public class GameControls implements KeyListener, MouseListener {
 
     public void setMyHealthPotionSelected(boolean myHealthPotionSelected) {
         this.myHealthPotionSelected = myHealthPotionSelected;
+    }
+
+    public boolean isMyStartOverGameClicked() {
+        return isMyStartOverGameClicked;
+    }
+
+    public boolean closeWindow() {
+        return myCloseInventory;
+    }
+
+    public boolean isMyCloseBattleWindow() {
+        return myCloseBattleWindow;
+    }
+
+    public void setMyCloseBattleWindow(boolean myCloseBattleWindow) {
+        this.myCloseBattleWindow = myCloseBattleWindow;
     }
 }

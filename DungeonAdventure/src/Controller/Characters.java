@@ -1,28 +1,37 @@
 package Controller;
 
+import Model.DungeonCharacter;
 import Model.Priestess;
 import Model.Thief;
 import Model.Warrior;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
 
 public class Characters {
-
-
     private boolean isMoving = false;
-
     private int playerSpeed = 4;
     private Rectangle myHealthBarRect;
+
+    public void setPlayerSpeed(int playerSpeed) {
+        this.playerSpeed = playerSpeed;
+    }
+
+    private static Characters myInstance;
+
+
+
+    public int getPlayerSpeed() {
+        return playerSpeed;
+    }
+
     private Rectangle myOuterHealthBarRect;
 
     private final int screenY;
     private final int screenX;
-
     private final GameUI myGameUI;
 
     private  Warrior myWarrior;
@@ -90,8 +99,6 @@ public class Characters {
 
             myHealthBarRect = new Rectangle(screenX - 2, screenY - 12, 45, 10);
             myOuterHealthBarRect = new Rectangle(screenX - 2, screenY - 12, 46, 11);
-
-
     }
 
 
@@ -183,35 +190,39 @@ public class Characters {
                 newY = myPriestess.getMyY();
             }
 
-            switch (direction) {
-                case NORTH -> newY -= playerSpeed;
-                case SOUTH -> newY += playerSpeed;
-                case WEST -> newX -= playerSpeed;
-                case EAST -> newX += playerSpeed;
-            }
 
-            if (myGameUI.getMyGameControls().isMyThiefSelected()) {
-                myThief.getMyHitBox().x = newX;
-                myThief.getMyHitBox().y = newY;
-                if (!myGameUI.getMyTileManager().isTileCollision(myThief.getMyHitBox())) {
-                    myThief.setMyX(newX);
-                    myThief.setMyY(newY);
+                switch (direction) {
+                    case NORTH -> newY -= playerSpeed;
+                    case SOUTH -> newY += playerSpeed;
+                    case WEST -> newX -= playerSpeed;
+                    case EAST -> newX += playerSpeed;
                 }
-            }
-            if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
-                myWarrior.getMyHitBox().x = newX;
-                myWarrior.getMyHitBox().y = newY;
-                if (!myGameUI.getMyTileManager().isTileCollision(myWarrior.getMyHitBox())) {
-                    myWarrior.setMyX(newX);
-                    myWarrior.setMyY(newY);
+
+
+            if(isMoving) {
+                if (myGameUI.getMyGameControls().isMyThiefSelected()) {
+                    myThief.getMyHitBox().x = newX;
+                    myThief.getMyHitBox().y = newY;
+                    if (!myGameUI.getMyTileManager().isTileCollision(myThief.getMyHitBox())) {
+                        myThief.setMyX(newX);
+                        myThief.setMyY(newY);
+                    }
                 }
-            }
-            if (myGameUI.getMyGameControls().isMyPriestessSelected()) {
-                myPriestess.getMyHitBox().x = newX;
-                myPriestess.getMyHitBox().y = newY;
-                if (!myGameUI.getMyTileManager().isTileCollision(myPriestess.getMyHitBox())) {
-                    myPriestess.setMyX(newX);
-                    myPriestess.setMyY(newY);
+                if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
+                    myWarrior.getMyHitBox().x = newX;
+                    myWarrior.getMyHitBox().y = newY;
+                    if (!myGameUI.getMyTileManager().isTileCollision(myWarrior.getMyHitBox())) {
+                        myWarrior.setMyX(newX);
+                        myWarrior.setMyY(newY);
+                    }
+                }
+                if (myGameUI.getMyGameControls().isMyPriestessSelected()) {
+                    myPriestess.getMyHitBox().x = newX;
+                    myPriestess.getMyHitBox().y = newY;
+                    if (!myGameUI.getMyTileManager().isTileCollision(myPriestess.getMyHitBox())) {
+                        myPriestess.setMyX(newX);
+                        myPriestess.setMyY(newY);
+                    }
                 }
             }
 
@@ -383,5 +394,21 @@ public class Characters {
         }else{
             return  null;
         }
+    }
+
+
+    public DungeonCharacter getCharacterType(){
+        DungeonCharacter hero = null;
+        if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
+            hero = myWarrior;
+        } else if (myGameUI.getMyGameControls().isMyThiefSelected()) {
+            hero = myThief;
+        } else if (myGameUI.getMyGameControls().isMyPriestessSelected()) {
+            hero = myPriestess;
+        }
+        return hero;
+    }
+    public boolean isMoving() {
+        return isMoving;
     }
 }

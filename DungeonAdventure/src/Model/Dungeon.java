@@ -116,6 +116,7 @@ public class Dungeon {
 //    }
 
     private void setEntranceAndExit() {
+
         int entranceX;
         int entranceY = (int) (Math.random() * mySize);
         int exitX;
@@ -133,9 +134,13 @@ public class Dungeon {
             exitY =  (int) (Math.random() * mySize);
         }
 
-        // Place entrance and exit
-        maze[entranceY][entranceX].setMyEntrance(true);
-        maze[exitY][exitX].setMyExit(true);
+        if(!maze[entranceY][entranceX].getMyHasMonster() && !maze[exitY][exitX].getMyHasMonster()) {
+            // Place entrance and exit
+            maze[entranceY][entranceX].setMyEntrance(true);
+            maze[exitY][exitX].setMyExit(true);
+        }else{
+            setEntranceAndExit();
+        }
     }
 
 
@@ -176,14 +181,17 @@ public class Dungeon {
             StringBuilder bottomRow = new StringBuilder();
             StringBuilder middleRow = new StringBuilder();
             StringBuilder fillerRow = new StringBuilder();
-
-            String filler = "* - - - * ";
+            StringBuilder bottomFillerRow = new StringBuilder();
+            String bottomFiller = "* - - - * ";
             for (int i = 0; i < mySize; i++) {
-                fillerRow.append(filler);
+                bottomFillerRow.append(bottomFiller);
             }
+
 
             for (int row = 0; row < maze.length; row++) {
                 for (int col = 0; col < maze[row].length; col++) {
+                    String filler = getFillerString(row, col);
+                    fillerRow.append(filler);
                     topRow.append(maze[row][col].getPartOfTheRoom(maze[row][col], 0));
                     middleRow.append(maze[row][col].getPartOfTheRoom(maze[row][col], 1));
                     bottomRow.append(maze[row][col].getPartOfTheRoom(maze[row][col], 2));
@@ -191,11 +199,12 @@ public class Dungeon {
                 writer.write(topRow.toString() + "\n");
                 writer.write(fillerRow.toString() + "\n");
                 writer.write(middleRow.toString() + "\n");
-                writer.write(fillerRow.toString() + "\n");
+                writer.write(bottomFillerRow.toString() + "\n");
                 writer.write(bottomRow.toString() + "\n");
                 topRow.setLength(0);
                 bottomRow.setLength(0);
                 middleRow.setLength(0);
+                fillerRow.setLength(0);
             }
 
 
@@ -204,6 +213,17 @@ public class Dungeon {
         }
     }
 
+    private String getFillerString(int row, int col) {
+        String filler = "* - - - * ";
+        if(maze[row][col].getMyHasMonster() && maze[row][col].getMyMonsterName().equals("Ogre")){
+            filler = "* O - - * ";
+        } else if(maze[row][col].getMyHasMonster() && maze[row][col].getMyMonsterName().equals("Gremlin")){
+            filler = "* G - - * ";
+        }else if((maze[row][col].getMyHasMonster() && maze[row][col].getMyMonsterName().equals("Skeleton"))){
+            filler = "* S - - * ";
+        }
+        return filler;
+    }
 
 
     @Override
@@ -228,6 +248,11 @@ public class Dungeon {
         }
         return myUniqueInstance;
     }
+
+    public Room[][] getMaze() {
+        return maze;
+    }
+
     public static Dungeon get_TEST_instance(){
         return new Dungeon();
     }

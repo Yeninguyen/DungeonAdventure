@@ -1,5 +1,7 @@
 package Controller;
 
+import View.DungeonPanel;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -13,7 +15,8 @@ public class Lighting {
     private final int day = 1;
     private double myScale = 1;
     private boolean myVisionPotionUsed;
-    public Lighting(GameUI theGameUI, int theCircleSize) {
+
+    public Lighting(GameUI theGameUI) {
         this.gameUI = theGameUI;
     }
 
@@ -36,7 +39,7 @@ public class Lighting {
         float[] fractions = {0f, 0.25f, 0.5f, 0.75f, 1f};
 
         // Create and apply the radial gradient paint
-        int radius = (int) (theCircleSize * myScale); // Adjust the radius here
+        int radius = (int) (theCircleSize / myScale); // Adjust the radius here
         RadialGradientPaint gradientPaint = new RadialGradientPaint(centerX, centerY, radius, fractions, colors);
         g2d.setPaint(gradientPaint);
         g2d.fillRect(0, 0, gameUI.getMyDungeonPanel().getMyWidth(), gameUI.getMyDungeonPanel().getMyHeight());
@@ -45,20 +48,21 @@ public class Lighting {
 
     public void update() {
 
+        filterAlpha = 0f;
         if (myVisionPotionUsed) {
-          //  filterAlpha = 0f;
-            myScale = 4;
+              filterAlpha = 0f;
+            myScale = 2.5;
             if (System.currentTimeMillis() - myVisionTimer >= myVisionDuration) {
                 myVisionPotionUsed = false;
-                //      filterAlpha = 1f;
+                filterAlpha = 1f;
                 myScale = 1; // Reset the scale to 1 when the vision potion expires
             }
-            }
-        else {
-                myScale = 4;
-
-            }
         }
+        else {
+            myScale = 1;
+
+        }
+    }
 
 
 
@@ -78,9 +82,17 @@ public class Lighting {
         theG2d.drawString(timeOfDay, 850, 700);
 
         if (gameUI.getMyGameControls().isMyInventorySelected()) {
-            gameUI.drawInventory(theG2d);
+
+            if(!gameUI.getMyGameControls().closeWindow()) {
+                gameUI.drawInventory(theG2d);
+            }
         }
         gameUI.drawInventoryRectangle(theG2d);
+
+
+        gameUI.getMyTileManager().drawMonsterEncounter(theG2d);
+
+
     }
     public boolean isMyVisionPotionUsed() {
         return myVisionPotionUsed;
