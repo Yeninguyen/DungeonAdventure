@@ -24,8 +24,9 @@ public class DungeonGUI extends JFrame {
         setTitle("DungeonAdventure");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        DungeonPanel dungeonPanel = new DungeonPanel();
-        add(dungeonPanel);
+//        DungeonPanel dungeonPanel = new DungeonPanel();
+
+        add(DungeonPanel.getMyInstance());
         pack();
         setLocationRelativeTo(null);
         setVisible(true);

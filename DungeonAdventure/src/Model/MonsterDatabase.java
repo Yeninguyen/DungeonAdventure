@@ -10,7 +10,7 @@ public class MonsterDatabase {
     private MonsterDatabase() {
     }
 
-    public Monster getMonster(String theMonsterName) throws SQLException {
+    public static Monster getMonster(String theMonsterName) throws SQLException {
         SQLiteDataSource ds = new SQLiteDataSource();
         ds.setUrl("jdbc:sqlite:monster.db");
 
@@ -34,8 +34,8 @@ public class MonsterDatabase {
                 int minHealPoints = rs.getInt("minHealPoints");
                 int maxHealPoints = rs.getInt("maxHealPoints");
 
-                int x = (int) (Math.random() * Dungeon.getInstance().getSIZE());
-                int y = (int) (Math.random() * Dungeon.getInstance().getSIZE());
+                int x = (int) (Math.random() * Dungeon.getInstance().getMySize());
+                int y = (int) (Math.random() * Dungeon.getInstance().getMySize());
                 monster = new Monster(name, hitPoints, attackSpeed, chanceToHit, maxDamage, minDamage, chanceToHeal,
                         minHealPoints, maxHealPoints, x, y);
             }

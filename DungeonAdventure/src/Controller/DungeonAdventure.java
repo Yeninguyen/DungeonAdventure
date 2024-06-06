@@ -1,36 +1,48 @@
 package Controller;
 
-import Model.Dungeon;
-import Model.DungeonCharacter;
-import Model.MonsterDatabase;
-import Model.Room;
+import Model.*;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 
-public class DungeonAdventure {
+public class DungeonAdventure implements PropertyChangeListener {
     private Dungeon myDungeon;
-    private DungeonCharacter myHero;
-    private DungeonAdventure() {
-        myDungeon = Dungeon.getInstance();
+    private final GameUI myGameUi;
+
+
+    //private DungeonCharacter myCharacter;
+    DungeonAdventure(final GameUI theGameUi) {
+        myGameUi = theGameUi;
+        myDungeon = myGameUi.getMyDungeon();
+       // setMyCharacter(myGameUi.getMyCharacter().getCharacterType());
     }
-    public void setMyHero(DungeonCharacter theHero) {
-        myHero = theHero;
-    }
-    public void battle(DungeonCharacter theOther){
-        int numberOfAttacks = myHero.getMyAttackSpeed()/ theOther.getMyAttackSpeed();
+
+    public void battle(DungeonCharacter theCharacter, DungeonCharacter theOther){
+        int numberOfAttacks = Math.min(theCharacter.getMyAttackSpeed()/ theOther.getMyAttackSpeed(),1);
         while(numberOfAttacks > 0){
-            myHero.attack(theOther);
+            theCharacter.attack(theOther);
             numberOfAttacks--;
         }
     }
-    public void placeMonsters() throws SQLException {
-        MonsterDatabase monsterDatabase = MonsterDatabase.getMyUniqueInstance();
-        String[] monsters = new String[]{"Gremlin","Ogre","Skeleton"};
-        int monsterIndex = (int) (Math.random() * monsters.length);
-        monsterDatabase.getMonster(monsters[monsterIndex]);
-    }
-    public void printCurrentRoom(){
-        Room currentRoom = myDungeon.getMaze()[myHero.getMyX()][myHero.getMyY()];
-        System.out.println(currentRoom);
+//    public void battle(DungeonCharacter theOther, Monster theMonster){
+//        int numberOfAttacks = Math.min(theMonster.getMyAttackSpeed()/ theOther.getMyAttackSpeed(),1);
+//        while(numberOfAttacks > 0){
+//            theMonster.attack(theOther);
+//            numberOfAttacks--;
+//        }
+//    }
+
+//    public void setMyCharacter(DungeonCharacter theHero) {
+//        myCharacter = theHero;
+//    }
+//    public void printCurrentRoom(){
+//        Room currentRoom = myDungeon.getMaze()[myCharacter.getMyX()][myCharacter.getMyY()];
+//        System.out.println(currentRoom);
+//    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+
     }
 }

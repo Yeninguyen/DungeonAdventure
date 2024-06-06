@@ -11,34 +11,26 @@ import java.util.List;
 
 
 public class Dungeon {
-    private final Room[][] maze;
-    private final int SIZE = 4;
+    private Room[][] maze;
+    public int mySize = 3;
     private int myNumberOfEntrances;
     private int myNumberOfExits;
     private int myNumberOfPillars;
     private static Dungeon myUniqueInstance;
-
-    public int getSIZE() {
-        return SIZE;
-    }
-
     public Dungeon() {
-        maze = new Room[SIZE][SIZE];
-        generateMaze();
-
     }
 
-    public Room[][] getMaze() {
-        return maze;
-    }
 
-    private void generateMaze() {
+
+    public void generateMaze(int theSize) {
+        mySize = theSize;
+        maze = new Room[theSize][theSize];
         boolean validMaze = false;
         while (!validMaze) {
             // Initialize maze with empty rooms
-            for (int i = 0; i < SIZE; i++) {
-                for (int j = 0; j < SIZE; j++) {
-                    maze[i][j] = new Room(SIZE); // This will automatically set up the room items
+            for (int i = 0; i < mySize; i++) {
+                for (int j = 0; j < mySize; j++) {
+                    maze[i][j] = new Room(mySize); // This will automatically set up the room items
                     maze[i][j].setMyX(j);
                     maze[i][j].setMyY(i);
                 }
@@ -47,8 +39,8 @@ public class Dungeon {
             // Place the pillars
             List<int[]> pillarPositions = new ArrayList<>();
             while (pillarPositions.size() < 4) {
-                int x = (int) (Math.random() * SIZE);
-                int y = (int) (Math.random() * SIZE);
+                int x = (int) (Math.random() * mySize);
+                int y = (int) (Math.random() * mySize);
                 if (!maze[x][y].getMyHasPillar() && !maze[x][y].isMyEntrance() && !maze[x][y].isMyExit()) {
                     pillarPositions.add(new int[]{x, y});
                 }
@@ -76,33 +68,84 @@ public class Dungeon {
             }
         }
     }
+//    public void generateMaze(int theSize) {
+//        SIZE = theSize;
+//        maze = new Room[theSize][theSize];
+//        boolean validMaze = false;
+//        while (!validMaze) {
+//            // Initialize maze with empty rooms
+//            for (int i = 0; i < theSize; i++) {
+//                for (int j = 0; j < theSize; j++) {
+//                    maze[i][j] = new Room(theSize); // This will automatically set up the room items
+//                    maze[i][j].setMyX(j);
+//                    maze[i][j].setMyY(i);
+//                }
+//            }
+//
+//            // Place the pillars
+//            List<int[]> pillarPositions = new ArrayList<>();
+//            while (pillarPositions.size() < 4) {
+//                int x = (int) (Math.random() * SIZE);
+//                int y = (int) (Math.random() * SIZE);
+//                if (!maze[x][y].getMyHasPillar() && !maze[x][y].isMyEntrance() && !maze[x][y].isMyExit()) {
+//                    pillarPositions.add(new int[]{x, y});
+//                }
+//            }
+//
+//            // Assign pillars to the selected positions
+//            char[] pillars = {'A', 'P', 'E', 'I'};
+//            Collections.shuffle(Arrays.asList(pillars));
+//
+//            for (int i = 0; i < 4; i++) {
+//                int[] pos = pillarPositions.get(i);
+//                maze[pos[0]][pos[1]].setMyItem(pillars[i]);
+//                maze[pos[0]][pos[1]].setMyHasPillar(true);
+//            }
+//
+//            setEntranceAndExit();
+//
+//            // Check if the maze is traversable
+//            if (isTraversable()) {
+//                validMaze = true;
+//            } else {
+//                myNumberOfEntrances = 0;
+//                myNumberOfExits = 0;
+//                myNumberOfPillars = 0;
+//            }
+//        }
+//    }
 
     private void setEntranceAndExit() {
+
         int entranceX;
-        int entranceY = (int) (Math.random() * SIZE);
+        int entranceY = (int) (Math.random() * mySize);
         int exitX;
         int exitY;
-        if(entranceY==0 || entranceY==SIZE-1) {
-            entranceX = (int) (Math.random() * SIZE);
-            exitY = SIZE - 1 - entranceY;
-            exitX = (int) (Math.random() * SIZE);
+        if(entranceY==0 || entranceY== mySize -1) {
+            entranceX = (int) (Math.random() * mySize);
+            exitY = mySize - 1 - entranceY;
+            exitX = (int) (Math.random() * mySize);
         } else{
-            int[]indexes = new int []{0,SIZE-1};
+            int[]indexes = new int []{0, mySize -1};
             int randomIndex = (int) (Math.random() * indexes.length);
             entranceX = indexes[randomIndex];
-            exitX = SIZE - 1;
+            exitX = mySize - 1;
             exitX -= entranceX;
-            exitY =  (int) (Math.random() * SIZE);
+            exitY =  (int) (Math.random() * mySize);
         }
 
-        // Place entrance and exit
-        maze[entranceY][entranceX].setMyEntrance(true);
-        maze[exitY][exitX].setMyExit(true);
+        if(!maze[entranceY][entranceX].getMyHasMonster() && !maze[exitY][exitX].getMyHasMonster()) {
+            // Place entrance and exit
+            maze[entranceY][entranceX].setMyEntrance(true);
+            maze[exitY][exitX].setMyExit(true);
+        }else{
+            setEntranceAndExit();
+        }
     }
 
 
     public boolean dfs(int x, int y, boolean[][] visited) {
-        if (x < 0 || x >= SIZE || y < 0 || y >= SIZE || visited[x][y])
+        if (x < 0 || x >= mySize || y < 0 || y >= mySize || visited[x][y])
             return false;
         visited[x][y] = true;
         if (maze[x][y].isMyExit()) {
@@ -126,9 +169,10 @@ public class Dungeon {
     }
 
     public boolean isTraversable() {
-        boolean[][] visited = new boolean[SIZE][SIZE];
+        boolean[][] visited = new boolean[mySize][mySize];
         return dfs(0, 0, visited) && myNumberOfPillars==4;
     }
+
 
     public void writeMazeToFile(String theFilePath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("DungeonAdventure/src/Maps/" + theFilePath))) {
@@ -137,14 +181,17 @@ public class Dungeon {
             StringBuilder bottomRow = new StringBuilder();
             StringBuilder middleRow = new StringBuilder();
             StringBuilder fillerRow = new StringBuilder();
-
-            String filler = "* - - - * ";
-            for (int i = 0; i < SIZE; i++) {
-                fillerRow.append(filler);
+            StringBuilder bottomFillerRow = new StringBuilder();
+            String bottomFiller = "* - - - * ";
+            for (int i = 0; i < mySize; i++) {
+                bottomFillerRow.append(bottomFiller);
             }
+
 
             for (int row = 0; row < maze.length; row++) {
                 for (int col = 0; col < maze[row].length; col++) {
+                    String filler = getFillerString(row, col);
+                    fillerRow.append(filler);
                     topRow.append(maze[row][col].getPartOfTheRoom(maze[row][col], 0));
                     middleRow.append(maze[row][col].getPartOfTheRoom(maze[row][col], 1));
                     bottomRow.append(maze[row][col].getPartOfTheRoom(maze[row][col], 2));
@@ -152,11 +199,12 @@ public class Dungeon {
                 writer.write(topRow.toString() + "\n");
                 writer.write(fillerRow.toString() + "\n");
                 writer.write(middleRow.toString() + "\n");
-                writer.write(fillerRow.toString() + "\n");
+                writer.write(bottomFillerRow.toString() + "\n");
                 writer.write(bottomRow.toString() + "\n");
                 topRow.setLength(0);
                 bottomRow.setLength(0);
                 middleRow.setLength(0);
+                fillerRow.setLength(0);
             }
 
 
@@ -165,21 +213,32 @@ public class Dungeon {
         }
     }
 
+    private String getFillerString(int row, int col) {
+        String filler = "* - - - * ";
+        if(maze[row][col].getMyHasMonster() && maze[row][col].getMyMonsterName().equals("Ogre")){
+            filler = "* O - - * ";
+        } else if(maze[row][col].getMyHasMonster() && maze[row][col].getMyMonsterName().equals("Gremlin")){
+            filler = "* G - - * ";
+        }else if((maze[row][col].getMyHasMonster() && maze[row][col].getMyMonsterName().equals("Skeleton"))){
+            filler = "* S - - * ";
+        }
+        return filler;
+    }
 
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < SIZE; i++) {
-            sb.append("+---".repeat(SIZE));
+        for (int i = 0; i < mySize; i++) {
+            sb.append("+---".repeat(mySize));
             sb.append("+\n");
-            for (int j = 0; j < SIZE; j++) {
+            for (int j = 0; j < mySize; j++) {
                 sb.append("| ");
                 sb.append(maze[i][j].getMyItem()).append(" ");
             }
             sb.append("|\n");
         }
-        sb.append("+---".repeat(SIZE));
+        sb.append("+---".repeat(mySize));
         sb.append("+\n");
         return sb.toString();
     }
@@ -189,8 +248,20 @@ public class Dungeon {
         }
         return myUniqueInstance;
     }
+
+    public Room[][] getMaze() {
+        return maze;
+    }
+
     public static Dungeon get_TEST_instance(){
         return new Dungeon();
     }
 
+    public int getMySize() {
+        return mySize;
+    }
+
+    public static void main(String[] args) {
+        new Dungeon();
+    }
 }

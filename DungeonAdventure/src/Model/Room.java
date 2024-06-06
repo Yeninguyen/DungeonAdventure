@@ -1,5 +1,8 @@
 package Model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Room {
     private int myHealingPotionAmount;
     private int myPitAmount;
@@ -7,37 +10,63 @@ public class Room {
     private boolean myExit;
     private int myX;
     private int myY;
-    private int myBorderSize;
     private char myItem;
     private boolean myHasVisionPotion;
     private boolean myHasPillar;
-    private double myRandom;
+
+    private boolean myHasMonster;
+    private double myChanceForMonster;
+
+    private String myMonsterName;
+    private final static ArrayList<String> MONSTER_NAMES = new ArrayList<>(Arrays.asList("Ogre","Gremlin","Skeleton"));
+
+    public void setMyMonsterName(String theMonsterName) {
+        myMonsterName = theMonsterName;
+    }
+
+    public void setMyHasMonster(boolean theHasMonster) {
+        myHasMonster = theHasMonster;
+    }
+
+    public String getMyMonsterName() {
+        return myMonsterName;
+    }
+
+    public boolean getMyHasMonster() {
+        return myHasMonster;
+    }
+
+    public double getMyChanceForMonster() {
+        return myChanceForMonster;
+    }
 
 
-    public Room(int theBorderSize) {
-        setMyRandom(Math.random());
-        setMyBorderSize(theBorderSize);
+    public void setMyChanceForMonster(double theChanceForMonster) {
+        myChanceForMonster = theChanceForMonster;
+    }
+
+    private int mySize;
+    public Room(int theSize) {
+        mySize = theSize;
+        setMyChanceForMonster(Math.random());
         setUpRoom();
 
     }
 
-    private void setMyRandom(double theRandom) {
-        myRandom = theRandom;
-    }
-
     private void setUpRoom() {
-        if (myRandom < 0.10) {
+        double randomValue = Math.random();
+        if (randomValue < 0.10) {
             // 10% chance for multiple items (healing potion, pit, and vision potion)
             setUpMultipleItems();
-        }  else if (myRandom < 0.35) {
+        }  else if (randomValue < 0.35) {
             // 10% chance for vision potion
-            setMyVisionPotion(true);
+            myHasVisionPotion = true;
             myItem = 'V';
-        } else if (myRandom < 0.55) {
+        } else if (randomValue < 0.55) {
             // 20% chance for pit
             myPitAmount = (int) (Math.random() * 20) + 1;
             myItem = 'X';
-        } else if(myRandom < 0.80){
+        } else if(randomValue < 0.80){
             // 25% chance for healing potion
             myHealingPotionAmount = (int) (Math.random() * 11) + 10;
             myItem = 'H';
@@ -45,8 +74,29 @@ public class Room {
             //20 percent chance for empty room
             myItem = ' ';
         }
+        if(!myEntrance) {
+            if (myChanceForMonster <= 0.15) {
+                setMyHasMonster(true);
+                setMyMonsterName(MONSTER_NAMES.get((int) (Math.random() * MONSTER_NAMES.size())));
+
+            }
+        }
 
 
+    }
+
+
+
+
+    private void setUpMultipleItems() {
+        myHealingPotionAmount = (int) (Math.random() * 11) + 10;
+        myPitAmount = (int) (Math.random() * 20) + 10;
+        myHasVisionPotion = true;
+        setMyItem('M');
+    }
+
+    public void setMyHasPillar(boolean theHasPillar) {
+        myHasPillar = theHasPillar;
     }
 
     @Override
@@ -60,62 +110,53 @@ public class Room {
         if(myY == 0){
             sb.append("* * * * * ").append("\n");
         } else{
-            sb.append("* * D * * ").append("\n");
+                sb.append("* * D * * ").append("\n");
 
         }
         if(myX == 0){
             sb.append("* - ").append(myItem).append(" - D ").append("\n");
-        }else if(myX == myBorderSize - 1){
+        }else if(myX == mySize - 1){
             sb.append("D - ").append(myItem).append(" - * ").append("\n");
         }else{
             sb.append("D - ").append(myItem).append(" - D ").append("\n");
         }
-        if(myY== myBorderSize - 1){
+        if(myY== mySize- 1){
             sb.append("* * * * * ").append("\n");
         } else{
-            sb.append("* * D * * ").append("\n");
+                sb.append("* * D * * ").append("\n");
         }
         return sb.toString();
 
     }
 
-    private void setUpMultipleItems() {
-        myHealingPotionAmount = (int) (Math.random() * 11) + 10;
-        myPitAmount = (int) (Math.random() * 20) + 10;
-        myHasVisionPotion = true;
-        setMyItem('M');
+
+
+    public void setMyHealingPotionAmount(final int theHealingPotion) {
+        myHealingPotionAmount = theHealingPotion;
+    }
+    public void setMyPitAmount(final int thePit) {
+        myPitAmount = thePit;
     }
 
-    public void setMyHasPillar(final boolean theHasPillar) {
-        myHasPillar = theHasPillar;
-    }
-
-    public void setMyEntrance(final boolean theEntrance) {
+    public void setMyEntrance(boolean theEntrance) {
         myEntrance = theEntrance;
         myItem = 'i';
     }
 
-    public void setMyItem(final char theItem) {
+
+    public void setMyItem(char theItem) {
         myItem = theItem;
     }
 
-    public void setMyY(final int theY) {
-        if(theY < 0){
-            throw new IllegalArgumentException("The Y value cannot be negative.");
-        }else{
-            myY = theY;
-        }
+
+    public void setMyY(int theY) {
+        myY = theY;
     }
 
-    public void setMyX(final int theX) {
-        if(theX < 0){
-            throw new IllegalArgumentException("The X value cannot be negative.");
-        }else{
-            myX = theX;
-        }
+    public void setMyX(int theX) {
+        myX = theX;
     }
-
-    public void setMyExit(final boolean theExit) {
+    public void setMyExit(boolean theExit) {
         myExit = theExit;
         myItem = 'o';
     }
@@ -123,12 +164,13 @@ public class Room {
     public void setMyVisionPotion(final boolean theHasVisionPotion) {
         myHasVisionPotion = theHasVisionPotion;
     }
-    public void setMyBorderSize(int theBorderSize) {
-        if(theBorderSize < 0){
-            throw new IllegalArgumentException("The border size cannot be negative.");
-        }else {
-            myBorderSize = theBorderSize;
-        }
+
+    public int getMyHealingPotionAmount() {
+        return myHealingPotionAmount;
+    }
+
+    public int getMyPitAmount() {
+        return myPitAmount;
     }
 
     public boolean isMyEntrance() {
@@ -158,16 +200,6 @@ public class Room {
         return myHasVisionPotion;
     }
 
-    public int getMyPitAmount() {
-        return myPitAmount;
-    }
-
-    public int getMyHealingPotionAmount() {
-        return myHealingPotionAmount;
-    }
-    public int getMyBorderSize() {
-        return myBorderSize;
-    }
 
     public String getPartOfTheRoom(Room theRoom, int thePart) {
         String roomString = theRoom.toString();
