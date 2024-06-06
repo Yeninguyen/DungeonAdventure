@@ -1,6 +1,5 @@
 package Controller;
 
-import Model.DungeonCharacter;
 import Model.Monster;
 import Model.MonsterDatabase;
 
@@ -16,8 +15,9 @@ public class Monsters {
 
 
 
-    private int x, y;
-    private double speed;
+    private int myX;
+    private int myY;
+
     private String monsterType;
     private final GameUI gameUI;
 
@@ -46,16 +46,14 @@ public class Monsters {
 
     public void draw(Graphics2D theGraphics2D) {
         int bound = gameUI.getMyDungeonPanel().getMyTileSize();
-        int screenX = x - gameUI.getMyCharacter().getMyX() + gameUI.getMyCharacter().getScreenX();
-        int screenY = y - gameUI.getMyCharacter().getMyY() + gameUI.getMyCharacter().getScreenY();
+        int screenX = myX - gameUI.getMyCharacter().getMyX() + gameUI.getMyCharacter().getMyScreenX();
+        int screenY = myY - gameUI.getMyCharacter().getMyY() + gameUI.getMyCharacter().getMyScreenY();
 
-        int solidAreaScreenX = screenX - solidArea.x;
-        int solidAreaScreenY = screenY - solidArea.y;
 
-        if (x + bound > gameUI.getMyCharacter().getMyX() - gameUI.getMyCharacter().getScreenX() &&
-                x - bound < gameUI.getMyCharacter().getMyX() + gameUI.getMyCharacter().getScreenX() &&
-                y + bound > gameUI.getMyCharacter().getMyY() - gameUI.getMyCharacter().getScreenY() &&
-                y - bound < gameUI.getMyCharacter().getMyY() + gameUI.getMyCharacter().getScreenY()) {
+        if (myX + bound > gameUI.getMyCharacter().getMyX() - gameUI.getMyCharacter().getMyScreenX() &&
+                myX - bound < gameUI.getMyCharacter().getMyX() + gameUI.getMyCharacter().getMyScreenX() &&
+                myY + bound > gameUI.getMyCharacter().getMyY() - gameUI.getMyCharacter().getMyScreenY() &&
+                myY - bound < gameUI.getMyCharacter().getMyY() + gameUI.getMyCharacter().getMyScreenY()) {
             theGraphics2D.drawImage(myMonsterImage, screenX, screenY, gameUI.getMyDungeonPanel().getMyTileSize(), gameUI.getMyDungeonPanel().getMyTileSize(), null);
 
         }
@@ -63,10 +61,6 @@ public class Monsters {
         //theGraphics2D.drawRect(solidAreaScreenX, solidAreaScreenY, solidArea.width, solidArea.height);
     }
 
-    public void handleMonsterEncounter(Monsters monster) {
-        monster.encounterTime = System.currentTimeMillis();
-        // Add any additional logic or effects you want for the monster encounter
-    }
 
     private void init()  {
         isAlive = true;
@@ -79,65 +73,47 @@ public class Monsters {
         }
     }
 
-    public int getX() {
-        return x;
+    public int getMyX() {
+        return myX;
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public void setMyX(final int theX) {
+        myX = theX;
     }
 
-    public int getY() {
-        return y;
+    public int getMyY() {
+        return myY;
     }
 
-    public void setY(int y) {
-        this.y = y;
-    }
-
-
-    public int getSpeed() {
-        return (int) speed;
-    }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
+    public void setMyY(final int theY) {
+        myY = theY;
     }
 
     public String getMonsterType() {
         return monsterType;
     }
 
-    public boolean isAlive() {
-        return isAlive;
-    }
-
-    public void setAlive(boolean alive) {
-        isAlive = alive;
-    }
-
     public Monster getMyMonster() {
-        System.out.println(myMonster.getMyHitPoints());
         return myMonster;
     }
 
-    public void setMyMonsterImage(BufferedImage myMonsterImage) {
-        this.myMonsterImage = myMonsterImage;
+    public void setMyMonsterImage(final BufferedImage theMonsterImage) {
+        this.myMonsterImage = theMonsterImage;
     }
 
     public boolean isCollision() {
         return collision;
     }
 
-    public void setCollision(boolean collision) {
-        this.collision = collision;
+    public void setCollision(final boolean theCollision) {
+        collision = theCollision;
     }
 
     public Rectangle getSolidArea() {
         return solidArea;
     }
 
-    public void setMonsterType(String monsterType) {
-        this.monsterType = monsterType;
+    public void setMonsterType(final String theMonsterType) {
+        monsterType = theMonsterType;
     }
 }

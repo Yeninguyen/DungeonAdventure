@@ -12,26 +12,15 @@ import java.io.IOException;
 import java.util.*;
 
 public class Characters {
-    private boolean isMoving = false;
-    private int playerSpeed = 4;
+    private boolean myPlayerIsMoving = false;
+    private int myPlayerSpeed = 4;
     private Rectangle myHealthBarRect;
 
-    public void setPlayerSpeed(int playerSpeed) {
-        this.playerSpeed = playerSpeed;
-    }
-
-    private static Characters myInstance;
-
-
-
-    public int getPlayerSpeed() {
-        return playerSpeed;
-    }
 
     private Rectangle myOuterHealthBarRect;
 
-    private final int screenY;
-    private final int screenX;
+    private final int myScreenY;
+    private final int myScreenX;
     private final GameUI myGameUI;
 
     private  Warrior myWarrior;
@@ -64,8 +53,8 @@ public class Characters {
         myThiefImages = new HashMap<>();
         myPriestessImages = new HashMap<>();
 
-        screenX = myGameUI.getMyDungeonPanel().getMyWidth() / 2 - (myGameUI.getMyDungeonPanel().getMyTileSize() / 2);
-        screenY = myGameUI.getMyDungeonPanel().getMyHeight() / 2 - (myGameUI.getMyDungeonPanel().getMyTileSize() / 2);
+        myScreenX = myGameUI.getMyDungeonPanel().getMyWidth() / 2 - (myGameUI.getMyDungeonPanel().getMyTileSize() / 2);
+        myScreenY = myGameUI.getMyDungeonPanel().getMyHeight() / 2 - (myGameUI.getMyDungeonPanel().getMyTileSize() / 2);
         load();
         myWarriorCurrentImage = myWarriorImage.get(RUNNING_LEFT);
         myThiefCurrentImage = myThiefImages.get(RUNNING_LEFT);
@@ -74,10 +63,10 @@ public class Characters {
 
 
 
+
     public void initHeroes(){
-        int x = myGameUI.getMyDungeonPanel().getMyTileSize() * myGameUI.getMyTileManager().entranceCol;
-        int y = myGameUI.getMyDungeonPanel().getMyTileSize() * myGameUI.getMyTileManager().entranceRow;
-        System.out.println(myGameUI.getMyTileManager().entranceCol);
+        int x = myGameUI.getMyDungeonPanel().getMyTileSize() * myGameUI.getMyTileManager().getMyEntranceCol();
+        int y = myGameUI.getMyDungeonPanel().getMyTileSize() * myGameUI.getMyTileManager().getMyEntranceRow();
 
         int width = 40;
         int height = 40;
@@ -96,30 +85,21 @@ public class Characters {
             myPriestess = Model.Priestess.getMyUniqueInstance();
             myPriestess.setMyY(y);
             myPriestess.setMyX(x);
-            myPriestess.setMyHitBox(new Rectangle((int) myPriestess.getMyX() + 10,  myPriestess.getMyY()+20, width, height));
+            myPriestess.setMyHitBox(new Rectangle( myPriestess.getMyX() + 10,  myPriestess.getMyY()+20, width, height));
 
-            myHealthBarRect = new Rectangle(screenX - 2, screenY - 12, 45, 10);
-            myOuterHealthBarRect = new Rectangle(screenX - 2, screenY - 12, 46, 11);
+            myHealthBarRect = new Rectangle(myScreenX - 2, myScreenY - 12, 45, 10);
+            myOuterHealthBarRect = new Rectangle(myScreenX - 2, myScreenY - 12, 46, 11);
     }
 
 
     public void drawPlayer(final Graphics2D theGraphics) {
-        //drawPillar(theGraphics);
         if(myGameUI.getMyGameControls().isMyWarriorSelected()){
-            theGraphics.drawImage(myHeroCurrentImage, screenX, screenY, 40, 40, null);
+            theGraphics.drawImage(myHeroCurrentImage, myScreenX, myScreenY, 40, 40, null);
         }else if (myGameUI.getMyGameControls().isMyThiefSelected()){
-            theGraphics.drawImage(myHeroCurrentImage, screenX - 10, screenY - 10, 70, 70, null);
+            theGraphics.drawImage(myHeroCurrentImage, myScreenX - 10, myScreenY - 10, 70, 70, null);
         }else if (myGameUI.getMyGameControls().isMyPriestessSelected()){
-            theGraphics.drawImage(myHeroCurrentImage, screenX - 20, screenY - 30, 70, 70, null);
+            theGraphics.drawImage(myHeroCurrentImage, myScreenX - 20, myScreenY - 30, 70, 70, null);
         }
-//        theGraphics.setColor(Color.RED);
-//        theGraphics.fill(myHealthBarRect);
-//        theGraphics.setColor(Color.BLACK);
-//        theGraphics.draw(myOuterHealthBarRect);
-
-        //drawHitBox(theGraphics);
-       // System.out.println(myGameUI.getMyTileManager().pillarARow);
-
     }
 
 
@@ -133,7 +113,7 @@ public class Characters {
             myHeroCurrentImage = myPriestessCurrentImage;
         }
 
-        if (isMoving) {
+        if (myPlayerIsMoving) {
             if (myGameUI.getMyGameControls().isMyUpArrow()) {
                 direction = Direction.NORTH;
                 if (myGameUI.getMyGameControls().isMyThiefSelected()) {
@@ -193,14 +173,14 @@ public class Characters {
 
 
                 switch (direction) {
-                    case NORTH -> newY -= playerSpeed;
-                    case SOUTH -> newY += playerSpeed;
-                    case WEST -> newX -= playerSpeed;
-                    case EAST -> newX += playerSpeed;
+                    case NORTH -> newY -= myPlayerSpeed;
+                    case SOUTH -> newY += myPlayerSpeed;
+                    case WEST -> newX -= myPlayerSpeed;
+                    case EAST -> newX += myPlayerSpeed;
                 }
 
 
-            if(isMoving) {
+            if(myPlayerIsMoving) {
                 if (myGameUI.getMyGameControls().isMyThiefSelected()) {
                     myThief.getMyHitBox().x = newX;
                     myThief.getMyHitBox().y = newY;
@@ -282,44 +262,40 @@ public class Characters {
     }
 
 
-    public void setMoving(boolean moving) {
-        isMoving = moving;
+    public void setMyPlayerIsMoving(boolean myPlayerIsMoving) {
+        this.myPlayerIsMoving = myPlayerIsMoving;
     }
 
 
-    public int getScreenY() {
-        return screenY;
+    public int getMyScreenY() {
+        return myScreenY;
     }
 
-    public int getScreenX() {
-        return screenX;
+    public int getMyScreenX() {
+        return myScreenX;
     }
 
     public Warrior getMyWarrior() {
         return myWarrior;
     }
 
-    public Direction getDirection() {
-        return direction;
-    }
-
 
     public void updateHitBox() {
         if(myGameUI.getMyGameControls().isMyWarriorSelected()) {
-            int playerX = (int) myWarrior.getMyX();
-            int playerY = (int) myWarrior.getMyY();
+            int playerX =  myWarrior.getMyX();
+            int playerY = myWarrior.getMyY();
             myWarrior.getMyHitBox().x = playerX;
             myWarrior.getMyHitBox().y = playerY;
         }
         if(myGameUI.getMyGameControls().isMyPriestessSelected()) {
-            int playerX = (int) myPriestess.getMyX();
-            int playerY = (int) myPriestess.getMyY();
+            int playerX =  myPriestess.getMyX();
+            int playerY =  myPriestess.getMyY();
             myPriestess.getMyHitBox().x = playerX;
             myPriestess.getMyHitBox().y = playerY;
         }
         if(myGameUI.getMyGameControls().isMyThiefSelected()) {
-            int playerX = (int) myThief.getMyX();
-            int playerY = (int) myThief.getMyY();
+            int playerX =  myThief.getMyX();
+            int playerY =  myThief.getMyY();
             myThief.getMyHitBox().x = playerX;
             myThief.getMyHitBox().y = playerY;
         }
@@ -329,7 +305,7 @@ public class Characters {
     public void drawHitBox(Graphics2D theGraphics) {
         //debugging
         theGraphics.setColor(Color.RED);
-        theGraphics.drawRect(screenX, screenY, myWarrior.getMyHitBox().width, myWarrior.getMyHitBox().height);
+        theGraphics.drawRect(myScreenX, myScreenY, myWarrior.getMyHitBox().width, myWarrior.getMyHitBox().height);
     }
 
     public BufferedImage getMyWarriorCurrentImage() {
@@ -369,21 +345,6 @@ public class Characters {
     public BufferedImage getMyPriestessCurrentImage() {
         return myPriestessCurrentImage;
     }
-//    public void checkMonsterEncounter() {
-//        int playerRow = getMyY() / myGameUI.getMyDungeonPanel().getMyTileSize();
-//        int playerCol = getMyX() / myGameUI.getMyDungeonPanel().getMyTileSize();
-//        String roomCoordinate = playerRow + "," + playerCol;
-//
-//        if (myGameUI.getMyTileManager().monsterRooms.containsKey(roomCoordinate)) {
-//            String monsterType = myGameUI.getMyTileManager().monsterRooms.get(roomCoordinate);
-//            handleMonsterEncounter(monsterType);
-//        }
-//    }
-//    private void handleMonsterEncounter(String monsterType) {
-//        // Show a popup or dialog indicating the monster encounter
-//        // You can also trigger a battle sequence or implement other logic here
-//        JOptionPane.showMessageDialog(null, "You encountered a " + monsterType + "!");
-//    }
 
     public Rectangle getHitBox(){
         if (myGameUI.getMyGameControls().isMyWarriorSelected()) {
@@ -413,8 +374,18 @@ public class Characters {
 
         return hero;
     }
-    public boolean isMoving() {
-        return isMoving;
+
+    public void setMyPlayerSpeed(int myPlayerSpeed) {
+        this.myPlayerSpeed = myPlayerSpeed;
+    }
+
+
+    public int getMyPlayerSpeed() {
+        return myPlayerSpeed;
+    }
+
+    public boolean isMyPlayerIsMoving() {
+        return myPlayerIsMoving;
     }
 
     public int getMyMaxHeroHitPoint() {

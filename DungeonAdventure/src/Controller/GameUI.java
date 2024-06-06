@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class GameUI {
-    int size;
-    private Map<String, Rectangle> itemRectangles;
+    private int myMazeSize;
+    private Map<String, Rectangle> myItemRectangles;
 
     private Rectangle myCloseWindowRectangle;
     private RoundRectangle2D myInventoryRectangle;
@@ -31,57 +31,46 @@ public class GameUI {
     private Rectangle mySelectButton;
     private Rectangle myUserNameBox;
 
-
-    private static GameUI myInstance;
     private Rectangle myHardCheckBox;
 
 
+    private BufferedImage myBackGroundImage;
 
 
-    private BufferedImage background;
+    private GameControls myGameControls;
+
+    private String myUserName = "";
 
 
-
-    private final GameControls myGameControls;
-    private final String myStartGameTitle = "NEW GAME";
-    private final String myLoadGameTitle = "LOAD GAME";
-    private final String myQuitGameTitle = "QUIT GAME";
-
-    private String username = "";
-
-
-    private BufferedImage selection;
-    private BufferedImage gameOver;
-
+    private BufferedImage mySelectionImg;
 
     private final DungeonPanel myDungeonPanel;
-    private  final Characters myCharacter;
+    private Characters myCharacter;
     private final TileManager myTileManager = new TileManager(this);
     private Dungeon myDungeon;
 
 
-
-
-
-    public GameUI(DungeonPanel theDungeonPanel) {
+    public GameUI(final DungeonPanel theDungeonPanel) {
         myDungeonPanel = theDungeonPanel;
-        itemRectangles = new HashMap<>();
+        initGameUI();
+    }
+
+
+    private void initGameUI() {
+        myItemRectangles = new HashMap<>();
         myGameControls = new GameControls(this);
-        theDungeonPanel.addKeyListener(myGameControls);
-        theDungeonPanel.addMouseListener(myGameControls);
-        theDungeonPanel.setFocusable(true);
+        myDungeonPanel.addKeyListener(myGameControls);
+        myDungeonPanel.addMouseListener(myGameControls);
+        myDungeonPanel.setFocusable(true);
         myCharacter = new Characters(this);
         loadImages();
     }
 
 
-
-
     public void loadImages() {
         try {
-            background = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Backgrounds/StartGameBackground.png")));
-            selection = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Backgrounds/CharacterSelection.png")));
-            gameOver = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Backgrounds/GameOver.png")));
+            myBackGroundImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Backgrounds/StartGameBackground.png")));
+            mySelectionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Backgrounds/CharacterSelection.png")));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -89,26 +78,25 @@ public class GameUI {
     }
 
 
-
-    public void drawPlayer(Graphics2D theGraphics) {
+    public void drawPlayer(final Graphics2D theGraphics) {
         myTileManager.drawTiles(theGraphics);
         myCharacter.drawPlayer(theGraphics);
         theGraphics.setColor(Color.WHITE);
 
 
         theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 15F));
-        theGraphics.drawString(getMyGameControls().getUsername(), myCharacter.getScreenX() - 2, myCharacter.getScreenY() - 20);
+        theGraphics.drawString(getMyGameControls().getUsername(), myCharacter.getMyScreenX() - 2, myCharacter.getMyScreenY() - 20);
         //myTileManager.updateAndRenderMonsters(theGraphics);
     }
 
-    public void drawTitleScreen(Graphics2D theGraphics) {
+    public void drawTitleScreen(final Graphics2D theGraphics) {
 
         theGraphics.setFont(theGraphics.getFont().deriveFont(Font.PLAIN, 60F));
         String title = "DUNGEON ADVENTURE";
         int x = (int) (myDungeonPanel.getMyTileSize() * 2.5);
         int y = myDungeonPanel.getMyTileSize() * 2;
 
-        theGraphics.drawImage(background, 0, 0, myDungeonPanel.getMyWidth(), myDungeonPanel.getMyHeight(), null);
+        theGraphics.drawImage(myBackGroundImage, 0, 0, myDungeonPanel.getMyWidth(), myDungeonPanel.getMyHeight(), null);
 
         theGraphics.setColor(Color.BLACK);
         theGraphics.drawString(title, x + 5, y + 5);
@@ -118,7 +106,7 @@ public class GameUI {
     }
 
 
-    public void drawCharacterSelection(Graphics2D theGraphics2D) {
+    public void drawCharacterSelection(final Graphics2D theGraphics2D) {
         theGraphics2D.setFont(theGraphics2D.getFont().deriveFont(Font.PLAIN, 20F));
         String chooseHeroTitle = "Choose Your Hero";
         String ChooseDifficultyTitle = "Choose difficulty";
@@ -127,7 +115,7 @@ public class GameUI {
         theGraphics2D.setColor(Color.WHITE);
 
         Rectangle chooseHeroRectangle = new Rectangle(myDungeonPanel.getMyTileSize() * 2, myDungeonPanel.getMyTileSize() * 6);
-        theGraphics2D.drawImage(selection, 0, 0, myDungeonPanel.getMyWidth(), myDungeonPanel.getMyHeight(), null);
+        theGraphics2D.drawImage(mySelectionImg, 0, 0, myDungeonPanel.getMyWidth(), myDungeonPanel.getMyHeight(), null);
         theGraphics2D.setColor(new Color(0, 0, 0, 200));
         theGraphics2D.fillRoundRect(myDungeonPanel.getMyTileSize() * 2, myDungeonPanel.getMyTileSize() * 2, myDungeonPanel.getMyTileSize() * 6, myDungeonPanel.getMyTileSize() * 6, 35, 35);
         theGraphics2D.fillRoundRect(myDungeonPanel.getMyTileSize() * 9, myDungeonPanel.getMyTileSize() * 2, myDungeonPanel.getMyTileSize() * 6, myDungeonPanel.getMyTileSize() * 6, 35, 35);
@@ -188,37 +176,37 @@ public class GameUI {
 
     }
 
-    public void updateCheckboxSelection(Graphics2D g2d, Rectangle checkbox) {
-        g2d.setColor(Color.WHITE);
-        g2d.drawLine(checkbox.x + 1, checkbox.y + 1, checkbox.x + 17, checkbox.y + 17);
-        g2d.drawLine(checkbox.x + 17, checkbox.y + 1, checkbox.x + 1, checkbox.y + 17);
+    public void updateCheckboxSelection(final Graphics2D theGraphics, final Rectangle theCheckbox) {
+        theGraphics.setColor(Color.WHITE);
+        theGraphics.drawLine(theCheckbox.x + 1, theCheckbox.y + 1, theCheckbox.x + 17, theCheckbox.y + 17);
+        theGraphics.drawLine(theCheckbox.x + 17, theCheckbox.y + 1, theCheckbox.x + 1, theCheckbox.y + 17);
     }
 
 
-    private void updateSelectionScreen(Graphics2D theGraphics2D) {
+    private void updateSelectionScreen(final Graphics2D theGraphics2D) {
         int width = myDungeonPanel.getMyTileSize() * 3;
         int height = myDungeonPanel.getMyTileSize() * 3;
 
         if (myGameControls.isMySelection()) {
-                if (myGameControls.isMyEasySelected()) {
-                    myDungeon = Model.Dungeon.getInstance();
-                    size = 3;
-                    myDungeon.generateMaze(3);
-                    myTileManager.generateDungeon();
-                }
-                if (myGameControls.isMyMediumSelected()) {
-                    myDungeon = Model.Dungeon.getInstance();
-                    size = 6;
-                    myDungeon.generateMaze(6);
-                    myTileManager.generateDungeon();
-                }
-                if (myGameControls.isMyHardSelected()) {
-                    myDungeon = Model.Dungeon.getInstance();
-                    size = 8;
-                    myDungeon.generateMaze(8);
-                    myTileManager.generateDungeon();
-                }
-                myDungeonPanel.setGameState(myDungeonPanel.getPlayState());
+            if (myGameControls.isMyEasySelected()) {
+                myDungeon = Model.Dungeon.getInstance();
+                myMazeSize = 3;
+                myDungeon.generateMaze(3);
+                myTileManager.generateDungeon();
+            }
+            if (myGameControls.isMyMediumSelected()) {
+                myDungeon = Model.Dungeon.getInstance();
+                myMazeSize = 6;
+                myDungeon.generateMaze(6);
+                myTileManager.generateDungeon();
+            }
+            if (myGameControls.isMyHardSelected()) {
+                myDungeon = Model.Dungeon.getInstance();
+                myMazeSize = 8;
+                myDungeon.generateMaze(8);
+                myTileManager.generateDungeon();
+            }
+            myDungeonPanel.setGameState(myDungeonPanel.getPlayState());
         }
 
         if (myGameControls.isMyWarriorSelected()) {
@@ -248,19 +236,18 @@ public class GameUI {
         }
 
         if (myGameControls.isMyUsernameBoxSelected()) {
-            username = myGameControls.getUsername();
+            myUserName = myGameControls.getUsername();
         }
-        theGraphics2D.drawString(username, (myDungeonPanel.getMyTileSize() * 12), (int) (myDungeonPanel.getMyTileSize() * 6.2));
+        theGraphics2D.drawString(myUserName, (myDungeonPanel.getMyTileSize() * 12), (int) (myDungeonPanel.getMyTileSize() * 6.2));
     }
 
 
-    public void drawInventory(Graphics2D theGraphics) {
+    public void drawInventory(final Graphics2D theGraphics) {
 
         int x = 64 * 9;
         int y = 64;
         int width = 64 * 6;
         int height = 64 * 5;
-
 
 
         drawFrame(x, y, width, height, theGraphics);
@@ -297,10 +284,10 @@ public class GameUI {
             theGraphics.setColor(Color.WHITE);
             theGraphics.drawRoundRect(cursorX, cursorY, slotSize + 30, slotSize, 10, 10);
 
-            theGraphics.drawImage(item.getImage(), cursorX, cursorY, slotSize, slotSize, null);
+            theGraphics.drawImage(item.getMyImage(), cursorX, cursorY, slotSize, slotSize, null);
 
-            if (item.isCollision()) {
-                int val = myTileManager.getMyItemCollisionFrequency().get(item.getName());
+            if (item.isMyCollisoin()) {
+                int val = myTileManager.getMyItemCollisionFrequency().get(item.getMyName());
                 theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 30F));
                 theGraphics.drawString(String.valueOf(val), cursorX + 50, cursorY + 50);
                 theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 20F));
@@ -313,8 +300,8 @@ public class GameUI {
                 // theGraphics.drawString(str, cursorX + 70, cursorY + 50);
             }
 
-            if(item.getName().equals("V") || item.getName().equals("H")){
-                itemRectangles.put(item.getName(), new Rectangle(cursorX, cursorY, slotSize + 30, slotSize));
+            if (item.getMyName().equals("V") || item.getMyName().equals("H")) {
+                myItemRectangles.put(item.getMyName(), new Rectangle(cursorX, cursorY, slotSize + 30, slotSize));
             }
 
             slotIndex++;
@@ -330,11 +317,11 @@ public class GameUI {
     }
 
 
-    public void updateInventory(){
-        if(myTileManager.getMyItemCollisionFrequency() != null) {
-            if(myGameControls.isMyVisionPotionSelected() && myTileManager.getMyItemCollisionFrequency().containsKey("V")) {
+    public void updateInventory() {
+        if (myTileManager.getMyItemCollisionFrequency() != null) {
+            if (myGameControls.isMyVisionPotionSelected() && myTileManager.getMyItemCollisionFrequency().containsKey("V")) {
                 int val = myTileManager.getMyItemCollisionFrequency().get("V");
-                if(val > 0) {
+                if (val > 0) {
                     val--;
                     myDungeonPanel.getMyLighting().setMyVisionPotionUsed(true);
                     myDungeonPanel.getMyLighting().setMyVisionTimer(System.currentTimeMillis()); // Set the timer
@@ -344,10 +331,10 @@ public class GameUI {
                 // ... (remove the code that sets isMyVisionPotionUsed to false when val == 0)
             }
             if (myGameControls.isMyHealthPotionSelected() && myTileManager.getMyItemCollisionFrequency().containsKey("H")) {
-                if(myCharacter.getCharacterType().getMyHitPoints() < myCharacter.getMyMaxHeroHitPoint()){
+                if (myCharacter.getCharacterType().getMyHitPoints() < myCharacter.getMyMaxHeroHitPoint()) {
                     int val = myTileManager.getMyItemCollisionFrequency().get("H");
-                    if(val > 0) {
-                        val --;
+                    if (val > 0) {
+                        val--;
                         System.out.println(myCharacter.getCharacterType().getMyHitPoints());
                         myCharacter.getCharacterType().setMyHitPoints(myCharacter.getMyMaxHeroHitPoint());
                         System.out.println(myCharacter.getCharacterType().getMyHitPoints());
@@ -360,7 +347,8 @@ public class GameUI {
             }
         }
     }
-    public void drawInventoryRectangle(Graphics2D theGraphics){
+
+    public void drawInventoryRectangle(final Graphics2D theGraphics) {
         int x = 64 * 11;
 
         myInventoryRectangle = new RoundRectangle2D.Double(x, 30, myDungeonPanel.getMyTileSize() * 2, 30, 10, 10);
@@ -369,36 +357,38 @@ public class GameUI {
         theGraphics.fill(myInventoryRectangle);
         theGraphics.setColor(Color.BLACK);
         theGraphics.setFont(theGraphics.getFont().deriveFont(Font.PLAIN, 15F));
-        theGraphics.drawString("Inventory", (int) (myInventoryRectangle.getX() + myInventoryRectangle.getWidth() / 5), (int) ((int) myInventoryRectangle.getCenterY() + myDungeonPanel.getMyTileSize() / 7));
+        theGraphics.drawString("Inventory", (int) (myInventoryRectangle.getX() + myInventoryRectangle.getWidth() / 5), ((int) myInventoryRectangle.getCenterY() + myDungeonPanel.getMyTileSize() / 7));
     }
 
-    public void drawFrame(int theX, int theY, int theWidth, int theHeight, Graphics2D theGraphics) {
+    public void drawFrame(final int theX, final int theY, final int theWidth, final int theHeight, final Graphics2D theGraphics) {
 
         theGraphics.setColor(new Color(0, 0, 0, 255));
         theGraphics.fillRoundRect(theX, theY, theWidth, theHeight, 35, 35);
         theGraphics.drawRoundRect(theX + 5, theY + 5, theWidth - 10, theHeight - 10, 25, 25);
 
 
-
     }
 
 
-    private void drawRoundedButton(Graphics2D g2d, RoundRectangle2D button, String buttonText) {
-        g2d.setColor(Color.WHITE);
-        g2d.fill(button);
-        g2d.setFont(g2d.getFont().deriveFont(Font.PLAIN, 20F));
-        g2d.setColor(Color.BLACK);
-        g2d.drawString(buttonText, (int) (button.getX() + button.getWidth() / 4), (int) button.getCenterY() + myDungeonPanel.getMyTileSize() / 5);
+    private void drawRoundedButton(final Graphics2D theGraphics, final RoundRectangle2D theButton, final String theButtonText) {
+        theGraphics.setColor(Color.WHITE);
+        theGraphics.fill(theButton);
+        theGraphics.setFont(theGraphics.getFont().deriveFont(Font.PLAIN, 20F));
+        theGraphics.setColor(Color.BLACK);
+        theGraphics.drawString(theButtonText, (int) (theButton.getX() + theButton.getWidth() / 4), (int) theButton.getCenterY() + myDungeonPanel.getMyTileSize() / 5);
     }
 
-    private void createButton(Graphics2D theGraphics) {
+    private void createButton(final Graphics2D theGraphics) {
         myStartRectangle = new RoundRectangle2D.Double(myDungeonPanel.getMyTileSize() * 6, myDungeonPanel.getMyTileSize() * 5, myDungeonPanel.getMyTileSize() * 4, myDungeonPanel.getMyTileSize(), 20, 20);
+        String myStartGameTitle = "NEW GAME";
         drawRoundedButton(theGraphics, myStartRectangle, myStartGameTitle);
 
         myQuitRectangle = new RoundRectangle2D.Double(myDungeonPanel.getMyTileSize() * 6, myDungeonPanel.getMyTileSize() * 9, myDungeonPanel.getMyTileSize() * 4, myDungeonPanel.getMyTileSize(), 20, 20);
+        String myQuitGameTitle = "QUIT GAME";
         drawRoundedButton(theGraphics, myQuitRectangle, myQuitGameTitle);
 
         myLoadRectangle = new RoundRectangle2D.Double(myDungeonPanel.getMyTileSize() * 6, myDungeonPanel.getMyTileSize() * 7, myDungeonPanel.getMyTileSize() * 4, myDungeonPanel.getMyTileSize(), 20, 20);
+        String myLoadGameTitle = "LOAD GAME";
         drawRoundedButton(theGraphics, myLoadRectangle, myLoadGameTitle);
 
         if (myGameControls.isStartGameClicked()) {
@@ -486,17 +476,15 @@ public class GameUI {
         return myInventoryRectangle;
     }
 
-    public Map<String, Rectangle> getItemRectangles() {
-        return itemRectangles;
-    }
-
-
-    public BufferedImage getGameOver() {
-        return gameOver;
+    public Map<String, Rectangle> getMyItemRectangles() {
+        return myItemRectangles;
     }
 
     public Rectangle getMyCloseWindowRectangle() {
         return myCloseWindowRectangle;
     }
 
+    public int getMyMazeSize() {
+        return myMazeSize;
+    }
 }

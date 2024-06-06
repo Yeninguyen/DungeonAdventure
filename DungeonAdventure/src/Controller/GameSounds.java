@@ -13,7 +13,7 @@ public class GameSounds {
 
     }
 
-    public void playClickSound(int theSoundNumber){
+    public void playClickSound(final int theSoundNumber){
         String filePath = "";
         switch (theSoundNumber) {
             case 1 -> filePath = myButtonClickedSound;
