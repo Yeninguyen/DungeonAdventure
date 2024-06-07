@@ -94,20 +94,20 @@ public class GameControls implements KeyListener, MouseListener {
         int keyCode = theKeyEvent.getKeyCode();
         if (keyCode == KeyEvent.VK_UP) {
             myUpArrow = true;
-            myGameUi.getMyCharacter().setMoving(true);
+            myGameUi.getMyCharacter().setMyPlayerIsMoving(true);
         }
         if (keyCode == KeyEvent.VK_DOWN) {
             myDownArrow = true;
-            myGameUi.getMyCharacter().setMoving(true);
+            myGameUi.getMyCharacter().setMyPlayerIsMoving(true);
         }
         if (keyCode == KeyEvent.VK_LEFT) {
             myLeftArrow = true;
-            myGameUi.getMyCharacter().setMoving(true);
+            myGameUi.getMyCharacter().setMyPlayerIsMoving(true);
 
         }
         if (keyCode == KeyEvent.VK_RIGHT) {
             myRightArrow = true;
-            myGameUi.getMyCharacter().setMoving(true);
+            myGameUi.getMyCharacter().setMyPlayerIsMoving(true);
         }
         if (keyCode == KeyEvent.VK_SPACE) {
             mySpaceKeyPressed = true;
@@ -117,7 +117,7 @@ public class GameControls implements KeyListener, MouseListener {
         }
         if (myInventorySelected) {
             myCloseInventory = false;
-            if (myGameUi.getItemRectangles().size() > 1) {
+            if (myGameUi.getMyItemRectangles().size() > 1) {
                 if (keyCode == KeyEvent.VK_V) {
                     myVisionPotionSelected = true;
                 }
@@ -134,19 +134,19 @@ public class GameControls implements KeyListener, MouseListener {
         int keyCode = theKeyEvent.getKeyCode();
         if (keyCode == KeyEvent.VK_UP) {
             myUpArrow = false;
-            myGameUi.getMyCharacter().setMoving(false);
+            myGameUi.getMyCharacter().setMyPlayerIsMoving(false);
         }
         if (keyCode == KeyEvent.VK_DOWN) {
             myDownArrow = false;
-            myGameUi.getMyCharacter().setMoving(false);
+            myGameUi.getMyCharacter().setMyPlayerIsMoving(false);
         }
         if (keyCode == KeyEvent.VK_LEFT) {
             myLeftArrow = false;
-            myGameUi.getMyCharacter().setMoving(false);
+            myGameUi.getMyCharacter().setMyPlayerIsMoving(false);
         }
         if (keyCode == KeyEvent.VK_RIGHT) {
             myRightArrow = false;
-            myGameUi.getMyCharacter().setMoving(false);
+            myGameUi.getMyCharacter().setMyPlayerIsMoving(false);
         }
         if (keyCode == KeyEvent.VK_SPACE) {
             mySpaceKeyPressed = false;
@@ -262,13 +262,13 @@ public class GameControls implements KeyListener, MouseListener {
             }
             if(myInventorySelected) {
                 myCloseInventory = false;
-                if (myGameUi.getItemRectangles().containsKey("V")) {
-                    if (myGameUi.getItemRectangles().get("V").contains(e.getPoint())) {
+                if (myGameUi.getMyItemRectangles().containsKey("V")) {
+                    if (myGameUi.getMyItemRectangles().get("V").contains(e.getPoint())) {
                         myVisionPotionSelected = true;
                     }
                 }
-                    if (myGameUi.getItemRectangles().containsKey("H")) {
-                        if (myGameUi.getItemRectangles().get("H").contains(e.getPoint())) {
+                    if (myGameUi.getMyItemRectangles().containsKey("H")) {
+                        if (myGameUi.getMyItemRectangles().get("H").contains(e.getPoint())) {
                             myHealthPotionSelected = true;
                         }
                 }
@@ -286,10 +286,10 @@ public class GameControls implements KeyListener, MouseListener {
     @Override
     public void mouseReleased(MouseEvent e) {
         if (myGameUi.getMyDungeonPanel().getGameState() == myGameUi.getMyDungeonPanel().getPlayState()) {
-            if (myGameUi.getItemRectangles().containsKey("V") && myGameUi.getItemRectangles().get("V").contains(e.getPoint())) {
+            if (myGameUi.getMyItemRectangles().containsKey("V") && myGameUi.getMyItemRectangles().get("V").contains(e.getPoint())) {
                 myVisionPotionSelected = false;
             }
-            if (myGameUi.getItemRectangles().containsKey("H") && myGameUi.getItemRectangles().get("H").contains(e.getPoint())) {
+            if (myGameUi.getMyItemRectangles().containsKey("H") && myGameUi.getMyItemRectangles().get("H").contains(e.getPoint())) {
                myHealthPotionSelected = false;
             }
             if(myGameUi.getMyTileManager().getMyCloseBattleWindow() != null && myGameUi.getMyTileManager().getMyCloseBattleWindow().contains(e.getPoint())){
@@ -367,12 +367,12 @@ public class GameControls implements KeyListener, MouseListener {
         return myHealthPotionSelected;
     }
 
-    public void setMyVisionPotionSelected(boolean myVisionPotionSelected) {
-        this.myVisionPotionSelected = myVisionPotionSelected;
+    public void setMyVisionPotionSelected(boolean theVisionPotionSelected) {
+        myVisionPotionSelected = theVisionPotionSelected;
     }
 
-    public void setMyHealthPotionSelected(boolean myHealthPotionSelected) {
-        this.myHealthPotionSelected = myHealthPotionSelected;
+    public void setMyHealthPotionSelected(boolean theHealthPotionSelected) {
+        myHealthPotionSelected = theHealthPotionSelected;
     }
 
     public boolean isMyStartOverGameClicked() {
@@ -387,7 +387,7 @@ public class GameControls implements KeyListener, MouseListener {
         return myCloseBattleWindow;
     }
 
-    public void setMyCloseBattleWindow(boolean myCloseBattleWindow) {
-        this.myCloseBattleWindow = myCloseBattleWindow;
+    public void setMyCloseBattleWindow(boolean theCloseBattleWindow) {
+        myCloseBattleWindow = theCloseBattleWindow;
     }
 }

@@ -8,89 +8,85 @@ import java.awt.image.BufferedImage;
 import java.sql.SQLException;
 
 public class SuperItems {
-    private BufferedImage image;
-    private String name;
-    private boolean collision = false;
-    private int worldX, worldY;
+    private BufferedImage myImage;
+    private String myName;
+    private boolean myCollision = false;
+    private int myX;
+    private int myY;
 
-    public int soldAreaDefaultX = 0, solidAreaDefaultY = 0;
-    GameUI myGameUI;
+    private int mySolidAreaDefaultX = 0;
+
+    private int mySolidAreaDefaultY = 0;
+    private final GameUI myGameUI;
 
     public Rectangle solidArea = new Rectangle(0,0,40,40);
 
-    private Monster myMonster;
 
-    private static SuperItems myInstance;
-
-
-    public SuperItems(GameUI myGameUI) {
-        this.myGameUI = myGameUI;
-        init();
+    public SuperItems(final GameUI theGameUi) {
+        myGameUI = theGameUi;
     }
 
-    public void draw(Graphics2D theGraphics2D) {
+    public void draw(final Graphics2D theGraphics2D) {
         int bound = myGameUI.getMyDungeonPanel().getMyTileSize();
-        int screenX = worldX - myGameUI.getMyCharacter().getMyX() + myGameUI.getMyCharacter().getScreenX();
-        int screenY = worldY - myGameUI.getMyCharacter().getMyY() + myGameUI.getMyCharacter().getScreenY();
+        int screenX = myX - myGameUI.getMyCharacter().getMyX() + myGameUI.getMyCharacter().getMyScreenX();
+        int screenY = myY - myGameUI.getMyCharacter().getMyY() + myGameUI.getMyCharacter().getMyScreenY();
 
-        if(worldX + bound > myGameUI.getMyCharacter().getMyX() - myGameUI.getMyCharacter().getScreenX() &&
-                worldX - bound < myGameUI.getMyCharacter().getMyX() + myGameUI.getMyCharacter().getScreenX() &&
-                worldY  + bound> myGameUI.getMyCharacter().getMyY() - myGameUI.getMyCharacter().getScreenY() &&
-                worldY  - bound< myGameUI.getMyCharacter().getMyY() + myGameUI.getMyCharacter().getScreenY()){
-            theGraphics2D.drawImage(image, screenX + 10, screenY + 10, myGameUI.getMyDungeonPanel().getMyTileSize() - 30, myGameUI.getMyDungeonPanel().getMyTileSize() - 30, null);
+        if(myX + bound > myGameUI.getMyCharacter().getMyX() - myGameUI.getMyCharacter().getMyScreenX() &&
+                myX - bound < myGameUI.getMyCharacter().getMyX() + myGameUI.getMyCharacter().getMyScreenX() &&
+                myY + bound> myGameUI.getMyCharacter().getMyY() - myGameUI.getMyCharacter().getMyScreenY() &&
+                myY - bound< myGameUI.getMyCharacter().getMyY() + myGameUI.getMyCharacter().getMyScreenY()){
+            theGraphics2D.drawImage(myImage, screenX + 10, screenY + 10, myGameUI.getMyDungeonPanel().getMyTileSize() - 30, myGameUI.getMyDungeonPanel().getMyTileSize() - 30, null);
         }
     }
 
-    private void init()  {
 
-        // Create a Monster instance from the database
-        myMonster = null;
-        try {
-            myMonster = MonsterDatabase.getMonster(name);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
+    public BufferedImage getMyImage() {
+        return myImage;
     }
 
-    public BufferedImage getImage() {
-        return image;
+    public String getMyName() {
+        return myName;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public boolean isCollision() {
-        return collision;
+    public boolean isMyCollisoin() {
+        return myCollision;
     }
 
     public int getWorldX() {
-        return worldX;
+        return myX;
     }
 
-    public int getWorldY() {
-        return worldY;
+    public int getMyY() {
+        return myY;
     }
 
-    public void setImage(BufferedImage image) {
-        this.image = image;
+    public void setMyImage(final BufferedImage theImage) {
+        myImage = theImage;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMyName(final String theName) {
+        myName = theName;
     }
 
-    public void setCollision(boolean collision) {
-        this.collision = collision;
+    public void setMyCollisoin(final boolean theCollision) {
+        myCollision = theCollision;
     }
 
-    public void setWorldX(int worldX) {
-        this.worldX = worldX;
+    public void setWorldX(final int theX) {
+        myX = theX;
     }
 
-    public void setWorldY(int worldY) {
-        this.worldY = worldY;
+    public void setMyY(final int theY) {
+        myY = theY;
     }
 
 
+    public int getMySolidAreaDefaultX() {
+        return mySolidAreaDefaultX;
+    }
+
+    public int getMySolidAreaDefaultY() {
+        return mySolidAreaDefaultY;
+    }
 }

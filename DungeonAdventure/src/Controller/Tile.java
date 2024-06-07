@@ -4,15 +4,6 @@ import java.awt.image.BufferedImage;
 
 public class Tile {
 
-
-    private static Tile myInstance;
-
-    public static Tile getMyInstance() {
-        if(myInstance == null){
-            myInstance = new Tile();
-        }
-        return myInstance;
-    }
     private boolean mySolid = false;
     private BufferedImage myTileImage;
 
@@ -24,13 +15,13 @@ public class Tile {
         return myTileImage;
     }
 
-    public void setMySolid(boolean mySolid) {
-        this.mySolid = mySolid;
+    public void setMySolid(final boolean theSolid) {
+        mySolid = theSolid;
     }
 
 
 
-    public void setMyTileImage(BufferedImage myTileImage) {
-        this.myTileImage = myTileImage;
+    public void setMyTileImage(final BufferedImage theTileImage) {
+        myTileImage = theTileImage;
     }
 }
