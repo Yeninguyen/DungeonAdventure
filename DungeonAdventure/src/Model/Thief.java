@@ -4,7 +4,6 @@ import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.util.Objects;
 
-import static Model.PlayersConstants.*;
 
 public class Thief extends Hero{
     private static Thief myUniqueInstance;
