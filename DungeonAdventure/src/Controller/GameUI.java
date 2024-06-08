@@ -8,9 +8,10 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
-public class GameUI {
+public class GameUI  {
     private int myMazeSize;
     private Map<String, Rectangle> myItemRectangles;
 
@@ -44,7 +45,7 @@ public class GameUI {
 
     private BufferedImage mySelectionImg;
 
-    private final DungeonPanel myDungeonPanel;
+    private DungeonPanel myDungeonPanel;
     private Characters myCharacter;
     private final TileManager myTileManager = new TileManager(this);
     private Dungeon myDungeon;
@@ -65,6 +66,9 @@ public class GameUI {
         myCharacter = new Characters(this);
         loadImages();
     }
+
+
+
 
 
     public void loadImages() {
@@ -393,6 +397,10 @@ public class GameUI {
 
         if (myGameControls.isStartGameClicked()) {
             myDungeonPanel.setGameState(myDungeonPanel.getSelectionState());
+        }
+
+        if (myGameControls.isMyLeftArrow()) {
+
         }
 
         if (myGameControls.isQuitGameClicked()) {

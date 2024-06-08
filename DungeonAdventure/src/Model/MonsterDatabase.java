@@ -4,12 +4,29 @@ import org.sqlite.SQLiteDataSource;
 
 import java.sql.*;
 
+/**
+ * The MonsterDatabase class provides methods to retrieve Monster objects from a SQLite database.
+ * It uses the Singleton design pattern to ensure only one instance of the database is used.
+ */
 public class MonsterDatabase {
-    public static MonsterDatabase myUniqueInstance;
 
+    /**
+     * The unique instance field of the MonsterDatabase.
+     */
+    private static MonsterDatabase myUniqueInstance;
+
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private MonsterDatabase() {
     }
 
+    /**
+     * This is the method retrieves a Monster from the database based on the monster's name.
+     * @param theMonsterName The name of the monster to retrieve.
+     * @return The Monster object if found, otherwise null.
+     * @throws SQLException if a database access error occurs.
+     */
     public static Monster getMonster(String theMonsterName) throws SQLException {
         SQLiteDataSource ds = new SQLiteDataSource();
         ds.setUrl("jdbc:sqlite:monster.db");
@@ -43,6 +60,10 @@ public class MonsterDatabase {
         return monster;
     }
 
+    /**
+     * This is the method gets the unique instance of the MonsterDatabase.
+     * @return The unique instance of the MonsterDatabase.
+     */
     public static MonsterDatabase getMyUniqueInstance() {
         if (myUniqueInstance == null) {
             myUniqueInstance = new MonsterDatabase();
@@ -50,6 +71,10 @@ public class MonsterDatabase {
         return myUniqueInstance;
     }
 
+    /**
+     * This is a method gets a new instance of the MonsterDatabase for testing purposes.
+     * @return A new instance of the MonsterDatabase.
+     */
     public static MonsterDatabase getMy_TEST_Instance() {
         return new MonsterDatabase();
     }

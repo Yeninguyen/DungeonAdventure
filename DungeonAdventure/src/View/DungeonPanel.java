@@ -9,11 +9,12 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 
 
-public class DungeonPanel extends JPanel implements Runnable {
+public class DungeonPanel extends JPanel implements Runnable, Serializable {
     //Screen Setting
     private static final int myOriginalTileSize = 16; // 16px   // 704 x
     public static final int myTileSize = myOriginalTileSize * 4; // 64 pixel
@@ -34,7 +35,7 @@ public class DungeonPanel extends JPanel implements Runnable {
     private final int pauseState = 3;
 
     private final int gameOverState = 4;
-    private final GameUI myGameUi;
+    final GameUI myGameUi;
     private final GameSounds myGameSounds;
     private Lighting myLighting;
     private Thread gameThread;
@@ -50,6 +51,7 @@ public class DungeonPanel extends JPanel implements Runnable {
     private final Map<String, Monsters> myDefaultMonsters;
 
     private static DungeonPanel MY_INSTANCE;
+    private static final long serialVersionUID = 1L;
 
 
     private DungeonPanel() {
@@ -110,6 +112,7 @@ public class DungeonPanel extends JPanel implements Runnable {
         Graphics2D graphics2D = (Graphics2D) g;
         if (gameState == playState) {
             myGameUi.drawPlayer(graphics2D);
+
             for (SuperItems myPillarItem : myItems) {
                 if (myPillarItem != null) {
                     myPillarItem.draw(graphics2D);
@@ -134,6 +137,8 @@ public class DungeonPanel extends JPanel implements Runnable {
             myGameUi.drawCharacterSelection(graphics2D);
         } else if (gameState == myBeginningState) {
             myGameUi.drawTitleScreen(graphics2D);
+
+
         }
         graphics2D.dispose();
     }
@@ -158,7 +163,11 @@ public class DungeonPanel extends JPanel implements Runnable {
         for (SuperItems item : myItems) {
             int x = (int) (item.getWorldX() * miniMapScale);
             int y = (int) (item.getMyY() * miniMapScale);
-            g2d.setColor(Color.BLUE); // Set color for items
+            if (item.getMyName().equals("X")) {
+                g2d.setColor(Color.GREEN); // Set color for items
+            } else {
+                g2d.setColor(Color.BLUE); // Set color for items
+            }
             g2d.fillRect(x, y, 4, 4); // Draw item as a small square
         }
 
@@ -185,16 +194,19 @@ public class DungeonPanel extends JPanel implements Runnable {
         BufferedImage visionPotionImg = null;
         BufferedImage healthPotionImg = null;
         BufferedImage exitChestImg = null;
+        BufferedImage pitImg = null;
         SuperItems pillarP = new SuperItems(myGameUi);
         SuperItems pillarA = new SuperItems(myGameUi);
         SuperItems pillarE = new SuperItems(myGameUi);
         SuperItems pillarI = new SuperItems(myGameUi);
         SuperItems multipleItems = new SuperItems(myGameUi);
         SuperItems exitChest = new SuperItems(myGameUi);
+        SuperItems pit = new SuperItems(myGameUi);
         pillarP.setMyName("P");
         pillarA.setMyName("A");
         pillarE.setMyName("E");
         pillarI.setMyName("I");
+        pit.setMyName("X");
         multipleItems.setMyName("M");
         exitChest.setMyName("o");
 
@@ -211,6 +223,7 @@ public class DungeonPanel extends JPanel implements Runnable {
             gremlinImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/MonsterImages/Gremlin.png")));
             ogreImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/MonsterImages/Ogre.png")));
             skeletonImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/MonsterImages/Skeleton.png")));
+            pitImg = (ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/Pit.png"))));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -219,6 +232,7 @@ public class DungeonPanel extends JPanel implements Runnable {
         myDefaultItems.put(pillarI.getMyName(), pillarI);
         myDefaultItems.put(pillarP.getMyName(), pillarP);
         myDefaultItems.put(pillarA.getMyName(), pillarA);
+
 
 
 
@@ -280,6 +294,20 @@ public class DungeonPanel extends JPanel implements Runnable {
             pillarI.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
             pillarI.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
             myItems.add(pillarI);
+        }
+
+        for (int i = 0; i < myGameUi.getMyTileManager().getMyPitCoordinates().size(); i += 2) {
+            SuperItems pits = new SuperItems(myGameUi);
+            pits.setMyName("X");
+            pits.setMyImage(pitImg);
+            pits.setMyY(myGameUi.getMyTileManager().getMyPitCoordinates().get(i) * 64);
+            pits.setWorldX(myGameUi.getMyTileManager().getMyPitCoordinates().get(i + 1) * 64);
+            pits.solidArea.x = pits.getWorldX() + pits.getMySolidAreaDefaultX();
+            pits.solidArea.y = pits.getMyY() + pits.getMySolidAreaDefaultY();
+            pits.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            pits.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            myItems.add(pits);
+
         }
 
         for (int i = 0; i < myGameUi.getMyTileManager().getMyVisionPotionCoordinatesList().size(); i += 2) {
@@ -357,6 +385,8 @@ public class DungeonPanel extends JPanel implements Runnable {
         }
 
 
+
+
     }
 
     public void drawGameOverScreen(Graphics2D theGraphics, String theTitle) {
@@ -383,6 +413,13 @@ public class DungeonPanel extends JPanel implements Runnable {
 
     }
 
+//    public void saveGame(String fileName) {
+//        SaveLoad.saveGame(this, fileName);
+//    }
+//
+//    public Object loadGame(String fileName) {
+//        return SaveLoad.loadGame(fileName);
+ //   }
     public int getXforCenteredText() {
         return myHeight / 2;
     }

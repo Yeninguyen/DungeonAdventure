@@ -1,5 +1,9 @@
 package Controller;
 
+import Model.Priestess;
+import Model.Thief;
+import Model.Warrior;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -32,6 +36,7 @@ public class TileManager {
     private final ArrayList<Integer> myVisionPotionCoordinatesList;
     private final ArrayList<Integer> myHealthPotionCoordinatesList;
     private int[] myMultipleCoordinates;
+    private  ArrayList<Integer> myPitCoordinates;
 
     private final Map<String, Integer> myItemCollisionFrequency;
 
@@ -70,6 +75,7 @@ public class TileManager {
     private String[][] mapTileNums;
 
 
+
     TileManager(final GameUI theGameUi) {
         myGameUi = theGameUi;
         myTile = new HashMap<>();
@@ -80,6 +86,7 @@ public class TileManager {
         myGremlinCoordinatesList = new ArrayList<>();
         myItemCollisionFrequency = new HashMap<>();
         myDungeonAdventurer = new DungeonAdventure();
+        myPitCoordinates = new ArrayList<>();
         getTileImage();
     }
 
@@ -115,8 +122,8 @@ public class TileManager {
 
             switch (title) {
                 case myHealthPotion, myVisionPotion, myEntrance, myPillarP, myPillarI,
-                        myPillarE, myExit, myMultiple, myPit, myEmpty,
-                        myPillarA, myOgre, myGremlin, mySkeleton -> title = "-";
+                     myPillarE, myExit, myMultiple, myPit, myEmpty,
+                     myPillarA, myOgre, myGremlin, mySkeleton -> title = "-";
             }
 
             int bound = myGameUi.getMyDungeonPanel().getMyTileSize();
@@ -152,6 +159,7 @@ public class TileManager {
         myGameUi.getMyDungeon().writeMazeToFile(path);
         loadMap();
     }
+
     public void loadMap(){
         try (BufferedReader reader = new BufferedReader(new FileReader(("DungeonAdventure/src/Maps/Maze.txt")))){
             for(int row = 0; row < this.myRow; row++) { // 20
@@ -159,62 +167,66 @@ public class TileManager {
                 for(int col = 0; col < this.myCol; col++) { // 20
                     String[] numbers = line.split(" "); // * * A *
                     String s = numbers[col];
-                if(s.equals("i")){
-                    myEntranceRow = row;
-                    myEntranceCol = col;
-                }
-                if(s.equals("M")){
-                    myMultipleCoordinates = new int[2];
-                    myMultipleCoordinates[0] = row;
-                    myMultipleCoordinates[1] = col;
-                }
-                if(s.equals("A")){
-                    myPillarACoordinates = new int[2];
-                    myPillarACoordinates[0] = row;
-                    myPillarACoordinates[1] = col;
-                }
-                if(s.equals("I")){
-                    myPillarICoordinates = new int[2];
-                    myPillarICoordinates[0] = row;
-                    myPillarICoordinates[1] = col;
-                }
+                    if(s.equals("i")){
+                        myEntranceRow = row;
+                        myEntranceCol = col;
+                    }
+                    if(s.equals("M")){
+                        myMultipleCoordinates = new int[2];
+                        myMultipleCoordinates[0] = row;
+                        myMultipleCoordinates[1] = col;
+                    }
+                    if(s.equals("A")){
+                        myPillarACoordinates = new int[2];
+                        myPillarACoordinates[0] = row;
+                        myPillarACoordinates[1] = col;
+                    }
+                    if(s.equals("I")){
+                        myPillarICoordinates = new int[2];
+                        myPillarICoordinates[0] = row;
+                        myPillarICoordinates[1] = col;
+                    }
 
-                if(s.equals("E")){
-                    myPillarECoordinates = new int[2];
-                    myPillarECoordinates[0] = row;
-                    myPillarECoordinates[1] = col;
-                }
+                    if(s.equals("E")){
+                        myPillarECoordinates = new int[2];
+                        myPillarECoordinates[0] = row;
+                        myPillarECoordinates[1] = col;
+                    }
 
-                if(s.equals("H")){
-                    myHealthPotionCoordinatesList.add(row);
-                    myHealthPotionCoordinatesList.add(col);
-                }
-                if(s.equals("V")){
-                    myVisionPotionCoordinatesList.add(row);
-                    myVisionPotionCoordinatesList.add(col);
-                }
-                if(s.equals("O")){
-                    myOgreCoordinatesList.add(row);
-                    myOgreCoordinatesList.add(col);
-                }
-                if(s.equals("G")){
-                    myGremlinCoordinatesList.add(row);
-                    myGremlinCoordinatesList.add(col);
-                }
-                if(s.equals("S")){
-                    mySkeletonCoordinatesList.add(row);
-                    mySkeletonCoordinatesList.add(col);
-                }
-                if(s.equals("P")){
-                    myPillarPCoordinates = new int[2];
-                    myPillarPCoordinates[0] = row;
-                    myPillarPCoordinates[1] = col;
-                }
-                if(s.equals("o")){
-                    myExitCoordinates = new int[2];
-                    myExitCoordinates[0] = row;
-                    myExitCoordinates[1] = col;
-                }
+                    if(s.equals("H")){
+                        myHealthPotionCoordinatesList.add(row);
+                        myHealthPotionCoordinatesList.add(col);
+                    }
+                    if(s.equals("V")){
+                        myVisionPotionCoordinatesList.add(row);
+                        myVisionPotionCoordinatesList.add(col);
+                    }
+                    if(s.equals("O")){
+                        myOgreCoordinatesList.add(row);
+                        myOgreCoordinatesList.add(col);
+                    }
+                    if(s.equals("G")){
+                        myGremlinCoordinatesList.add(row);
+                        myGremlinCoordinatesList.add(col);
+                    }
+                    if(s.equals("S")){
+                        mySkeletonCoordinatesList.add(row);
+                        mySkeletonCoordinatesList.add(col);
+                    }
+                    if(s.equals("X")){
+                        myPitCoordinates.add(row);
+                        myPitCoordinates.add(col);
+                    }
+                    if(s.equals("P")){
+                        myPillarPCoordinates = new int[2];
+                        myPillarPCoordinates[0] = row;
+                        myPillarPCoordinates[1] = col;
+                    }
+                    if(s.equals("o")){
+                        myExitCoordinates = new int[2];
+                        myExitCoordinates[0] = row;
+                        myExitCoordinates[1] = col;
+                    }
                     mapTileNums[row][col] = s;
                 }
             }
@@ -294,7 +306,7 @@ public class TileManager {
                 }
             }
         }
-            return isTileSolid;
+        return isTileSolid;
     }
 
 
@@ -359,7 +371,7 @@ public class TileManager {
             if ( Math.random() < 0.5) {
                 // Character attacks
                 beforeBattle = monsterEncountered.getMyMonster().getMyHitPoints();
-               // boolean characterAttackSuccess = battle(myGameUi.getMyCharacter().getCharacterType(), monsterEncountered.getMyMonster());
+                // boolean characterAttackSuccess = battle(myGameUi.getMyCharacter().getCharacterType(), monsterEncountered.getMyMonster());
                 myDungeonAdventurer.battle(myGameUi.getMyCharacter().getCharacterType(), monsterEncountered.getMyMonster());
                 afterBattle = monsterEncountered.getMyMonster().getMyHitPoints();
 
@@ -376,11 +388,41 @@ public class TileManager {
                             .append(monsterEncountered.getMonsterType())
                             .append(".")
                             .append("\n");
+                } if(myGameUi.getMyCharacter().getCharacterType() instanceof Warrior){
+                    Warrior warrior = ((Warrior) myGameUi.getMyCharacter().getCharacterType());
+                    if(warrior.getMySpecialSuccess()){
+                        resultMessage.append("You successfully landed a")
+                                .append(" Landing Blow for ")
+                                .append(warrior.getMySpecialAmount())
+                                .append(" damage!")
+                                .append("\n");
+                        warrior.setMySpecialSuccess(false);
+                    }
+                } else if(myGameUi.getMyCharacter().getCharacterType() instanceof Priestess){
+                    Priestess priestess = ((Priestess) myGameUi.getMyCharacter().getCharacterType());
+                    if(priestess.getMySpecialSuccess()){
+                        resultMessage.append("You successfully used special")
+                                .append(" healing for ")
+                                .append(priestess.getMySpecialAmount())
+                                .append(" hit points!")
+                                .append("\n");
+                        priestess.setMySpecialSuccess(false);
+                    }
+                } else if(myGameUi.getMyCharacter().getCharacterType() instanceof Thief){
+                    Thief thief = ((Thief) myGameUi.getMyCharacter().getCharacterType());
+                    if(thief.getMySpecialSuccess()){
+                        resultMessage.append("You successfully landed a")
+                                .append(" surprise attack for ")
+                                .append(thief.getMySpecialAmount())
+                                .append(" damage!")
+                                .append("\n");
+                        thief.setMySpecialSuccess(false);
+                    }
                 }
             } else {
                 // Monster attacks
                 beforeBattle = myGameUi.getMyCharacter().getCharacterType().getMyHitPoints();
-                 myDungeonAdventurer.battle(monsterEncountered.getMyMonster(), myGameUi.getMyCharacter().getCharacterType());
+                myDungeonAdventurer.battle(monsterEncountered.getMyMonster(), myGameUi.getMyCharacter().getCharacterType());
                 afterBattle = myGameUi.getMyCharacter().getCharacterType().getMyHitPoints();
 
                 boolean monsterAttackSuccess = beforeBattle > afterBattle;
@@ -397,6 +439,14 @@ public class TileManager {
                             .append(" unsuccessfully battled with ")
                             .append(myGameUi.getMyCharacter().getCharacterType().getMyName())
                             .append(".")
+                            .append("\n");
+                }
+                if(monsterEncountered.getMyMonster().getMyHealed()){
+                    resultMessage.append(monsterEncountered.getMonsterType())
+                            .append(" Was able to heal")
+                            .append(" for")
+                            .append(monsterEncountered.getMyMonster().getMyHealedAmount())
+                            .append(" hit points.")
                             .append("\n");
                 }
             }
@@ -503,5 +553,9 @@ public class TileManager {
 
     public int getMyEntranceCol() {
         return myEntranceCol;
+    }
+
+    public ArrayList<Integer> getMyPitCoordinates() {
+        return myPitCoordinates;
     }
 }

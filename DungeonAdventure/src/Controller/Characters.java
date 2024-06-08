@@ -41,10 +41,10 @@ public class Characters {
     private int myMaxHeroHitPoint;
     private Direction direction = Direction.EAST;
 
-    public static final int RUNNING_RIGHT = 1;
-    public static final int RUNNING_LEFT = 2;
-    public static final int RUNNING_DOWN = 3;
-    public static final int RUNNING_UP = 4;
+    private static final int RUNNING_RIGHT = 1;
+    private static final int RUNNING_LEFT = 2;
+    private static final int RUNNING_DOWN = 3;
+    private static final int RUNNING_UP = 4;
 
 
     public Characters(final GameUI theGameUI) {
@@ -262,7 +262,7 @@ public class Characters {
     }
 
 
-    public void setMyPlayerIsMoving(boolean myPlayerIsMoving) {
+    public void setMyPlayerIsMoving(final boolean myPlayerIsMoving) {
         this.myPlayerIsMoving = myPlayerIsMoving;
     }
 
@@ -302,7 +302,7 @@ public class Characters {
     }
 
 
-    public void drawHitBox(Graphics2D theGraphics) {
+    public void drawHitBox(final Graphics2D theGraphics) {
         //debugging
         theGraphics.setColor(Color.RED);
         theGraphics.drawRect(myScreenX, myScreenY, myWarrior.getMyHitBox().width, myWarrior.getMyHitBox().height);
@@ -375,7 +375,7 @@ public class Characters {
         return hero;
     }
 
-    public void setMyPlayerSpeed(int myPlayerSpeed) {
+    public void setMyPlayerSpeed(final int myPlayerSpeed) {
         this.myPlayerSpeed = myPlayerSpeed;
     }
 
@@ -392,7 +392,7 @@ public class Characters {
         return myMaxHeroHitPoint;
     }
 
-    public void setMyMaxHeroHitPoint(int myMaxHeroHitPoint) {
+    public void setMyMaxHeroHitPoint(final int myMaxHeroHitPoint) {
         this.myMaxHeroHitPoint = myMaxHeroHitPoint;
     }
 }

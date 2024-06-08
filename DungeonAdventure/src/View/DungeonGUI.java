@@ -1,3 +1,8 @@
+/**
+ * Team members: Pham Nguyen, Faisal Nur, Ali Mohamed
+ * Class: TCSS360
+ * Date: Jun 7, 2024
+ */
 package View;
 
 import javax.swing.*;
@@ -52,11 +57,20 @@ public class DungeonGUI extends JFrame {
                 }
             }
         });
+
+//        saveGame.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                // Call the saveGame method in DungeonPanel or GameUI
+//                DungeonPanel.getMyInstance().saveGame("savedGame.dat");
+//            }
+//        });
+
+
         saveGame.setAccelerator(KeyStroke.getKeyStroke("control S"));
-        //reset.setAccelerator(KeyStroke.getKeyStroke("control X"));
         exit.setAccelerator(KeyStroke.getKeyStroke("control E"));
         game.add(saveGame);
-        //game.add(reset);
+
         game.add(exit);
 
         JMenu help = new JMenu("Help");

@@ -57,21 +57,6 @@ public class GameControls implements KeyListener, MouseListener {
         myGameUi = thePlayerUI;
     }
 
-    public boolean isMyUpArrow() {
-        return myUpArrow;
-    }
-
-    public boolean isMyDownArrow() {
-        return myDownArrow;
-    }
-
-    public boolean isMyLeftArrow() {
-        return myLeftArrow;
-    }
-
-    public boolean isMyRightArrow() {
-        return myRightArrow;
-    }
 
 
     @Override
@@ -390,4 +375,22 @@ public class GameControls implements KeyListener, MouseListener {
     public void setMyCloseBattleWindow(boolean theCloseBattleWindow) {
         myCloseBattleWindow = theCloseBattleWindow;
     }
+
+    public boolean isMyUpArrow() {
+        return myUpArrow;
+    }
+
+    public boolean isMyDownArrow() {
+        return myDownArrow;
+    }
+
+    public boolean isMyLeftArrow() {
+        return myLeftArrow;
+    }
+
+    public boolean isMyRightArrow() {
+        return myRightArrow;
+    }
+
+
 }
