@@ -1,9 +1,11 @@
 package Model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class Room {
+public class Room implements Serializable {
     private int myHealingPotionAmount;
     private int myPitAmount;
     private boolean myEntrance;
@@ -18,8 +20,7 @@ public class Room {
     private double myChanceForMonster;
 
     private String myMonsterName;
-    private final static ArrayList<String> MONSTER_NAMES = new ArrayList<>(Arrays.asList("Ogre","Gremlin","Skeleton"));
-
+    private final static List<String> MONSTER_NAMES = new ArrayList<>(Arrays.asList("Ogre", "Gremlin", "Skeleton"));
     public void setMyMonsterName(String theMonsterName) {
         myMonsterName = theMonsterName;
     }

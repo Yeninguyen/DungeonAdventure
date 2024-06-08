@@ -13,11 +13,14 @@ import java.util.*;
 import java.util.List;
 
 
+
 public class DungeonPanel extends JPanel implements Runnable {
     //Screen Setting
     private static final int myOriginalTileSize = 16; // 16px   // 704 x
     public static final int myTileSize = myOriginalTileSize * 4; // 64 pixel
     private final int myMaxScreenCol = 16; // 16
+
+
 
 
     private final int myMaxScreenRow = 12; // 12
@@ -34,7 +37,9 @@ public class DungeonPanel extends JPanel implements Runnable {
     private final int pauseState = 3;
 
     private final int gameOverState = 4;
-    private final GameUI myGameUi;
+    private GameUI myGameUi = new GameUI(this);
+    private final TileManager myTileManager = new TileManager(this);
+    private Characters myCharacter = new Characters(this);
     private final GameSounds myGameSounds;
     private Lighting myLighting;
     private Thread gameThread;
@@ -43,26 +48,25 @@ public class DungeonPanel extends JPanel implements Runnable {
     public List<Monsters> myMonsters;
     public Map<String, SuperItems> myDefaultItems;
 
-    private final int miniMapSize = 300;
+    private final int miniMapSize = 100;
     private final float miniMapScale = 0.1f;
     private BufferedImage miniMapImage;
 
-    private final Map<String, Monsters> myDefaultMonsters;
+    private Map<String, Monsters> myDefaultMonsters;
 
-    private static DungeonPanel MY_INSTANCE;
+    private final SaveLoad mySaveLoad = new SaveLoad(this);
 
 
-    private DungeonPanel() {
+    DungeonPanel() {
+        myMonsters = new ArrayList<>();
+        myItems = new ArrayList<>();
+        myDefaultItems = new HashMap<>();
+        myDefaultMonsters  = new HashMap<>();
         gameState = myBeginningState;
         this.setPreferredSize(new Dimension(myWidth, myHeight));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
-        myDefaultItems = new HashMap<>();
-        myGameUi = new GameUI(this);
-        myItems = new ArrayList<>();
         myGameSounds = new GameSounds();
-        myMonsters = new ArrayList<>();
-        myDefaultMonsters = new HashMap<>();
         setLighting();
         initMiniMap();
         startGameThread();
@@ -109,8 +113,11 @@ public class DungeonPanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D graphics2D = (Graphics2D) g;
         if (gameState == playState) {
+
+            myTileManager.drawTiles(graphics2D);
             myGameUi.drawPlayer(graphics2D);
-            for (SuperItems myPillarItem : myItems) {
+            List<SuperItems> copyItems = new ArrayList<>(myItems);
+            for (SuperItems myPillarItem : copyItems) {
                 if (myPillarItem != null) {
                     myPillarItem.draw(graphics2D);
                 }
@@ -170,8 +177,8 @@ public class DungeonPanel extends JPanel implements Runnable {
         }
 
         // Draw player position on the mini-map
-        int playerX = (int) (myGameUi.getMyCharacter().getMyX() * miniMapScale);
-        int playerY = (int) (myGameUi.getMyCharacter().getMyY() * miniMapScale);
+        int playerX = (int) (myCharacter.getMyX() * miniMapScale);
+        int playerY = (int) (myCharacter.getMyY() * miniMapScale);
         g2d.setColor(Color.BLACK); // Set color for the player
         g2d.fillRect(playerX, playerY, 6, 6); // Draw player as a small square
 
@@ -179,23 +186,23 @@ public class DungeonPanel extends JPanel implements Runnable {
     }
 
     public void setObjects() {
+
         BufferedImage ogreImg = null;
         BufferedImage gremlinImg = null;
         BufferedImage skeletonImg = null;
         BufferedImage visionPotionImg = null;
         BufferedImage healthPotionImg = null;
-        BufferedImage exitChestImg = null;
+        BufferedImage multipleImg = null;
+        BufferedImage pitImg = null;
         SuperItems pillarP = new SuperItems(myGameUi);
         SuperItems pillarA = new SuperItems(myGameUi);
         SuperItems pillarE = new SuperItems(myGameUi);
         SuperItems pillarI = new SuperItems(myGameUi);
-        SuperItems multipleItems = new SuperItems(myGameUi);
         SuperItems exitChest = new SuperItems(myGameUi);
         pillarP.setMyName("P");
         pillarA.setMyName("A");
         pillarE.setMyName("E");
         pillarI.setMyName("I");
-        multipleItems.setMyName("M");
         exitChest.setMyName("o");
 
 
@@ -207,10 +214,11 @@ public class DungeonPanel extends JPanel implements Runnable {
             visionPotionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/VisionPotion.png")));
             healthPotionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/HealthPotion.png")));
             exitChest.setMyImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/ExitChest.png"))));
-            multipleItems.setMyImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/MultipleItems.png"))));
+            multipleImg = (ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/MultipleItems.png"))));
             gremlinImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/MonsterImages/Gremlin.png")));
             ogreImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/MonsterImages/Ogre.png")));
             skeletonImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/MonsterImages/Skeleton.png")));
+            pitImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/pitImg.png")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -232,15 +240,6 @@ public class DungeonPanel extends JPanel implements Runnable {
             myItems.add(exitChest);
         }
 
-        if (myGameUi.getMyTileManager().getMyMultipleCoordinates() != null) {
-            multipleItems.setMyY(myGameUi.getMyTileManager().getMyMultipleCoordinates()[0] * myTileSize);
-            multipleItems.setWorldX(myGameUi.getMyTileManager().getMyMultipleCoordinates()[1] * myTileSize);
-            multipleItems.solidArea.x = multipleItems.getWorldX() + multipleItems.getMySolidAreaDefaultX();
-            multipleItems.solidArea.y = multipleItems.getMyY() + multipleItems.getMySolidAreaDefaultY();
-            multipleItems.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
-            multipleItems.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
-            myItems.add(multipleItems);
-        }
 
         if (myGameUi.getMyTileManager().getMyPillarPCoordinates() != null) {
             pillarP.setMyY(myGameUi.getMyTileManager().getMyPillarPCoordinates()[0] * myTileSize);
@@ -282,7 +281,22 @@ public class DungeonPanel extends JPanel implements Runnable {
             myItems.add(pillarI);
         }
 
-        for (int i = 0; i < myGameUi.getMyTileManager().getMyVisionPotionCoordinatesList().size(); i += 2) {
+
+        for (int i = 0; i < myGameUi.getMyTileManager().getMyPitCoordinates().size(); i += 2) {
+            SuperItems pits = new SuperItems(myGameUi);
+            pits.setMyName("X");
+            pits.setMyImage(pitImg);
+            pits.setMyY(myGameUi.getMyTileManager().getMyPitCoordinates().get(i) * 64);
+            pits.setWorldX(myGameUi.getMyTileManager().getMyPitCoordinates().get(i + 1) * 64);
+            pits.solidArea.x = pits.getWorldX() + pits.getMySolidAreaDefaultX();
+            pits.solidArea.y = pits.getMyY() + pits.getMySolidAreaDefaultY();
+            pits.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            pits.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            myItems.add(pits);
+
+        }
+
+        for (int i = 0; i < myTileManager.getMyVisionPotionCoordinatesList().size(); i += 2) {
             SuperItems visionPotion = new SuperItems(myGameUi);
             visionPotion.setMyName("V");
             visionPotion.setMyImage(visionPotionImg);
@@ -295,7 +309,22 @@ public class DungeonPanel extends JPanel implements Runnable {
             myItems.add(visionPotion);
             myDefaultItems.put("V", visionPotion);
         }
-        for (int i = 0; i < myGameUi.getMyTileManager().getMyHealthPotionCoordinatesList().size(); i += 2) {
+
+            for (int i = 0; i < myTileManager.getMyMultipleCoordinates().size(); i+=2) {
+                SuperItems multipleItem = new SuperItems(myGameUi);
+                multipleItem.setMyName("M");
+                multipleItem.setMyImage(multipleImg);
+                multipleItem.setMyY(myTileManager.getMyMultipleCoordinates().get(i) * 64);
+                multipleItem.setWorldX(myTileManager.getMyMultipleCoordinates().get(i + 1) * 64);
+                multipleItem.solidArea.x = multipleItem.getWorldX() + multipleItem.getMySolidAreaDefaultX();
+                multipleItem.solidArea.y = multipleItem.getMyY() + multipleItem.getMySolidAreaDefaultY();
+                multipleItem.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+                multipleItem.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+                myItems.add(multipleItem);
+
+        }
+
+        for (int i = 0; i < myTileManager.getMyHealthPotionCoordinatesList().size(); i += 2) {
             SuperItems healthPotion = new SuperItems(myGameUi);
             healthPotion.setMyName("H");
             healthPotion.setMyImage(healthPotionImg);
@@ -310,54 +339,63 @@ public class DungeonPanel extends JPanel implements Runnable {
         }
 
 
-        for (int i = 0; i < myGameUi.getMyTileManager().getMyOgreCoordinatesList().size(); i += 2) {
-            Monsters ogre = new Monsters(myGameUi, "Ogre");
-            ogre.setMonsterType("Ogre");
-            ogre.setMyMonsterImage(ogreImg);
-            ogre.setMyY(myGameUi.getMyTileManager().getMyOgreCoordinatesList().get(i) * 64);
-            ogre.setMyX(myGameUi.getMyTileManager().getMyOgreCoordinatesList().get(i + 1) * 64);
-            ogre.solidArea.x = ogre.getMyX();
-            ogre.solidArea.y = ogre.getMyY();
-            ogre.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() * 3;
-            ogre.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() * 3;
-            myMonsters.add(ogre);
-            // myItems.add(ogre);
-            myDefaultMonsters.put("Ogre", ogre);
+        if (myGameUi.getMyTileManager().getMyOgreCoordinatesList() != null) {
+            for (int i = 0; i < myTileManager.getMyOgreCoordinatesList().size(); i += 2) {
+                Monsters ogre = new Monsters(myGameUi, "Ogre");
+                ogre.setMonsterType("Ogre");
+                ogre.setMyMonsterImage(ogreImg);
+                ogre.setMyY(myGameUi.getMyTileManager().getMyOgreCoordinatesList().get(i) * 64);
+                ogre.setMyX(myGameUi.getMyTileManager().getMyOgreCoordinatesList().get(i + 1) * 64);
+                ogre.solidArea.x = ogre.getMyX();
+                ogre.solidArea.y = ogre.getMyY();
+                ogre.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() * 3;
+                ogre.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() * 3;
+                myMonsters.add(ogre);
+                // myItems.add(ogre);
+                myDefaultMonsters.put("Ogre", ogre);
+            }
         }
 
-        for (int i = 0; i < myGameUi.getMyTileManager().getMyGremlinCoordinatesList().size(); i += 2) {
-            Monsters gremlin = new Monsters(myGameUi, "Gremlin");
-            gremlin.setMyMonsterImage(gremlinImg);
-            gremlin.setMonsterType("Gremlin");
-            gremlin.setMyY(myGameUi.getMyTileManager().getMyGremlinCoordinatesList().get(i) * 64);
-            gremlin.setMyX(myGameUi.getMyTileManager().getMyGremlinCoordinatesList().get(i + 1) * 64);
-            gremlin.solidArea.x = gremlin.getMyX();
-            gremlin.solidArea.y = gremlin.getMyY();
-            gremlin.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() * 3;
-            gremlin.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() * 3;
-            //myItems.add(gremlin);
-            myDefaultMonsters.put("Gremlin", gremlin);
-            myMonsters.add(gremlin);
+        if (myGameUi.getMyTileManager().getMyGremlinCoordinatesList() != null) {
+            for (int i = 0; i < myTileManager.getMyGremlinCoordinatesList().size(); i += 2) {
+                Monsters gremlin = new Monsters(myGameUi, "Gremlin");
+                gremlin.setMyMonsterImage(gremlinImg);
+                gremlin.setMonsterType("Gremlin");
+                gremlin.setMyY(myGameUi.getMyTileManager().getMyGremlinCoordinatesList().get(i) * 64);
+                gremlin.setMyX(myGameUi.getMyTileManager().getMyGremlinCoordinatesList().get(i + 1) * 64);
+                gremlin.solidArea.x = gremlin.getMyX();
+                gremlin.solidArea.y = gremlin.getMyY();
+                gremlin.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() * 3;
+                gremlin.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() * 3;
+                //myItems.add(gremlin);
+                myDefaultMonsters.put("Gremlin", gremlin);
+                myMonsters.add(gremlin);
+            }
         }
 
 
-        for (int i = 0; i < myGameUi.getMyTileManager().getMySkeletonCoordinatesList().size(); i += 2) {
-            Monsters skeleton = new Monsters(myGameUi, "Skeleton");
-            skeleton.setMonsterType("Skeleton");
-            skeleton.setMyMonsterImage(skeletonImg);
-            skeleton.setMyY(myGameUi.getMyTileManager().getMySkeletonCoordinatesList().get(i) * 64);
-            skeleton.setMyX(myGameUi.getMyTileManager().getMySkeletonCoordinatesList().get(i + 1) * 64);
-            skeleton.solidArea.x = skeleton.getMyX();
-            skeleton.solidArea.y = skeleton.getMyY();
-            skeleton.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() * 3;
-            skeleton.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() * 3;
-            //myItems.add(skeleton);
-            myDefaultMonsters.put("Skeleton", skeleton);
-            myMonsters.add(skeleton);
+        if (myGameUi.getMyTileManager().getMySkeletonCoordinatesList() != null) {
+
+            for (int i = 0; i < myTileManager.getMySkeletonCoordinatesList().size(); i += 2) {
+                Monsters skeleton = new Monsters(myGameUi, "Skeleton");
+                skeleton.setMonsterType("Skeleton");
+                skeleton.setMyMonsterImage(skeletonImg);
+                skeleton.setMyY(myGameUi.getMyTileManager().getMySkeletonCoordinatesList().get(i) * 64);
+                skeleton.setMyX(myGameUi.getMyTileManager().getMySkeletonCoordinatesList().get(i + 1) * 64);
+                skeleton.solidArea.x = skeleton.getMyX();
+                skeleton.solidArea.y = skeleton.getMyY();
+                skeleton.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() * 3;
+                skeleton.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() * 3;
+                //myItems.add(skeleton);
+                myDefaultMonsters.put("Skeleton", skeleton);
+                myMonsters.add(skeleton);
+            }
         }
+        System.out.println("Size" + myItems.size());
 
 
     }
+
 
     public void drawGameOverScreen(Graphics2D theGraphics, String theTitle) {
 
@@ -434,13 +472,6 @@ public class DungeonPanel extends JPanel implements Runnable {
     }
 
 
-    public static DungeonPanel getMyInstance() {
-        if (MY_INSTANCE == null){
-            MY_INSTANCE = new DungeonPanel();
-        }
-        return MY_INSTANCE;
-    }
-
     public GameSounds getMyGameSounds() {
         return myGameSounds;
     }
@@ -464,4 +495,45 @@ public class DungeonPanel extends JPanel implements Runnable {
     public RoundRectangle2D getMyStartOverRectangle() {
         return myStartOverRectangle;
     }
+
+    public GameUI getMyGameUi() {
+        return myGameUi;
+    }
+
+    public SaveLoad getMySaveLoad() {
+        return mySaveLoad;
+    }
+
+    public void setMyItems(List<SuperItems> myItems) {
+        this.myItems = myItems;
+    }
+
+    public void setMyMonsters(List<Monsters> myMonsters) {
+        this.myMonsters = myMonsters;
+    }
+
+    public void setMyDefaultItems(Map<String, SuperItems> myDefaultItems) {
+        this.myDefaultItems = myDefaultItems;
+    }
+
+    public void setMiniMapImage(BufferedImage miniMapImage) {
+        this.miniMapImage = miniMapImage;
+    }
+
+    public TileManager getMyTileManager() {
+        return myTileManager;
+    }
+
+    public void setMyGameUi(GameUI myGameUi) {
+        this.myGameUi = myGameUi;
+    }
+
+    public Characters getMyCharacter() {
+        return myCharacter;
+    }
+
+    public List<SuperItems> getMyItems() {
+        return myItems;
+    }
+
 }

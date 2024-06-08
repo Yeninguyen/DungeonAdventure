@@ -8,7 +8,6 @@ import java.awt.event.MouseListener;
 public class GameControls implements KeyListener, MouseListener {
 
 
-    private static GameControls myInstance;
 
 
     private boolean myUpArrow;
@@ -43,6 +42,8 @@ public class GameControls implements KeyListener, MouseListener {
     private boolean myCloseInventory;
     private boolean myCloseBattleWindow;
 
+    private String myUserName;
+
 
     public boolean isMySelection() {
         return mySelection;
@@ -57,21 +58,7 @@ public class GameControls implements KeyListener, MouseListener {
         myGameUi = thePlayerUI;
     }
 
-    public boolean isMyUpArrow() {
-        return myUpArrow;
-    }
 
-    public boolean isMyDownArrow() {
-        return myDownArrow;
-    }
-
-    public boolean isMyLeftArrow() {
-        return myLeftArrow;
-    }
-
-    public boolean isMyRightArrow() {
-        return myRightArrow;
-    }
 
 
     @Override
@@ -387,7 +374,53 @@ public class GameControls implements KeyListener, MouseListener {
         return myCloseBattleWindow;
     }
 
+    public boolean isMyLoadGameClicked() {
+        return myLoadGameClicked;
+    }
+
+    public boolean isMyUpArrow() {
+        return myUpArrow;
+    }
+
+    public boolean isMyDownArrow() {
+        return myDownArrow;
+    }
+
+    public boolean isMyLeftArrow() {
+        return myLeftArrow;
+    }
+
+    public boolean isMyRightArrow() {
+        return myRightArrow;
+    }
+
+    public void setMyWarriorSelected(boolean myWarriorSelected) {
+        this.myWarriorSelected = myWarriorSelected;
+    }
+
+    public void setMyThiefSelected(boolean myThiefSelected) {
+        this.myThiefSelected = myThiefSelected;
+    }
+
+    public void setMyPriestessSelected(boolean myPriestessSelected) {
+        this.myPriestessSelected = myPriestessSelected;
+    }
+
+
+    public void setMyUsernameBoxSelected(boolean myUsernameBoxSelected) {
+        this.myUsernameBoxSelected = myUsernameBoxSelected;
+    }
+
+    public String getMyUserName() {
+        return userName.toString();
+    }
+
+    public void setMyUserName(String myUserName) {
+        this.myUserName = myUserName;
+    }
+
     public void setMyCloseBattleWindow(boolean theCloseBattleWindow) {
         myCloseBattleWindow = theCloseBattleWindow;
     }
 }
+

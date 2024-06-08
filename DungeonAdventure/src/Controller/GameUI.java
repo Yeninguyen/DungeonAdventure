@@ -8,9 +8,12 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
-public class GameUI {
+public class GameUI implements Serializable {
+    private int myHealAmount;
+    private boolean myUsedHealthPotion = false;
     private int myMazeSize;
     private Map<String, Rectangle> myItemRectangles;
 
@@ -45,8 +48,7 @@ public class GameUI {
     private BufferedImage mySelectionImg;
 
     private final DungeonPanel myDungeonPanel;
-    private Characters myCharacter;
-    private final TileManager myTileManager = new TileManager(this);
+    //    private final TileManager myTileManager = new TileManager(this);
     private Dungeon myDungeon;
 
 
@@ -62,7 +64,6 @@ public class GameUI {
         myDungeonPanel.addKeyListener(myGameControls);
         myDungeonPanel.addMouseListener(myGameControls);
         myDungeonPanel.setFocusable(true);
-        myCharacter = new Characters(this);
         loadImages();
     }
 
@@ -79,14 +80,28 @@ public class GameUI {
 
 
     public void drawPlayer(final Graphics2D theGraphics) {
-        myTileManager.drawTiles(theGraphics);
-        myCharacter.drawPlayer(theGraphics);
+        myDungeonPanel.getMyCharacter().drawPlayer(theGraphics);
         theGraphics.setColor(Color.WHITE);
 
-
         theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 15F));
-        theGraphics.drawString(getMyGameControls().getUsername(), myCharacter.getMyScreenX() - 2, myCharacter.getMyScreenY() - 20);
-        //myTileManager.updateAndRenderMonsters(theGraphics);
+        if(myDungeonPanel.getMyTileManager().isMyPitFall()){
+        theGraphics.drawString("Fall into pit -" + myDungeonPanel.getMyTileManager().getMyPitDmg(), getMyCharacter().getMyScreenX(), getMyCharacter().getMyScreenY());
+
+
+        // Start a new thread to remove the pit fall message after 2 seconds
+            new Thread(() -> {
+                try {
+                    Thread.sleep(2000); // Sleep for 2 seconds (2000 milliseconds)
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+
+                }
+                myDungeonPanel.getMyTileManager().setMyPitFall(false);
+            }).start();
+        }
+
+
+
     }
 
     public void drawTitleScreen(final Graphics2D theGraphics) {
@@ -191,38 +206,47 @@ public class GameUI {
             if (myGameControls.isMyEasySelected()) {
                 myDungeon = Model.Dungeon.getInstance();
                 myMazeSize = 3;
+                myDungeonPanel.getMyTileManager().setMyCol(3);
+                myDungeonPanel.getMyTileManager().setMyRow(3);
                 myDungeon.generateMaze(3);
-                myTileManager.generateDungeon();
+                myDungeonPanel.getMyTileManager().generateDungeon();
             }
             if (myGameControls.isMyMediumSelected()) {
                 myDungeon = Model.Dungeon.getInstance();
                 myMazeSize = 6;
+                myDungeonPanel.getMyTileManager().setMyCol(myMazeSize);
+                myDungeonPanel.getMyTileManager().setMyRow(myMazeSize);
                 myDungeon.generateMaze(6);
-                myTileManager.generateDungeon();
+                myDungeonPanel.getMyTileManager().generateDungeon();
             }
             if (myGameControls.isMyHardSelected()) {
                 myDungeon = Model.Dungeon.getInstance();
                 myMazeSize = 8;
+                myDungeonPanel.getMyTileManager().setMyCol(myMazeSize);
+                myDungeonPanel.getMyTileManager().setMyRow(myMazeSize);
                 myDungeon.generateMaze(8);
-                myTileManager.generateDungeon();
+                myDungeonPanel.getMyTileManager().generateDungeon();
             }
             myDungeonPanel.setGameState(myDungeonPanel.getPlayState());
         }
 
         if (myGameControls.isMyWarriorSelected()) {
+            myDungeonPanel.getMyCharacter().setMyMaxHeroHitPoint(125);
             updateCheckboxSelection(theGraphics2D, myWarriorCheckBox);
-            theGraphics2D.drawImage((myCharacter.getMyWarriorCurrentImage()), myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
+            theGraphics2D.drawImage((myDungeonPanel.getMyCharacter().getMyWarriorCurrentImage()), myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
         }
 
         if (myGameControls.isMyPriestessSelected()) {
+            myDungeonPanel.getMyCharacter().setMyMaxHeroHitPoint(75);
             updateCheckboxSelection(theGraphics2D, myPriestessCheckBox);
-            theGraphics2D.drawImage((myCharacter.getMyPriestessCurrentImage()), myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
+            theGraphics2D.drawImage((myDungeonPanel.getMyCharacter().getMyPriestessCurrentImage()), myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
 
         }
 
         if (myGameControls.isMyThiefSelected()) {
+            myDungeonPanel.getMyCharacter().setMyMaxHeroHitPoint(75);
             updateCheckboxSelection(theGraphics2D, myThiefCheckBox);
-            theGraphics2D.drawImage((myCharacter.getMyThiefCurrentImage()), myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
+            theGraphics2D.drawImage((myDungeonPanel.getMyCharacter().getMyThiefCurrentImage()), myDungeonPanel.getMyTileSize() * 4, (myDungeonPanel.getMyTileSize() * 3), width, height, null);
         }
 
         if (myGameControls.isMyEasySelected()) {
@@ -263,7 +287,8 @@ public class GameUI {
 
         final int slotXStart = x + 40;
         final int slotYStart = y + 90;
-        final int slotSize = 64; // Assuming each slot has a
+        final int slotSize = 64;
+        // Assuming each slot has a
         // size of 64 pixels
 
         int slotX = slotXStart;
@@ -287,7 +312,7 @@ public class GameUI {
             theGraphics.drawImage(item.getMyImage(), cursorX, cursorY, slotSize, slotSize, null);
 
             if (item.isMyCollisoin()) {
-                int val = myTileManager.getMyItemCollisionFrequency().get(item.getMyName());
+                int val = myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().get(item.getMyName());
                 theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 30F));
                 theGraphics.drawString(String.valueOf(val), cursorX + 50, cursorY + 50);
                 theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 20F));
@@ -318,31 +343,33 @@ public class GameUI {
 
 
     public void updateInventory() {
-        if (myTileManager.getMyItemCollisionFrequency() != null) {
-            if (myGameControls.isMyVisionPotionSelected() && myTileManager.getMyItemCollisionFrequency().containsKey("V")) {
-                int val = myTileManager.getMyItemCollisionFrequency().get("V");
+        if (myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency() != null) {
+            if (myGameControls.isMyVisionPotionSelected() && myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().containsKey("V")) {
+                int val = myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().get("V");
                 if (val > 0) {
                     val--;
                     myDungeonPanel.getMyLighting().setMyVisionPotionUsed(true);
                     myDungeonPanel.getMyLighting().setMyVisionTimer(System.currentTimeMillis()); // Set the timer
-                    myTileManager.getMyItemCollisionFrequency().put("V", val);
+                    myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().put("V", val);
                     myGameControls.setMyVisionPotionSelected(false);
                 }
                 // ... (remove the code that sets isMyVisionPotionUsed to false when val == 0)
             }
-            if (myGameControls.isMyHealthPotionSelected() && myTileManager.getMyItemCollisionFrequency().containsKey("H")) {
-                if (myCharacter.getCharacterType().getMyHitPoints() < myCharacter.getMyMaxHeroHitPoint()) {
-                    int val = myTileManager.getMyItemCollisionFrequency().get("H");
+            if (myGameControls.isMyHealthPotionSelected() && myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().containsKey("H")) {
+                if (myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints() < myDungeonPanel.getMyCharacter().getMyMaxHeroHitPoint()) {
+                    int health = (int) (Math.random() * 11) + 10;
+                    myHealAmount = health;
+                    int val = myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().get("H");
                     if (val > 0) {
+                        myUsedHealthPotion = true;
                         val--;
-                        System.out.println(myCharacter.getCharacterType().getMyHitPoints());
-                        myCharacter.getCharacterType().setMyHitPoints(myCharacter.getMyMaxHeroHitPoint());
-                        System.out.println(myCharacter.getCharacterType().getMyHitPoints());
-                        myTileManager.getMyItemCollisionFrequency().put("H", val);
+                        myDungeonPanel.getMyCharacter().getCharacterType().setMyHitPoints(myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints() + health);
+                        myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().put("H", val);
                         myGameControls.setMyHealthPotionSelected(false);
                     }
                 }
 
+                myUsedHealthPotion = false;
 
             }
         }
@@ -394,6 +421,16 @@ public class GameUI {
         if (myGameControls.isStartGameClicked()) {
             myDungeonPanel.setGameState(myDungeonPanel.getSelectionState());
         }
+        if(myGameControls.isMyLoadGameClicked()){
+            //myDungeonPanel.getMyTileManager().generateDungeon();
+
+
+            myDungeonPanel.getMyGameUi().getMyCharacter().initHeroes();
+            myDungeonPanel.getMySaveLoad().load();
+            //myDungeonPanel.getMyTileManager().loadMap();
+            //myDungeonPanel.getMyGameUi().getMyDungeonPanel().setObjects();
+            myDungeonPanel.setGameState(myDungeonPanel.getPlayState());
+        }
 
         if (myGameControls.isQuitGameClicked()) {
             System.exit(0);
@@ -402,7 +439,7 @@ public class GameUI {
 
 
     public void updatePlayerLocation() {
-        myCharacter.updatePlayerLocation();
+        myDungeonPanel.getMyCharacter().updatePlayerLocation();
     }
 
 
@@ -456,12 +493,12 @@ public class GameUI {
     }
 
     public Characters getMyCharacter() {
-        return myCharacter;
+        return myDungeonPanel.getMyCharacter();
     }
 
 
     public TileManager getMyTileManager() {
-        return myTileManager;
+        return myDungeonPanel.getMyTileManager();
     }
 
     public Rectangle getMyUserNameBox() {
@@ -486,5 +523,21 @@ public class GameUI {
 
     public int getMyMazeSize() {
         return myMazeSize;
+    }
+
+    public void setMyUserName(String myUserName) {
+        this.myUserName = myUserName;
+    }
+
+    public int getMyHealAmount() {
+        return myHealAmount;
+    }
+
+    public boolean isMyUsedHealthPotion() {
+        return myUsedHealthPotion;
+    }
+
+    public void setMyDungeon(Dungeon myDungeon) {
+        this.myDungeon = myDungeon;
     }
 }

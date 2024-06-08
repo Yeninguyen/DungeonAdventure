@@ -68,55 +68,8 @@ public class Dungeon {
             }
         }
     }
-//    public void generateMaze(int theSize) {
-//        SIZE = theSize;
-//        maze = new Room[theSize][theSize];
-//        boolean validMaze = false;
-//        while (!validMaze) {
-//            // Initialize maze with empty rooms
-//            for (int i = 0; i < theSize; i++) {
-//                for (int j = 0; j < theSize; j++) {
-//                    maze[i][j] = new Room(theSize); // This will automatically set up the room items
-//                    maze[i][j].setMyX(j);
-//                    maze[i][j].setMyY(i);
-//                }
-//            }
-//
-//            // Place the pillars
-//            List<int[]> pillarPositions = new ArrayList<>();
-//            while (pillarPositions.size() < 4) {
-//                int x = (int) (Math.random() * SIZE);
-//                int y = (int) (Math.random() * SIZE);
-//                if (!maze[x][y].getMyHasPillar() && !maze[x][y].isMyEntrance() && !maze[x][y].isMyExit()) {
-//                    pillarPositions.add(new int[]{x, y});
-//                }
-//            }
-//
-//            // Assign pillars to the selected positions
-//            char[] pillars = {'A', 'P', 'E', 'I'};
-//            Collections.shuffle(Arrays.asList(pillars));
-//
-//            for (int i = 0; i < 4; i++) {
-//                int[] pos = pillarPositions.get(i);
-//                maze[pos[0]][pos[1]].setMyItem(pillars[i]);
-//                maze[pos[0]][pos[1]].setMyHasPillar(true);
-//            }
-//
-//            setEntranceAndExit();
-//
-//            // Check if the maze is traversable
-//            if (isTraversable()) {
-//                validMaze = true;
-//            } else {
-//                myNumberOfEntrances = 0;
-//                myNumberOfExits = 0;
-//                myNumberOfPillars = 0;
-//            }
-//        }
-//    }
 
     private void setEntranceAndExit() {
-
         int entranceX;
         int entranceY = (int) (Math.random() * mySize);
         int exitX;
@@ -261,7 +214,7 @@ public class Dungeon {
         return mySize;
     }
 
-    public static void main(String[] args) {
-        new Dungeon();
+    public void setMaze(Room[][] maze) {
+        this.maze = maze;
     }
 }

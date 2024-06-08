@@ -8,10 +8,11 @@ import Model.MonsterDatabase;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.sql.SQLException;
 
 
-public class Monsters {
+public class Monsters implements Serializable {
 
 
 

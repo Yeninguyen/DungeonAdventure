@@ -1,8 +1,9 @@
 package Model;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public abstract class DungeonCharacter {
+public abstract class DungeonCharacter implements Serializable {
     private String myName;
     private int myHitPoints;
     private int myAttackSpeed;

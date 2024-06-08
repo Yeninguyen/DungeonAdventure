@@ -20,13 +20,14 @@ public class DungeonGUI extends JFrame {
     /*** This is instance field of shortcuts menu item. */
     private JMenuItem shortcuts;
 
+    private DungeonPanel myDungeonPanel;
+
     public DungeonGUI(){
         setTitle("DungeonAdventure");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-//        DungeonPanel dungeonPanel = new DungeonPanel();
-
-        add(DungeonPanel.getMyInstance());
+        myDungeonPanel = new DungeonPanel();
+        add(myDungeonPanel);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -87,6 +88,15 @@ public class DungeonGUI extends JFrame {
                                 " while some will prove helpful (healing and vision potions)\n"
                                 );
             }
+        });
+
+        saveGame.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                myDungeonPanel.getMySaveLoad().save();
+                JOptionPane.showMessageDialog(DungeonGUI.this, "Saved the game ");
+            }
+
         });
 
         /*** This is the message summary about keyboard shortcuts used in this game. */

@@ -5,10 +5,11 @@ import Model.MonsterDatabase;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.sql.SQLException;
 
-public class SuperItems {
-    private BufferedImage myImage;
+public class SuperItems implements Serializable {
+    private  BufferedImage myImage;
     private String myName;
     private boolean myCollision = false;
     private int myX;

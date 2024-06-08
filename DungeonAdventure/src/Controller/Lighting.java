@@ -44,17 +44,17 @@ public class Lighting {
     }
 
     public void update() {
-        myFilterAlpha = 1f;
+        //myFilterAlpha = 1f;
         if (myVisionPotionUsed) {
                 myScale = 3;
             if (System.currentTimeMillis() - myVisionTimer >= myVisionDuration) {
                 myVisionPotionUsed = false;
                 myFilterAlpha = 1f;
-                myScale = 1.5; // Reset the scale to 1 when the vision potion expires
+                myScale = 3; // Reset the scale to 1 when the vision potion expires
             }
         }
         else {
-            myScale = 1.5;
+            myScale = 3;
 
         }
     }

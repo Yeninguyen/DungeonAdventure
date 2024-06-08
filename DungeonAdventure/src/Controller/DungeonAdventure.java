@@ -6,7 +6,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 
-public class DungeonAdventure {
+public class DungeonAdventure  {
 
 
     DungeonAdventure() {

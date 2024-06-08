@@ -1,5 +1,7 @@
 package Controller;
 
+import View.DungeonPanel;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -7,11 +9,14 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 
-public class TileManager {
+public class TileManager implements Serializable{
 
 
     private final DungeonAdventure myDungeonAdventurer;
+    private boolean myPitFall = false;
 
+    private Random myRandom = new Random();
+    private int myPitDmg;
     private int myEntranceRow;
     private int myEntranceCol;
 
@@ -29,15 +34,16 @@ public class TileManager {
     private int[] myPillarECoordinates;
     private int[] myExitCoordinates;
 
-    private final ArrayList<Integer> myVisionPotionCoordinatesList;
-    private final ArrayList<Integer> myHealthPotionCoordinatesList;
-    private int[] myMultipleCoordinates;
+    private ArrayList<Integer> myVisionPotionCoordinatesList;
+    private ArrayList<Integer> myHealthPotionCoordinatesList;
+    private ArrayList<Integer> myMultipleCoordinates = new ArrayList<>();
 
-    private final Map<String, Integer> myItemCollisionFrequency;
+    private  Map<String, Integer> myItemCollisionFrequency;
 
-    private final ArrayList<Integer> myOgreCoordinatesList;
-    private final ArrayList<Integer> myGremlinCoordinatesList;
-    private final ArrayList<Integer> mySkeletonCoordinatesList;
+    private  ArrayList<Integer> myOgreCoordinatesList = new ArrayList<>();
+    private  ArrayList<Integer> myGremlinCoordinatesList = new ArrayList<>();
+    private  ArrayList<Integer> mySkeletonCoordinatesList = new ArrayList<>();
+    private ArrayList<Integer> myPitCoordinates = new ArrayList<>();
 
 
 
@@ -60,24 +66,23 @@ public class TileManager {
     private final String mySkeleton = "S";
     private  int myRow;
     private  int myCol;
-    private final GameUI myGameUi;
+//    private final GameUI myGameUi;
     private final Map<String, Tile> myTile;
 
     private Monsters monsterEncountered;
 
 
+    private DungeonPanel myDungeonPanel;
 
     private String[][] mapTileNums;
 
 
-    TileManager(final GameUI theGameUi) {
-        myGameUi = theGameUi;
+    public TileManager(final DungeonPanel theDungeonPanel) {
+        myDungeonPanel = theDungeonPanel;
         myTile = new HashMap<>();
         myVisionPotionCoordinatesList = new ArrayList<>();
         myHealthPotionCoordinatesList = new ArrayList<>();
-        myOgreCoordinatesList = new ArrayList<>();
-        mySkeletonCoordinatesList = new ArrayList<>();
-        myGremlinCoordinatesList = new ArrayList<>();
+        myPitCoordinates = new ArrayList<>();
         myItemCollisionFrequency = new HashMap<>();
         myDungeonAdventurer = new DungeonAdventure();
         getTileImage();
@@ -119,19 +124,19 @@ public class TileManager {
                         myPillarA, myOgre, myGremlin, mySkeleton -> title = "-";
             }
 
-            int bound = myGameUi.getMyDungeonPanel().getMyTileSize();
+            int bound = myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize();
 
-            int x = col * myGameUi.getMyDungeonPanel().getMyTileSize();
-            int y = row * myGameUi.getMyDungeonPanel().getMyTileSize();
+            int x = col * myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize();
+            int y = row * myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize();
 
-            int screenX = x - myGameUi.getMyCharacter().getMyX() + myGameUi.getMyCharacter().getMyScreenX();
-            int screenY = y - myGameUi.getMyCharacter().getMyY() + myGameUi.getMyCharacter().getMyScreenY();
+            int screenX = x - myDungeonPanel.getMyGameUi().getMyCharacter().getMyX() + myDungeonPanel.getMyGameUi().getMyCharacter().getMyScreenX();
+            int screenY = y - myDungeonPanel.getMyGameUi().getMyCharacter().getMyY() + myDungeonPanel.getMyGameUi().getMyCharacter().getMyScreenY();
 
-            if(x + bound > myGameUi.getMyCharacter().getMyX() - myGameUi.getMyCharacter().getMyScreenX() &&
-                    x  - bound < myGameUi.getMyCharacter().getMyX() + myGameUi.getMyCharacter().getMyScreenX() &&
-                    y  + bound> myGameUi.getMyCharacter().getMyY() - myGameUi.getMyCharacter().getMyScreenY() &&
-                    y  - bound< myGameUi.getMyCharacter().getMyY() + myGameUi.getMyCharacter().getMyScreenY()){
-                theGraphics.drawImage(myTile.get(title).getMyTileImage(), screenX, screenY, myGameUi.getMyDungeonPanel().getMyTileSize() - 1, myGameUi.getMyDungeonPanel().getMyTileSize() - 1, null);
+            if(x + bound > myDungeonPanel.getMyGameUi().getMyCharacter().getMyX() - myDungeonPanel.getMyGameUi().getMyCharacter().getMyScreenX() &&
+                    x  - bound < myDungeonPanel.getMyGameUi().getMyCharacter().getMyX() + myDungeonPanel.getMyGameUi().getMyCharacter().getMyScreenX() &&
+                    y  + bound> myDungeonPanel.getMyGameUi().getMyCharacter().getMyY() - myDungeonPanel.getMyGameUi().getMyCharacter().getMyScreenY() &&
+                    y  - bound< myDungeonPanel.getMyGameUi().getMyCharacter().getMyY() + myDungeonPanel.getMyGameUi().getMyCharacter().getMyScreenY()){
+                theGraphics.drawImage(myTile.get(title).getMyTileImage(), screenX, screenY, myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize() - 1, myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize() - 1, null);
             }
             row++;
             if(row == this.myRow){
@@ -139,17 +144,17 @@ public class TileManager {
                 col++;
             }
         }
-        //drawMonsterEncounter(theGraphics);
     }
 
 
     public void generateDungeon(){
         String path = "Maze.txt";
 
-        myRow = myGameUi.getMyMazeSize() * 5;
-        myCol = myGameUi.getMyMazeSize() * 5;
+        //myRow = myDungeonPanel.getMyGameUi().getMyMazeSize() * 5;//myCol = myDungeonPanel.getMyGameUi().getMyMazeSize() * 5;
+        myRow *= 5;
+        myCol *= 5;
         mapTileNums = new String[myRow][myCol];
-        myGameUi.getMyDungeon().writeMazeToFile(path);
+        myDungeonPanel.getMyGameUi().getMyDungeon().writeMazeToFile(path);
         loadMap();
     }
     public void loadMap(){
@@ -164,9 +169,8 @@ public class TileManager {
                     myEntranceCol = col;
                 }
                 if(s.equals("M")){
-                    myMultipleCoordinates = new int[2];
-                    myMultipleCoordinates[0] = row;
-                    myMultipleCoordinates[1] = col;
+                   myMultipleCoordinates.add(row);
+                   myMultipleCoordinates.add(col);
                 }
                 if(s.equals("A")){
                     myPillarACoordinates = new int[2];
@@ -192,6 +196,7 @@ public class TileManager {
                 if(s.equals("V")){
                     myVisionPotionCoordinatesList.add(row);
                     myVisionPotionCoordinatesList.add(col);
+                    System.out.println("Loadeddd");
                 }
                 if(s.equals("O")){
                     myOgreCoordinatesList.add(row);
@@ -210,6 +215,10 @@ public class TileManager {
                     myPillarPCoordinates[0] = row;
                     myPillarPCoordinates[1] = col;
                 }
+                if(s.equals("X")){
+                    myPitCoordinates.add(row);
+                    myPitCoordinates.add(col);
+                }
                 if(s.equals("o")){
                     myExitCoordinates = new int[2];
                     myExitCoordinates[0] = row;
@@ -224,90 +233,191 @@ public class TileManager {
             e.printStackTrace();
         }
 
-        myGameUi.getMyDungeonPanel().setObjects();
-        myGameUi.getMyCharacter().initHeroes();
-
+        myDungeonPanel.getMyGameUi().getMyDungeonPanel().setObjects();
+        myDungeonPanel.getMyGameUi().getMyCharacter().initHeroes();
     }
 
 
-    public boolean isTileCollision(final Rectangle theHitBox) {
+//    public boolean isTileCollision(final Rectangle theHitBox) {
+//
+//        int x1 = theHitBox.x / myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize();
+//        int y1 = theHitBox.y / myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize();;
+//        int x2 = (theHitBox.x + theHitBox.width) / myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize();
+//        int y2 = (theHitBox.y + theHitBox.height) / myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize();
+//        boolean isTileSolid = false;
+//        for (int row = y1; row <= y2; row++) {
+//            for (int col = x1; col <= x2; col++) {
+//                String tile = mapTileNums[row][col];
+//
+//                if(myTile.get(tile) != null && myTile.get(tile).isSolid()){
+//                    isTileSolid = true;
+//                }
+//            }
+//        }
+//
+//        List<SuperItems> itemsCopy = new ArrayList<>(myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems);
+//        for (SuperItems item : itemsCopy) {
+//            if (item.solidArea.intersects(theHitBox)) {
+//                // Handle collision with the item
+//                // You can perform actions based on the item's name or type
+//                System.out.println("Collision with item: " + item.getMyName() + " at row, col " + item.getWorldX() + " " + item.getMyY());
+//                    if (item.getMyName().equals("o")) {
+//                        if (myItemCollisionFrequency.containsKey(myPillarA) && myItemCollisionFrequency.containsKey(myPillarE) &&
+//                                myItemCollisionFrequency.containsKey(myPillarI) && myItemCollisionFrequency.containsKey(myPillarP)) {
+//                            if (myItemCollisionFrequency.get(myPillarA) == 1 && myItemCollisionFrequency.get(myPillarE) == 1 &&
+//                                    myItemCollisionFrequency.get(myPillarI) == 1 && myItemCollisionFrequency.get(myPillarE) == 1) {
+//                                myIsPlayerWin = true;
+//                                myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems.remove(item);
+//                                System.out.println(myDungeonPanel.myItems.size());
+//                            }
+//                        }
+//
+//                    } else {
+//                        if(myDungeonPanel.myDefaultItems.containsKey(item.getMyName()) && item.getMyName().equals("M")){
+//                            myDungeonPanel.getMyGameUi().getMyDungeonPanel().myDefaultItems.get(item.getMyName()).setMyCollisoin(true);
+//                            myItemCollisionFrequency.put("H", myItemCollisionFrequency.getOrDefault(item.getMyName(), 0 ) + 1);
+//                            myItemCollisionFrequency.put("V", myItemCollisionFrequency.getOrDefault(item.getMyName(), 0 ) + 1);
+//                            //myDungeonPanel.getMyCharacter().getCharacterType().setMyHitPoints();
+//                        }else {
+//                            if (myDungeonPanel.getMyGameUi().getMyDungeonPanel().myDefaultItems.containsKey(item.getMyName())) {
+//                                myDungeonPanel.getMyGameUi().getMyDungeonPanel().myDefaultItems.get(item.getMyName()).setMyCollisoin(true);
+//                                myItemCollisionFrequency.put(item.getMyName(), myItemCollisionFrequency.getOrDefault(item.getMyName(), 0) + 1);
+//                            }
+//                        }
+//                        myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems.remove(item);
+//                        System.out.println(myDungeonPanel.myItems.size());
+//                    }
+//
+//            }
+//
+//            List<Monsters> monsterCopy = new ArrayList<>(myDungeonPanel.getMyGameUi().getMyDungeonPanel().myMonsters);
+//            for (Monsters monster : monsterCopy) {
+//                if (monster.solidArea.intersects(theHitBox)) {
+//                    if (myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyDefaultMonsters().containsKey(monster.getMonsterType())) {
+//                        myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyDefaultMonsters().get(monster.getMonsterType()).setCollision(true);
+//                        System.out.println("Collided with monster " + monster.getMonsterType() + " at row, col " + monster.getMyX() + " " + monster.getMyY());
+//                        monsterEncountered = monster;
+//                        // Check if the player's character has defeated the monster
+//                        if ((myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints() > 0 && monsterEncountered.getMyMonster().getMyHitPoints() <= 0)) {
+//                            // Player has defeated the monster, remove it from the list
+//                            myDungeonPanel.getMyGameUi().getMyDungeonPanel().myMonsters.remove(monster);
+//                        }else if(myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints() <= 0){
+//                            myIsGameOver = true;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//            return isTileSolid;
+//    }
 
-        int x1 = theHitBox.x / myGameUi.getMyDungeonPanel().getMyTileSize();
-        int y1 = theHitBox.y / myGameUi.getMyDungeonPanel().getMyTileSize();;
-        int x2 = (theHitBox.x + theHitBox.width) / myGameUi.getMyDungeonPanel().getMyTileSize();
-        int y2 = (theHitBox.y + theHitBox.height) / myGameUi.getMyDungeonPanel().getMyTileSize();
+    public boolean isTileCollision(final Rectangle theHitBox) {
+        int tileSize = myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize();
+        int x1 = theHitBox.x / tileSize;
+        int y1 = theHitBox.y / tileSize;
+        int x2 = (theHitBox.x + theHitBox.width) / tileSize;
+        int y2 = (theHitBox.y + theHitBox.height) / tileSize;
         boolean isTileSolid = false;
+
         for (int row = y1; row <= y2; row++) {
             for (int col = x1; col <= x2; col++) {
                 String tile = mapTileNums[row][col];
-
-                if(myTile.get(tile) != null && myTile.get(tile).isSolid()){
+                if (myTile.get(tile) != null && myTile.get(tile).isSolid()) {
                     isTileSolid = true;
                 }
             }
         }
 
-        List<SuperItems> itemsCopy = new ArrayList<>(myGameUi.getMyDungeonPanel().myItems);
+        List<SuperItems> itemsCopy = new ArrayList<>(myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems);
         for (SuperItems item : itemsCopy) {
             if (item.solidArea.intersects(theHitBox)) {
-                // Handle collision with the item
-                // You can perform actions based on the item's name or type
                 System.out.println("Collision with item: " + item.getMyName() + " at row, col " + item.getWorldX() + " " + item.getMyY());
-                if (!item.getMyName().equals("M")) {
-                    if (item.getMyName().equals("o")) {
-                        if (myItemCollisionFrequency.containsKey(myPillarA) && myItemCollisionFrequency.containsKey(myPillarE) &&
-                                myItemCollisionFrequency.containsKey(myPillarI) && myItemCollisionFrequency.containsKey(myPillarP)) {
-                            if (myItemCollisionFrequency.get(myPillarA) == 1 && myItemCollisionFrequency.get(myPillarE) == 1 &&
-                                    myItemCollisionFrequency.get(myPillarI) == 1 && myItemCollisionFrequency.get(myPillarE) == 1) {
-                                myIsPlayerWin = true;
-                                myGameUi.getMyDungeonPanel().myItems.remove(item);
-                            }
-                        }
 
-                    } else {
-                        if (myGameUi.getMyDungeonPanel().myDefaultItems.containsKey(item.getMyName())) {
-                            myGameUi.getMyDungeonPanel().myDefaultItems.get(item.getMyName()).setMyCollisoin(true);
-                            myItemCollisionFrequency.put(item.getMyName(), myItemCollisionFrequency.getOrDefault(item.getMyName(), 0) + 1);
-                        }
-                        myGameUi.getMyDungeonPanel().myItems.remove(item);
-                    }
+                // Remove item coordinates from the respective list
+                //removeItemCoordinates(item);
+
+                // Handle special item collisions
+                if (item.getMyName().equals("o")) {
+                    handleSpecialItemCollision(item);
+                } else {
+                    handleDefaultItemCollision(item);
+                }
+                if(item.getMyName().equals("X")){
+                   int oldHitPoint = myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints();
+                   myPitDmg = myRandom.nextInt(1, 21);
+                   int newHitPoint = oldHitPoint - myPitDmg;
+                   myPitFall = true;
+                   myDungeonPanel.getMyCharacter().getCharacterType().setMyHitPoints(newHitPoint);
+                    myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems.remove(item);
                 }
 
 
-            }
 
-            List<Monsters> monsterCopy = new ArrayList<>(myGameUi.getMyDungeonPanel().myMonsters);
-            for (Monsters monster : monsterCopy) {
-                if (monster.solidArea.intersects(theHitBox)) {
-                    if (myGameUi.getMyDungeonPanel().getMyDefaultMonsters().containsKey(monster.getMonsterType())) {
-                        myGameUi.getMyDungeonPanel().getMyDefaultMonsters().get(monster.getMonsterType()).setCollision(true);
-                        System.out.println("Collided with monster " + monster.getMonsterType() + " at row, col " + monster.getMyX() + " " + monster.getMyY());
-                        monsterEncountered = monster;
-                        // Check if the player's character has defeated the monster
-                        if ((myGameUi.getMyCharacter().getCharacterType().getMyHitPoints() > 0 && monsterEncountered.getMyMonster().getMyHitPoints() <= 0)) {
-                            // Player has defeated the monster, remove it from the list
-                            myGameUi.getMyDungeonPanel().myMonsters.remove(monster);
-                        }else if(myGameUi.getMyCharacter().getCharacterType().getMyHitPoints() <= 0){
-                            myIsGameOver = true;
-                        }
+            }
+        }
+
+        List<Monsters> monsterCopy = new ArrayList<>(myDungeonPanel.getMyGameUi().getMyDungeonPanel().myMonsters);
+        for (Monsters monster : monsterCopy) {
+            if (monster.solidArea.intersects(theHitBox)) {
+                if (myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyDefaultMonsters().containsKey(monster.getMonsterType())) {
+                    myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyDefaultMonsters().get(monster.getMonsterType()).setCollision(true);
+                    System.out.println("Collided with monster " + monster.getMonsterType() + " at row, col " + monster.getMyX() + " " + monster.getMyY());
+                    monsterEncountered = monster;
+
+                    if (myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints() > 0 && monsterEncountered.getMyMonster().getMyHitPoints() <= 0) {
+                        myDungeonPanel.getMyGameUi().getMyDungeonPanel().myMonsters.remove(monster);
+                    } else if (myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints() <= 0) {
+                        myIsGameOver = true;
                     }
                 }
             }
         }
-            return isTileSolid;
+
+        return isTileSolid;
+    }
+
+
+
+    private void handleSpecialItemCollision(SuperItems item) {
+        if (myItemCollisionFrequency.containsKey(myPillarA) && myItemCollisionFrequency.containsKey(myPillarE) &&
+                myItemCollisionFrequency.containsKey(myPillarI) && myItemCollisionFrequency.containsKey(myPillarP)) {
+            if (myItemCollisionFrequency.get(myPillarA) == 1 && myItemCollisionFrequency.get(myPillarE) == 1 &&
+                    myItemCollisionFrequency.get(myPillarI) == 1 && myItemCollisionFrequency.get(myPillarP) == 1) {
+                myIsPlayerWin = true;
+                myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems.remove(item);
+                System.out.println(myDungeonPanel.myItems.size());
+            }
+        }
+    }
+
+    private void handleDefaultItemCollision(SuperItems item) {
+        if (item.getMyName().equals("M")) {
+            myItemCollisionFrequency.put("H", myItemCollisionFrequency.getOrDefault("H", 0) + 1);
+            myItemCollisionFrequency.put("V", myItemCollisionFrequency.getOrDefault("V", 0) + 1);
+        } else {
+            if (myDungeonPanel.getMyGameUi().getMyDungeonPanel().myDefaultItems.containsKey(item.getMyName())) {
+                myDungeonPanel.getMyGameUi().getMyDungeonPanel().myDefaultItems.get(item.getMyName()).setMyCollisoin(true);
+                myItemCollisionFrequency.put(item.getMyName(), myItemCollisionFrequency.getOrDefault(item.getMyName(), 0) + 1);
+            }
+        }
+        myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems.remove(item);
+    }
+
+    public void drawPitDmg(Graphics2D theGraphics){
+        theGraphics.drawString("You fall into a pit -" + myPitDmg, 300, 300);
     }
 
 
     private void drawBattleWindow(final Graphics2D theGraphics) {
-        int x = myGameUi.getMyDungeonPanel().getMyWidth() / 2;
-        int y = myGameUi.getMyDungeonPanel().getMyHeight() / 2 - 200;
+        int x = myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyWidth() / 2;
+        int y = myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyHeight() / 2 - 200;
 
-        myGameUi.drawFrame(x, y, 450, 600, theGraphics);
+        myDungeonPanel.getMyGameUi().drawFrame(x, y, 450, 600, theGraphics);
         myCloseBattleWindow = new Rectangle(x + 20, y + 20, 20, 20);
         theGraphics.setColor(new Color(255, 255, 255));
         theGraphics.setStroke(new BasicStroke(5));
 
-        myGameUi.updateCheckboxSelection(theGraphics, myCloseBattleWindow);
+        myDungeonPanel.getMyGameUi().updateCheckboxSelection(theGraphics, myCloseBattleWindow);
         theGraphics.setColor(new Color(0, 0, 0, 0));
         theGraphics.fill(myCloseBattleWindow);
         int textX = x + 60;
@@ -317,10 +427,10 @@ public class TileManager {
         theGraphics.drawString("You encountered an " + monsterEncountered.getMyMonster().getMyName(), textX, textY);
     }
     public void drawMonsterEncounter(final Graphics2D theGraphics) {
-        if (monsterEncountered != null && !myGameUi.getMyGameControls().isMyCloseBattleWindow()) {
+        if (monsterEncountered != null && !myDungeonPanel.getMyGameUi().getMyGameControls().isMyCloseBattleWindow()) {
             // Use an off-screen image for double buffering
-            BufferedImage offScreen = new BufferedImage(myGameUi.getMyDungeonPanel().getMyWidth(),
-                    myGameUi.getMyDungeonPanel().getMyHeight(),
+            BufferedImage offScreen = new BufferedImage(myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyWidth(),
+                    myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyHeight(),
                     BufferedImage.TYPE_INT_ARGB);
             Graphics2D offScreenG2 = offScreen.createGraphics();
 
@@ -339,13 +449,13 @@ public class TileManager {
             // Copy the off-screen image to the actual graphics context
             theGraphics.drawImage(offScreen, 0, 0, null);
 
-            myGameUi.getMyCharacter().setMyPlayerIsMoving(false); // Set the character to frozen state
-            myGameUi.getMyCharacter().setMyPlayerSpeed(0);
+            myDungeonPanel.getMyGameUi().getMyCharacter().setMyPlayerIsMoving(false); // Set the character to frozen state
+            myDungeonPanel.getMyGameUi().getMyCharacter().setMyPlayerSpeed(0);
             offScreenG2.dispose();
         } else {
             monsterEncountered = null;
             if (!myIsGameOver) {
-                myGameUi.getMyCharacter().setMyPlayerSpeed(4);
+                myDungeonPanel.getMyGameUi().getMyCharacter().setMyPlayerSpeed(4);
             }
             battleCalculated = false; // Reset the flag for the next encounter
         }
@@ -355,12 +465,12 @@ public class TileManager {
         StringBuilder resultMessage = new StringBuilder();
         int beforeBattle, afterBattle;
 
-        while (myGameUi.getMyCharacter().getCharacterType().getMyHitPoints() > 0 && monsterEncountered.getMyMonster().getMyHitPoints() > 0) {
+        while (myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints() > 0 && monsterEncountered.getMyMonster().getMyHitPoints() > 0) {
             if ( Math.random() < 0.5) {
                 // Character attacks
                 beforeBattle = monsterEncountered.getMyMonster().getMyHitPoints();
-               // boolean characterAttackSuccess = battle(myGameUi.getMyCharacter().getCharacterType(), monsterEncountered.getMyMonster());
-                myDungeonAdventurer.battle(myGameUi.getMyCharacter().getCharacterType(), monsterEncountered.getMyMonster());
+               // boolean characterAttackSuccess = battle(myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType(), monsterEncountered.getMyMonster());
+                myDungeonAdventurer.battle(myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType(), monsterEncountered.getMyMonster());
                 afterBattle = monsterEncountered.getMyMonster().getMyHitPoints();
 
                 boolean characterAttackSuccess = beforeBattle > afterBattle;
@@ -379,15 +489,15 @@ public class TileManager {
                 }
             } else {
                 // Monster attacks
-                beforeBattle = myGameUi.getMyCharacter().getCharacterType().getMyHitPoints();
-                 myDungeonAdventurer.battle(monsterEncountered.getMyMonster(), myGameUi.getMyCharacter().getCharacterType());
-                afterBattle = myGameUi.getMyCharacter().getCharacterType().getMyHitPoints();
+                beforeBattle = myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints();
+                 myDungeonAdventurer.battle(monsterEncountered.getMyMonster(), myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType());
+                afterBattle = myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints();
 
                 boolean monsterAttackSuccess = beforeBattle > afterBattle;
                 if (monsterAttackSuccess) {
                     resultMessage.append(monsterEncountered.getMonsterType())
                             .append(" successfully battled with ")
-                            .append(myGameUi.getMyCharacter().getCharacterType().getMyName())
+                            .append(myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyName())
                             .append(" and dealt ")
                             .append(beforeBattle - afterBattle)
                             .append(" damage.")
@@ -395,7 +505,7 @@ public class TileManager {
                 } else {
                     resultMessage.append(monsterEncountered.getMonsterType())
                             .append(" unsuccessfully battled with ")
-                            .append(myGameUi.getMyCharacter().getCharacterType().getMyName())
+                            .append(myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyName())
                             .append(".")
                             .append("\n");
                 }
@@ -403,11 +513,11 @@ public class TileManager {
 
         }
 
-        if (myGameUi.getMyCharacter().getCharacterType().getMyHitPoints() <= 0) {
+        if (myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints() <= 0) {
             resultMessage.append("You have been defeated by ").append(monsterEncountered.getMonsterType()).append(".\n");
         } else if(monsterEncountered.getMyMonster().getMyHitPoints() <= 0) {
             resultMessage.append("You have defeated ").append(monsterEncountered.getMonsterType()).append(".\n");
-            resultMessage.append("Your current hit point is ").append(myGameUi.getMyCharacter().getCharacterType().getMyHitPoints());
+            resultMessage.append("Your current hit point is ").append(myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints());
         }
 
 
@@ -418,9 +528,9 @@ public class TileManager {
 
 
     private void drawBattleResult(Graphics theGraphics) {
-        int y = myGameUi.getMyDungeonPanel().getMyHeight() / 2 - 200;
+        int y = myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyHeight() / 2 - 200;
         int textY = y + 70;
-        int x = myGameUi.getMyDungeonPanel().getMyWidth() / 2;
+        int x = myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyWidth() / 2;
         int textX =  x + 60;
         String[] messages = battleResultMessage.split("\n");
         for (String message : messages) {
@@ -449,9 +559,7 @@ public class TileManager {
     }
 
 
-    public int[] getMyMultipleCoordinates() {
-        return myMultipleCoordinates;
-    }
+
 
     public ArrayList<Integer> getMyVisionPotionCoordinatesList() {
         return myVisionPotionCoordinatesList;
@@ -503,5 +611,85 @@ public class TileManager {
 
     public int getMyEntranceCol() {
         return myEntranceCol;
+    }
+
+    public int getMyRow() {
+        return myRow;
+    }
+
+    public void setMyRow(int myRow) {
+        this.myRow = myRow;
+    }
+
+    public int getMyCol() {
+        return myCol;
+    }
+
+    public void setMyCol(int myCol) {
+        this.myCol = myCol;
+    }
+
+    public void setMapTileNums(String[][] mapTileNums) {
+        this.mapTileNums = mapTileNums;
+    }
+
+    public void setMyPillarACoordinates(int[] myPillarACoordinates) {
+        this.myPillarACoordinates = myPillarACoordinates;
+    }
+
+    public void setMyPillarPCoordinates(int[] myPillarPCoordinates) {
+        this.myPillarPCoordinates = myPillarPCoordinates;
+    }
+
+    public void setMyPillarICoordinates(int[] myPillarICoordinates) {
+        this.myPillarICoordinates = myPillarICoordinates;
+    }
+
+    public void setMyPillarECoordinates(int[] myPillarECoordinates) {
+        this.myPillarECoordinates = myPillarECoordinates;
+    }
+
+    public void setMyExitCoordinates(int[] myExitCoordinates) {
+        this.myExitCoordinates = myExitCoordinates;
+    }
+
+    public ArrayList<Integer> getMyMultipleCoordinates() {
+        return myMultipleCoordinates;
+    }
+
+    public void setMyMultipleCoordinates(ArrayList<Integer> myMultipleCoordinates) {
+        this.myMultipleCoordinates = myMultipleCoordinates;
+    }
+
+    public void setMyOgreCoordinatesList(ArrayList<Integer> myOgreCoordinatesList) {
+        this.myOgreCoordinatesList = myOgreCoordinatesList;
+    }
+
+    public void setMyGremlinCoordinatesList(ArrayList<Integer> myGremlinCoordinatesList) {
+        this.myGremlinCoordinatesList = myGremlinCoordinatesList;
+    }
+
+    public void setMySkeletonCoordinatesList(ArrayList<Integer> mySkeletonCoordinatesList) {
+        this.mySkeletonCoordinatesList = mySkeletonCoordinatesList;
+    }
+
+    public void setMyItemCollisionFrequency(Map<String, Integer> myItemCollisionFrequency) {
+        this.myItemCollisionFrequency = myItemCollisionFrequency;
+    }
+
+    public ArrayList<Integer> getMyPitCoordinates() {
+        return myPitCoordinates;
+    }
+
+    public boolean isMyPitFall() {
+        return myPitFall;
+    }
+
+    public int getMyPitDmg() {
+        return myPitDmg;
+    }
+
+    public void setMyPitFall(boolean myPitFall) {
+        this.myPitFall = myPitFall;
     }
 }
