@@ -28,8 +28,6 @@ public class SaveLoad {
             ds.setMyName(myDungeonPanel.getMyGameUi().getMyGameControls().getMyUserName());
             ds.setMyX(myDungeonPanel.getMyCharacter().getMyX());
             ds.setMyY(myDungeonPanel.getMyCharacter().getMyY());
-            System.out.println("ds saved col " + ds.getMyX());
-            System.out.println("ds saved row " + ds.getMyY() );
             ds.setMyX(myDungeonPanel.getMyCharacter().getMyX());
             ds.setMyPlayerHitPoint(myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints());
             ds.setMySize(myDungeonPanel.getMyGameUi().getMyMazeSize());
@@ -41,7 +39,6 @@ public class SaveLoad {
 
             if (myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().containsKey("V")) {
                 ds.setMyVisionPotionAmount(myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().get("V"));
-                System.out.println("V amount is " + ds.getMyVisionPotionAmount());
 
             }
             if (myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().containsKey("H")) {
@@ -172,7 +169,6 @@ public class SaveLoad {
             myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().put("A", ds.getMyPillarAAmount());
             myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().put("P", ds.getMyPillarPAmount());
             myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().put("E", ds.getMyPillarEAmount());
-            System.out.println("V " + myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().get("V"));
 
             for (Map.Entry<String, Integer> entry : myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().entrySet()) {
                 if(myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().get(entry.getKey()) > 0){
@@ -219,6 +215,7 @@ public class SaveLoad {
                 case "H" -> itemImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/HealthPotion.png")));
                 case "o" -> itemImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/ExitChest.png")));
                 case "M" -> itemImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/MultipleItems.png")));
+                case "X" -> itemImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Objects/pitImg.png")));
                 // Add more cases for other item types if needed
             }
         } catch (IOException e) {

@@ -3,7 +3,7 @@ package Model;
 import java.awt.*;
 import java.io.Serializable;
 
-public abstract class DungeonCharacter implements Serializable {
+public abstract class DungeonCharacter {
     private String myName;
     private int myHitPoints;
     private int myAttackSpeed;
@@ -17,15 +17,17 @@ public abstract class DungeonCharacter implements Serializable {
 
 
 
-    DungeonCharacter(final String theName, final int theHitPoints, final int theAttackSpeed,
-                     final double theChanceToHit, final int theMaxDamage, final int theMinDamage,
-                     final int theX, final int theY){
+
+    protected DungeonCharacter(final String theName, final int theHitPoints, final int theAttackSpeed,
+                               final double theChanceToHit, final int theMaxDamage, final int theMinDamage,
+                               final int theX, final int theY){
         setMyName(theName);
         setMyHitPoints(theHitPoints);
         setMyAttackSpeed(theAttackSpeed);
         setMyChanceToHit(theChanceToHit);
         setMyMaxDamage(theMaxDamage);
         setMyMinDamage(theMinDamage);
+
 
     }
 
@@ -53,6 +55,7 @@ public abstract class DungeonCharacter implements Serializable {
         myX = theX;
         //}
     }
+
 
     void setMyMinDamage(final int theMinDamage) {
         if(theMinDamage < 0 ) {
@@ -115,6 +118,7 @@ public abstract class DungeonCharacter implements Serializable {
     public int getMyY() {
         return myY;
     }
+
 
 
     public void attack(final DungeonCharacter theOther){

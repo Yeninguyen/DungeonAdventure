@@ -82,24 +82,36 @@ public class GameUI implements Serializable {
     public void drawPlayer(final Graphics2D theGraphics) {
         myDungeonPanel.getMyCharacter().drawPlayer(theGraphics);
         theGraphics.setColor(Color.WHITE);
+        theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 15F));
+        theGraphics.drawString(myUserName, getMyCharacter().getMyScreenX(), getMyCharacter().getMyScreenY() - 20);
 
         theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 15F));
-        if(myDungeonPanel.getMyTileManager().isMyPitFall()){
-        theGraphics.drawString("Fall into pit -" + myDungeonPanel.getMyTileManager().getMyPitDmg(), getMyCharacter().getMyScreenX(), getMyCharacter().getMyScreenY());
-
-
-        // Start a new thread to remove the pit fall message after 2 seconds
+        theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 15F));
+        theGraphics.drawString("Current Health " + myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints(), getMyCharacter().getMyScreenX() - 25, getMyCharacter().getMyScreenY() - 50);
+        if (myUsedHealthPotion) {
+            theGraphics.drawString("Used Heal potion +" + myHealAmount, myDungeonPanel.getMyCharacter().getMyScreenX(), myDungeonPanel.getMyCharacter().getMyScreenY());
             new Thread(() -> {
                 try {
-                    Thread.sleep(2000); // Sleep for 2 seconds (2000 milliseconds)
+                    Thread.sleep(1000); // Sleep for 2 seconds (2000 milliseconds)
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                }
+            }).start();
+            myUsedHealthPotion = false;
+        }
+        if (myDungeonPanel.getMyTileManager().isMyPitFall()) {
+            theGraphics.setColor(Color.RED);
+            theGraphics.drawString("Fall into pit -" + myDungeonPanel.getMyTileManager().getMyPitDmg(), getMyCharacter().getMyScreenX(), getMyCharacter().getMyScreenY());
 
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
                 myDungeonPanel.getMyTileManager().setMyPitFall(false);
             }).start();
         }
-
 
 
     }
@@ -261,8 +273,8 @@ public class GameUI implements Serializable {
 
         if (myGameControls.isMyUsernameBoxSelected()) {
             myUserName = myGameControls.getUsername();
+            theGraphics2D.drawString(myUserName, (myDungeonPanel.getMyTileSize() * 12), (int) (myDungeonPanel.getMyTileSize() * 6.2));
         }
-        theGraphics2D.drawString(myUserName, (myDungeonPanel.getMyTileSize() * 12), (int) (myDungeonPanel.getMyTileSize() * 6.2));
     }
 
 
@@ -363,6 +375,9 @@ public class GameUI implements Serializable {
                     if (val > 0) {
                         myUsedHealthPotion = true;
                         val--;
+                        if(myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints() + health > myDungeonPanel.getMyCharacter().getMyMaxHeroHitPoint()){
+                            health = myDungeonPanel.getMyCharacter().getMyMaxHeroHitPoint() - myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints();
+                        }
                         myDungeonPanel.getMyCharacter().getCharacterType().setMyHitPoints(myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints() + health);
                         myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().put("H", val);
                         myGameControls.setMyHealthPotionSelected(false);

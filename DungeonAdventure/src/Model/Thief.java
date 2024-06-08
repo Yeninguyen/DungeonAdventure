@@ -10,25 +10,22 @@ public class Thief extends Hero{
 
     @Override
     protected void special(DungeonCharacter theOther) {
-        double random = Math.random() +0.1;
+        double random = Math.random() + 0.1;
         //40 percent chance for surprise attack
-        if(random <= getMyChanceForSpecial()) {
+        if (random <= getMyChanceForSpecial()) {
             for (int i = 0; i < 2; i++) {
                 int damage = (int) (Math.random() * (getMySpecialMax() - getMySpecialMin() + 1)) + getMySpecialMin();
                 theOther.setMyHitPoints(theOther.getMyHitPoints() - damage);
-                System.out.println("Surprise attack was successful for " + damage + " damage!");
             }
 
-        //20 percent chance surprise attack is caught
-        }else if(random >= 0.8) {
-            System.out.println("Surprise Attack was caught, better luck next time");
-        //40 percent chance for one singular attack
-        }else {
+            //40 percent chance surprise attack is caught
+        } else if (random >= 0.8) {
             int damage = (int) (Math.random() * (getMySpecialMax() - getMySpecialMin() + 1)) + getMySpecialMin();
             theOther.setMyHitPoints(theOther.getMyHitPoints() - damage);
-            System.out.println("Surprise Attack was successful for " + damage + " damage!");
+
+
         }
-      }
+    }
 
     public static Thief getMyUniqueInstance() {
         if (myUniqueInstance == null) {

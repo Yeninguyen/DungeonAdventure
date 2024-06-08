@@ -9,6 +9,8 @@ public class GameSounds {
 
     private final String myButtonClickedSound = "clicksound.wav";
     private final String myWarriorAttackSound = "warriorAttack.wav";
+    private final String myLoseSound = "loser.wav";
+    private final String myWinSound = "winner.wav";
     public GameSounds() {
 
     }
@@ -18,6 +20,8 @@ public class GameSounds {
         switch (theSoundNumber) {
             case 1 -> filePath = myButtonClickedSound;
             case 2 -> filePath = myWarriorAttackSound;
+            case 3 -> filePath = myWinSound;
+            case 4 -> filePath = myLoseSound;
         }
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("DungeonAdventure/src/Sounds/" + filePath));

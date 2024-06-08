@@ -85,7 +85,6 @@ public class DungeonPanel extends JPanel implements Runnable {
         long prevTime = System.nanoTime();
         long currTime;
         while (gameThread != null) {
-            //      System.out.println(gameState);
             currTime = System.nanoTime();
             delta += (currTime - prevTime) / interval;
 
@@ -391,7 +390,6 @@ public class DungeonPanel extends JPanel implements Runnable {
                 myMonsters.add(skeleton);
             }
         }
-        System.out.println("Size" + myItems.size());
 
 
     }

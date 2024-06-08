@@ -1,5 +1,9 @@
 package Controller;
 
+import Model.Hero;
+import Model.Priestess;
+import Model.Thief;
+import Model.Warrior;
 import View.DungeonPanel;
 
 import javax.imageio.ImageIO;
@@ -196,7 +200,6 @@ public class TileManager implements Serializable{
                 if(s.equals("V")){
                     myVisionPotionCoordinatesList.add(row);
                     myVisionPotionCoordinatesList.add(col);
-                    System.out.println("Loadeddd");
                 }
                 if(s.equals("O")){
                     myOgreCoordinatesList.add(row);
@@ -237,80 +240,6 @@ public class TileManager implements Serializable{
         myDungeonPanel.getMyGameUi().getMyCharacter().initHeroes();
     }
 
-
-//    public boolean isTileCollision(final Rectangle theHitBox) {
-//
-//        int x1 = theHitBox.x / myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize();
-//        int y1 = theHitBox.y / myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize();;
-//        int x2 = (theHitBox.x + theHitBox.width) / myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize();
-//        int y2 = (theHitBox.y + theHitBox.height) / myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize();
-//        boolean isTileSolid = false;
-//        for (int row = y1; row <= y2; row++) {
-//            for (int col = x1; col <= x2; col++) {
-//                String tile = mapTileNums[row][col];
-//
-//                if(myTile.get(tile) != null && myTile.get(tile).isSolid()){
-//                    isTileSolid = true;
-//                }
-//            }
-//        }
-//
-//        List<SuperItems> itemsCopy = new ArrayList<>(myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems);
-//        for (SuperItems item : itemsCopy) {
-//            if (item.solidArea.intersects(theHitBox)) {
-//                // Handle collision with the item
-//                // You can perform actions based on the item's name or type
-//                System.out.println("Collision with item: " + item.getMyName() + " at row, col " + item.getWorldX() + " " + item.getMyY());
-//                    if (item.getMyName().equals("o")) {
-//                        if (myItemCollisionFrequency.containsKey(myPillarA) && myItemCollisionFrequency.containsKey(myPillarE) &&
-//                                myItemCollisionFrequency.containsKey(myPillarI) && myItemCollisionFrequency.containsKey(myPillarP)) {
-//                            if (myItemCollisionFrequency.get(myPillarA) == 1 && myItemCollisionFrequency.get(myPillarE) == 1 &&
-//                                    myItemCollisionFrequency.get(myPillarI) == 1 && myItemCollisionFrequency.get(myPillarE) == 1) {
-//                                myIsPlayerWin = true;
-//                                myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems.remove(item);
-//                                System.out.println(myDungeonPanel.myItems.size());
-//                            }
-//                        }
-//
-//                    } else {
-//                        if(myDungeonPanel.myDefaultItems.containsKey(item.getMyName()) && item.getMyName().equals("M")){
-//                            myDungeonPanel.getMyGameUi().getMyDungeonPanel().myDefaultItems.get(item.getMyName()).setMyCollisoin(true);
-//                            myItemCollisionFrequency.put("H", myItemCollisionFrequency.getOrDefault(item.getMyName(), 0 ) + 1);
-//                            myItemCollisionFrequency.put("V", myItemCollisionFrequency.getOrDefault(item.getMyName(), 0 ) + 1);
-//                            //myDungeonPanel.getMyCharacter().getCharacterType().setMyHitPoints();
-//                        }else {
-//                            if (myDungeonPanel.getMyGameUi().getMyDungeonPanel().myDefaultItems.containsKey(item.getMyName())) {
-//                                myDungeonPanel.getMyGameUi().getMyDungeonPanel().myDefaultItems.get(item.getMyName()).setMyCollisoin(true);
-//                                myItemCollisionFrequency.put(item.getMyName(), myItemCollisionFrequency.getOrDefault(item.getMyName(), 0) + 1);
-//                            }
-//                        }
-//                        myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems.remove(item);
-//                        System.out.println(myDungeonPanel.myItems.size());
-//                    }
-//
-//            }
-//
-//            List<Monsters> monsterCopy = new ArrayList<>(myDungeonPanel.getMyGameUi().getMyDungeonPanel().myMonsters);
-//            for (Monsters monster : monsterCopy) {
-//                if (monster.solidArea.intersects(theHitBox)) {
-//                    if (myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyDefaultMonsters().containsKey(monster.getMonsterType())) {
-//                        myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyDefaultMonsters().get(monster.getMonsterType()).setCollision(true);
-//                        System.out.println("Collided with monster " + monster.getMonsterType() + " at row, col " + monster.getMyX() + " " + monster.getMyY());
-//                        monsterEncountered = monster;
-//                        // Check if the player's character has defeated the monster
-//                        if ((myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints() > 0 && monsterEncountered.getMyMonster().getMyHitPoints() <= 0)) {
-//                            // Player has defeated the monster, remove it from the list
-//                            myDungeonPanel.getMyGameUi().getMyDungeonPanel().myMonsters.remove(monster);
-//                        }else if(myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints() <= 0){
-//                            myIsGameOver = true;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//            return isTileSolid;
-//    }
-
     public boolean isTileCollision(final Rectangle theHitBox) {
         int tileSize = myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize();
         int x1 = theHitBox.x / tileSize;
@@ -331,21 +260,22 @@ public class TileManager implements Serializable{
         List<SuperItems> itemsCopy = new ArrayList<>(myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems);
         for (SuperItems item : itemsCopy) {
             if (item.solidArea.intersects(theHitBox)) {
-                System.out.println("Collision with item: " + item.getMyName() + " at row, col " + item.getWorldX() + " " + item.getMyY());
 
-                // Remove item coordinates from the respective list
-                //removeItemCoordinates(item);
-
-                // Handle special item collisions
                 if (item.getMyName().equals("o")) {
                     handleSpecialItemCollision(item);
                 } else {
                     handleDefaultItemCollision(item);
                 }
-                if(item.getMyName().equals("X")){
+                if(item.getMyName().equals("X") || item.getMyName().equals("M")){
                    int oldHitPoint = myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints();
+                    int newHitPoint = oldHitPoint - myPitDmg;
+                   if(oldHitPoint <= 0 || newHitPoint <= 0){
+                       myDungeonPanel.getMyCharacter().setMyPlayerSpeed(0);
+                       myDungeonPanel.getMyGameSounds().playClickSound(4);
+                       myIsGameOver = true;
+                   }
                    myPitDmg = myRandom.nextInt(1, 21);
-                   int newHitPoint = oldHitPoint - myPitDmg;
+
                    myPitFall = true;
                    myDungeonPanel.getMyCharacter().getCharacterType().setMyHitPoints(newHitPoint);
                     myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems.remove(item);
@@ -361,13 +291,13 @@ public class TileManager implements Serializable{
             if (monster.solidArea.intersects(theHitBox)) {
                 if (myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyDefaultMonsters().containsKey(monster.getMonsterType())) {
                     myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyDefaultMonsters().get(monster.getMonsterType()).setCollision(true);
-                    System.out.println("Collided with monster " + monster.getMonsterType() + " at row, col " + monster.getMyX() + " " + monster.getMyY());
                     monsterEncountered = monster;
 
                     if (myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints() > 0 && monsterEncountered.getMyMonster().getMyHitPoints() <= 0) {
                         myDungeonPanel.getMyGameUi().getMyDungeonPanel().myMonsters.remove(monster);
                     } else if (myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints() <= 0) {
                         myIsGameOver = true;
+                        myDungeonPanel.getMyGameSounds().playClickSound(4);
                     }
                 }
             }
@@ -384,8 +314,8 @@ public class TileManager implements Serializable{
             if (myItemCollisionFrequency.get(myPillarA) == 1 && myItemCollisionFrequency.get(myPillarE) == 1 &&
                     myItemCollisionFrequency.get(myPillarI) == 1 && myItemCollisionFrequency.get(myPillarP) == 1) {
                 myIsPlayerWin = true;
+                myDungeonPanel.getMyGameSounds().playClickSound(3);
                 myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems.remove(item);
-                System.out.println(myDungeonPanel.myItems.size());
             }
         }
     }
@@ -465,63 +395,104 @@ public class TileManager implements Serializable{
         StringBuilder resultMessage = new StringBuilder();
         int beforeBattle, afterBattle;
 
-        while (myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints() > 0 && monsterEncountered.getMyMonster().getMyHitPoints() > 0) {
-            if ( Math.random() < 0.5) {
+        while (myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints() > 0 && monsterEncountered.getMyMonster().getMyHitPoints() > 0) {
+            if (Math.random() < 0.5) {
                 // Character attacks
                 beforeBattle = monsterEncountered.getMyMonster().getMyHitPoints();
-               // boolean characterAttackSuccess = battle(myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType(), monsterEncountered.getMyMonster());
-                myDungeonAdventurer.battle(myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType(), monsterEncountered.getMyMonster());
+                myDungeonAdventurer.battle(myDungeonPanel.getMyCharacter().getCharacterType(), monsterEncountered.getMyMonster());
                 afterBattle = monsterEncountered.getMyMonster().getMyHitPoints();
 
-                boolean characterAttackSuccess = beforeBattle > afterBattle;
+                boolean characterAttackSuccess = myDungeonAdventurer.getBattleSuccess();
                 if (characterAttackSuccess) {
                     resultMessage.append("You successfully battled with ")
                             .append(monsterEncountered.getMonsterType())
                             .append(" and dealt ")
-                            .append(beforeBattle - afterBattle)
+                            .append(myDungeonAdventurer.getMyBattleDamage()-((Hero)myDungeonPanel.getMyCharacter().getCharacterType()).getMySpecialAmount())
                             .append(" damage.")
                             .append("\n");
+                    myDungeonAdventurer.setMyBattleSuccess(false);
+                    myDungeonAdventurer.setMyBattleDamage(0);
+
+                    if (myDungeonPanel.getMyCharacter().getCharacterType() instanceof Warrior warrior) {
+                        if (warrior.getMySpecialSuccess()) {
+                            resultMessage.append("You successfully landed a Landing Blow for ")
+                                    .append(warrior.getMySpecialAmount())
+                                    .append(" damage!")
+                                    .append("\n");
+                            warrior.setMySpecialSuccess(false);
+                        }
+                    } else if (myDungeonPanel.getMyCharacter().getCharacterType() instanceof Priestess priestess) {
+                        if (priestess.getMySpecialSuccess()) {
+                            resultMessage.append("You successfully used special healing for ")
+                                    .append(priestess.getMySpecialAmount())
+                                    .append(" hit points!")
+                                    .append("\n");
+                            priestess.setMySpecialSuccess(false);
+                        }
+                    } else if (myDungeonPanel.getMyCharacter().getCharacterType() instanceof Thief thief) {
+                        if (thief.getMySpecialSuccess()) {
+                            resultMessage.append("You successfully landed a surprise attack for ")
+                                    .append(thief.getMySpecialAmount())
+                                    .append(" damage!")
+                                    .append("\n");
+                            thief.setMySpecialSuccess(false);
+                        }
+                    }
                 } else {
                     resultMessage.append("You unsuccessfully battled with ")
                             .append(monsterEncountered.getMonsterType())
                             .append(".")
                             .append("\n");
                 }
+
+                // Check if monster heals
+
+                if (monsterEncountered.getMyMonster().getMyHealed()) {
+                    resultMessage.append(monsterEncountered.getMonsterType())
+                            .append(" healed for ")
+                            .append(monsterEncountered.getMyMonster().getMyHealedAmount())
+                            .append(" hit points.")
+                            .append("\n");
+                }
+
             } else {
                 // Monster attacks
-                beforeBattle = myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints();
-                 myDungeonAdventurer.battle(monsterEncountered.getMyMonster(), myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType());
-                afterBattle = myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints();
+                beforeBattle = myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints();
+                myDungeonAdventurer.battle(monsterEncountered.getMyMonster(), myDungeonPanel.getMyCharacter().getCharacterType());
+                afterBattle = myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints();
 
-                boolean monsterAttackSuccess = beforeBattle > afterBattle;
+                boolean monsterAttackSuccess = myDungeonAdventurer.getBattleSuccess();
                 if (monsterAttackSuccess) {
                     resultMessage.append(monsterEncountered.getMonsterType())
                             .append(" successfully battled with ")
-                            .append(myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyName())
+                            .append(myDungeonPanel.getMyCharacter().getCharacterType().getMyName())
                             .append(" and dealt ")
-                            .append(beforeBattle - afterBattle)
+                            .append(myDungeonAdventurer.getMyBattleDamage())
                             .append(" damage.")
                             .append("\n");
+                    myDungeonAdventurer.setMyBattleSuccess(false);
+                    myDungeonAdventurer.setMyBattleDamage(0);
+                } else if (((Hero) myDungeonPanel.getMyCharacter().getCharacterType()).getMyBlockedAttack()) {
+                    resultMessage.append("You blocked an attack from the ")
+                            .append(monsterEncountered.getMonsterType())
+                            .append("\n");
+                    ((Hero) myDungeonPanel.getMyCharacter().getCharacterType()).setMyBlockedAttack(false);
                 } else {
                     resultMessage.append(monsterEncountered.getMonsterType())
                             .append(" unsuccessfully battled with ")
-                            .append(myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyName())
+                            .append(myDungeonPanel.getMyCharacter().getCharacterType().getMyName())
                             .append(".")
                             .append("\n");
                 }
             }
-
         }
 
-        if (myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints() <= 0) {
+        if (myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints() <= 0) {
             resultMessage.append("You have been defeated by ").append(monsterEncountered.getMonsterType()).append(".\n");
-        } else if(monsterEncountered.getMyMonster().getMyHitPoints() <= 0) {
+        } else if (monsterEncountered.getMyMonster().getMyHitPoints() <= 0) {
             resultMessage.append("You have defeated ").append(monsterEncountered.getMonsterType()).append(".\n");
-            resultMessage.append("Your current hit point is ").append(myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints());
+            resultMessage.append("Your current hit point is ").append(myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints());
         }
-
-
-
 
         battleResultMessage = resultMessage.toString();
     }
