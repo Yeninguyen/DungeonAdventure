@@ -1,4 +1,9 @@
-
+/**
+ * Team members: Pham Nguyen, Ali Mohamed and Faisal Nur
+ * Class: TCSS360
+ * Date: Jun 7, 2024
+ * @version 1.0
+ */
 package Model;
 import org.sqlite.SQLiteDataSource;
 

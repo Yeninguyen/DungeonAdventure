@@ -36,6 +36,7 @@ public class SaveLoad {
             ds.setMyPriestessSelected(myDungeonPanel.getMyGameUi().getMyGameControls().isMyPriestessSelected());
             ds.setMyWarriorSelected(myDungeonPanel.getMyGameUi().getMyGameControls().isMyWarriorSelected());
             ds.setMyThiefSelected(myDungeonPanel.getMyGameUi().getMyGameControls().isMyThiefSelected());
+            ds.setMyEasyModeSelected(myDungeonPanel.getMyGameUi().getMyGameControls().isMyEasySelected());
 
 
             if (myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().containsKey("V")) {
@@ -71,7 +72,7 @@ public class SaveLoad {
                 ds.getItemNames().add(item.getMyName());
             }
 
-            for (Monsters monster : myDungeonPanel.myMonsters) {
+            for (Monsters monster : myDungeonPanel.getMyMonsters()) {
                 ds.getMonsterCoordinates().add(monster.getMyX() / 64);
                 ds.getMonsterCoordinates().add(monster.getMyY() / 64);
                 ds.getMonsterTypes().add(monster.getMonsterType());
@@ -87,9 +88,9 @@ public class SaveLoad {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(SAVE_FILE_PATH))) {
             DataStorage ds = (DataStorage) ois.readObject();
 
-            myDungeonPanel.myItems.clear();
-            myDungeonPanel.myMonsters.clear();
-            myDungeonPanel.myDefaultItems.clear();
+            myDungeonPanel.getMyItems().clear();
+            myDungeonPanel.getMyMonsters().clear();
+            myDungeonPanel.getMyDefaultItems().clear();
             myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().clear();
             myDungeonPanel.getMyDefaultMonsters().clear();
             myDungeonPanel.getMyTileManager().setMyCol(ds.getMySize() * 5);
@@ -106,6 +107,7 @@ public class SaveLoad {
                 myDungeonPanel.getMyCharacter().getMyWarrior().setMyX(ds.getMyX());
                 myDungeonPanel.getMyCharacter().getMyWarrior().setMyY(ds.getMyY());
             }
+            myDungeonPanel.getMyGameUi().getMyGameControls().setMyEasySelected(ds.isMyEasyModeSelected());
 
 
 
@@ -135,10 +137,10 @@ public class SaveLoad {
             setItemImage(pillarA);
             setItemImage(pillarI);
 
-            myDungeonPanel.myDefaultItems.put(pillarE.getMyName(), pillarE);
-            myDungeonPanel.myDefaultItems.put(pillarI.getMyName(), pillarI);
-            myDungeonPanel.myDefaultItems.put(pillarP.getMyName(), pillarP);
-            myDungeonPanel.myDefaultItems.put(pillarA.getMyName(), pillarA);
+            myDungeonPanel.getMyDefaultItems().put(pillarE.getMyName(), pillarE);
+            myDungeonPanel.getMyDefaultItems().put(pillarI.getMyName(), pillarI);
+            myDungeonPanel.getMyDefaultItems().put(pillarP.getMyName(), pillarP);
+            myDungeonPanel.getMyDefaultItems().put(pillarA.getMyName(), pillarA);
 
 
             // Restore items from saved coordinates
@@ -159,9 +161,9 @@ public class SaveLoad {
                 // Set the item's image
                 setItemImage(item);
 
-                myDungeonPanel.myItems.add(item);
+                myDungeonPanel.getMyItems().add(item);
                 if (!name.equals("M") && !name.equals("o") && !name.equals("X")) {
-                    myDungeonPanel.myDefaultItems.put(name, item);
+                    myDungeonPanel.getMyDefaultItems().put(name, item);
                 }
             }
             int v = ds.getMyVisionPotionAmount();
@@ -174,8 +176,8 @@ public class SaveLoad {
 
             for (Map.Entry<String, Integer> entry : myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().entrySet()) {
                 if(myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().get(entry.getKey()) > 0){
-                    if(myDungeonPanel.myDefaultItems.containsKey(entry.getKey())){
-                        myDungeonPanel.myDefaultItems.get(entry.getKey()).setMyCollisoin(true);
+                    if(myDungeonPanel.getMyDefaultItems().containsKey(entry.getKey())){
+                        myDungeonPanel.getMyDefaultItems().get(entry.getKey()).setMyCollisoin(true);
                     }
                 }
             }
@@ -196,7 +198,7 @@ public class SaveLoad {
 
                 setMonsterImage(monster);
 
-                myDungeonPanel.myMonsters.add(monster);
+                myDungeonPanel.getMyMonsters().add(monster);
                 myDungeonPanel.getMyDefaultMonsters().put(type, monster);
             }
 

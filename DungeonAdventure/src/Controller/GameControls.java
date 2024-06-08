@@ -190,18 +190,18 @@ public class GameControls implements KeyListener, MouseListener {
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(2);
             }
-            if (myGameUi.getMyUserNameBox().contains(e.getPoint())){
+            if (myGameUi.getMyUserNameBox() != null && myGameUi.getMyUserNameBox().contains(e.getPoint())){
                 myUsernameBoxSelected = true;
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
             }
-            if (myGameUi.getMyThiefCheckBox().contains(e.getPoint())) {
+            if (myGameUi.getMyThiefCheckBox() != null && myGameUi.getMyThiefCheckBox().contains(e.getPoint())) {
                 myWarriorSelected = false;
                 myThiefSelected = true;
                 myPriestessSelected = false;
                 myUsernameBoxSelected = false;
                 myGameUi.getMyDungeonPanel().getMyGameSounds().playClickSound(1);
             }
-            if (myGameUi.getMyPriestessCheckBox().contains(e.getPoint())) {
+            if (myGameUi.getMyPriestessCheckBox() != null && myGameUi.getMyPriestessCheckBox().contains(e.getPoint())) {
                 myWarriorSelected = false;
                 myThiefSelected = false;
                 myPriestessSelected = true;
@@ -254,10 +254,10 @@ public class GameControls implements KeyListener, MouseListener {
                         myVisionPotionSelected = true;
                     }
                 }
-                    if (myGameUi.getMyItemRectangles().containsKey("H")) {
-                        if (myGameUi.getMyItemRectangles().get("H").contains(e.getPoint())) {
-                            myHealthPotionSelected = true;
-                        }
+                if (myGameUi.getMyItemRectangles().containsKey("H")) {
+                    if (myGameUi.getMyItemRectangles().get("H").contains(e.getPoint())) {
+                        myHealthPotionSelected = true;
+                    }
                 }
 
             }
@@ -277,7 +277,7 @@ public class GameControls implements KeyListener, MouseListener {
                 myVisionPotionSelected = false;
             }
             if (myGameUi.getMyItemRectangles().containsKey("H") && myGameUi.getMyItemRectangles().get("H").contains(e.getPoint())) {
-               myHealthPotionSelected = false;
+                myHealthPotionSelected = false;
             }
             if(myGameUi.getMyTileManager().getMyCloseBattleWindow() != null && myGameUi.getMyTileManager().getMyCloseBattleWindow().contains(e.getPoint())){
                 myCloseBattleWindow = false;
@@ -422,5 +422,8 @@ public class GameControls implements KeyListener, MouseListener {
     public void setMyCloseBattleWindow(boolean theCloseBattleWindow) {
         myCloseBattleWindow = theCloseBattleWindow;
     }
-}
 
+    public void setMyEasySelected(boolean myEasySelected) {
+        this.myEasySelected = myEasySelected;
+    }
+}

@@ -46,15 +46,23 @@ public class Lighting {
     public void update() {
         //myFilterAlpha = 1f;
         if (myVisionPotionUsed) {
-                myScale = 3;
+            if(myGameUi.getMyGameControls().isMyEasySelected()) {
+                myScale = 3.5;
+            }else{
+                myScale = 2.5;
+            }
             if (System.currentTimeMillis() - myVisionTimer >= myVisionDuration) {
                 myVisionPotionUsed = false;
                 myFilterAlpha = 1f;
-                myScale = 3; // Reset the scale to 1 when the vision potion expires
+                myScale = 1; // Reset the scale to 1 when the vision potion expires
             }
         }
         else {
-            myScale = 3;
+            if(myGameUi.getMyGameControls().isMyEasySelected()) {
+                myScale = 2.5;
+            }else{
+                myScale = 1.5;
+            }
 
         }
     }
@@ -66,7 +74,7 @@ public class Lighting {
 
         setGameLight((int) (64 * myScale));
         // Apply darkness filter
-       theG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, myFilterAlpha));
+        theG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, myFilterAlpha));
         theG2d.drawImage(myDarknessFiter, 0, 0, null);
         theG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 

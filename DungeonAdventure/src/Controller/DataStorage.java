@@ -22,6 +22,7 @@ public class DataStorage implements Serializable {
     private int myPillarIAmount;
     private int myVisionPotionAmount;
     private int myHealthPotionAmount;
+    private boolean myEasyModeSelected;
     private static final long serialVersionUID = 1L;
     private String myName;
 
@@ -195,5 +196,12 @@ public class DataStorage implements Serializable {
     public void setMyMaxHitPoint(int myMaxHitPoint) {
         this.myMaxHitPoint = myMaxHitPoint;
     }
-}
 
+    public boolean isMyEasyModeSelected() {
+        return myEasyModeSelected;
+    }
+
+    public void setMyEasyModeSelected(boolean myEasyModeSelected) {
+        this.myEasyModeSelected = myEasyModeSelected;
+    }
+}

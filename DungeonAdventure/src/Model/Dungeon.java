@@ -1,3 +1,9 @@
+/**
+ * Team members: Pham Nguyen, Ali Mohamed and Faisal Nur
+ * Class: TCSS360
+ * Date: Jun 7, 2024
+ * @version 1.0
+ */
 package Model;
 
 import java.io.BufferedWriter;
@@ -10,6 +16,9 @@ import java.util.Collections;
 import java.util.List;
 
 
+/**
+ * The Dungeon class represents a dungeon with a maze of rooms.
+ */
 public class Dungeon {
     private Room[][] maze;
     public int mySize = 3;
@@ -17,11 +26,20 @@ public class Dungeon {
     private int myNumberOfExits;
     private int myNumberOfPillars;
     private static Dungeon myUniqueInstance;
+
+    /**
+     * Constructs a new Dungeon object.
+     */
     public Dungeon() {
     }
 
 
 
+    /**
+     * Generates a maze of the specified size.
+     *
+     * @param theSize the size of the maze
+     */
     public void generateMaze(int theSize) {
         mySize = theSize;
         maze = new Room[theSize][theSize];
@@ -69,6 +87,9 @@ public class Dungeon {
         }
     }
 
+    /**
+     * Sets the entrance and exit rooms of the maze.
+     */
     private void setEntranceAndExit() {
         int entranceX;
         int entranceY = (int) (Math.random() * mySize);
@@ -97,6 +118,15 @@ public class Dungeon {
     }
 
 
+
+    /**
+     * Performs a depth-first search to check if the maze is traversable.
+     *
+     * @param x       the x-coordinate of the current room
+     * @param y       the y-coordinate of the current room
+     * @param visited a boolean array to keep track of visited rooms
+     * @return true if the maze is traversable, false otherwise
+     */
     public boolean dfs(int x, int y, boolean[][] visited) {
         if (x < 0 || x >= mySize || y < 0 || y >= mySize || visited[x][y])
             return false;
@@ -121,12 +151,23 @@ public class Dungeon {
         return up || down || left || right;
     }
 
+    /**
+     * Checks if the maze is traversable.
+     *
+     * @return true if the maze is traversable, false otherwise
+     */
+
     public boolean isTraversable() {
         boolean[][] visited = new boolean[mySize][mySize];
         return dfs(0, 0, visited) && myNumberOfPillars==4;
     }
 
 
+    /**
+     * Writes the maze to a file at the specified file path.
+     *
+     * @param theFilePath the file path to write the maze to
+     */
     public void writeMazeToFile(String theFilePath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("DungeonAdventure/src/Maps/" + theFilePath))) {
             // Write the top parts of the rooms in the first row
@@ -166,6 +207,15 @@ public class Dungeon {
         }
     }
 
+
+    /**
+     * Returns the filler string for a room based on its monster type.
+     *
+     * @param row the row index of the room
+     * @param col the column index of the room
+     * @return the filler string for the room
+     */
+
     private String getFillerString(int row, int col) {
         String filler = "* - - - * ";
         if(maze[row][col].getMyHasMonster() && maze[row][col].getMyMonsterName().equals("Ogre")){
@@ -179,6 +229,11 @@ public class Dungeon {
     }
 
 
+    /**
+     * Returns a string representation of the dungeon.
+     *
+     * @return a string representation of the dungeon
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -195,6 +250,11 @@ public class Dungeon {
         sb.append("+\n");
         return sb.toString();
     }
+    /**
+     * Returns the unique instance of the Dungeon class.
+     *
+     * @return the unique instance of the Dungeon class
+     */
     public static Dungeon getInstance() {
         if (myUniqueInstance == null) {
             myUniqueInstance = new Dungeon();
@@ -202,18 +262,39 @@ public class Dungeon {
         return myUniqueInstance;
     }
 
+    /**
+     * Returns the maze of rooms.
+     *
+     * @return the maze of rooms
+     */
     public Room[][] getMaze() {
         return maze;
     }
+
+    /**
+     * Returns a new instance of the Dungeon class for testing purposes.
+     *
+     * @return a new instance of the Dungeon class for testing purposes
+     */
 
     public static Dungeon get_TEST_instance(){
         return new Dungeon();
     }
 
+    /**
+     * Returns the size of the maze.
+     *
+     * @return the size of the maze
+     */
     public int getMySize() {
         return mySize;
     }
 
+    /**
+     * Sets the maze of rooms.
+     *
+     * @param maze the maze of rooms to set
+     */
     public void setMaze(Room[][] maze) {
         this.maze = maze;
     }

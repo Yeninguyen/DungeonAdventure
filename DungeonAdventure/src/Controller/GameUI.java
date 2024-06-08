@@ -12,6 +12,9 @@ import java.io.Serializable;
 import java.util.*;
 
 public class GameUI implements Serializable {
+
+    private boolean myPickedVisionPotion = false;
+    private boolean myPickedHealthPotion = false;
     private int myHealAmount;
     private boolean myUsedHealthPotion = false;
     private int myMazeSize;
@@ -89,10 +92,10 @@ public class GameUI implements Serializable {
         theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 15F));
         theGraphics.drawString("Current Health " + myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints(), getMyCharacter().getMyScreenX() - 25, getMyCharacter().getMyScreenY() - 50);
         if (myUsedHealthPotion) {
-            theGraphics.drawString("Used Heal potion +" + myHealAmount, myDungeonPanel.getMyCharacter().getMyScreenX(), myDungeonPanel.getMyCharacter().getMyScreenY());
+            theGraphics.drawString("Used Heal potion + " + myHealAmount, myDungeonPanel.getMyCharacter().getMyScreenX(), myDungeonPanel.getMyCharacter().getMyScreenY());
             new Thread(() -> {
                 try {
-                    Thread.sleep(1000); // Sleep for 2 seconds (2000 milliseconds)
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -110,6 +113,31 @@ public class GameUI implements Serializable {
                     e.printStackTrace();
                 }
                 myDungeonPanel.getMyTileManager().setMyPitFall(false);
+            }).start();
+        }
+        if (myDungeonPanel.getMyTileManager().isMyPickedVisionPotion()) {
+            theGraphics.setColor(Color.GREEN);
+            theGraphics.drawString("Picked up a Vision Potion", getMyCharacter().getMyScreenX(), getMyCharacter().getMyScreenY() + 20);
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                myDungeonPanel.getMyTileManager().setMyPickedVisionPotion(false);
+            }).start();
+        }
+
+        if (myDungeonPanel.getMyTileManager().isMyPickedHealthPotion()) {
+            theGraphics.setColor(Color.YELLOW);
+            theGraphics.drawString("Picked up a Health Potion", getMyCharacter().getMyScreenX(), getMyCharacter().getMyScreenY() + 40);
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000); // Sleep for 2 seconds (2000 milliseconds)
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                myDungeonPanel.getMyTileManager().setMyPickedHealthPotion(false);
             }).start();
         }
 
@@ -292,7 +320,6 @@ public class GameUI implements Serializable {
         theGraphics.setStroke(new BasicStroke(5));
 
         updateCheckboxSelection(theGraphics, myCloseWindowRectangle);
-        // Set the color to a fully transparent color for the closeWindowRectangle fill
         theGraphics.setColor(new Color(0, 0, 0, 0)); // Transparent black color
         theGraphics.fill(myCloseWindowRectangle);
 
@@ -300,8 +327,7 @@ public class GameUI implements Serializable {
         final int slotXStart = x + 40;
         final int slotYStart = y + 90;
         final int slotSize = 64;
-        // Assuming each slot has a
-        // size of 64 pixels
+
 
         int slotX = slotXStart;
         int slotY = slotYStart;
@@ -313,7 +339,7 @@ public class GameUI implements Serializable {
         theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 30F));
         theGraphics.drawString("Inventory", slotXStart + 70, slotYStart - 50);
 
-        for (SuperItems item : myDungeonPanel.myDefaultItems.values()) {
+        for (SuperItems item : myDungeonPanel.getMyDefaultItems().values()) {
             int cursorX = slotX;
             int cursorY = slotY;
 
@@ -329,12 +355,10 @@ public class GameUI implements Serializable {
                 theGraphics.drawString(String.valueOf(val), cursorX + 50, cursorY + 50);
                 theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 20F));
 
-                //theGraphics.drawString(str, cursorX + 70, cursorY + 50);
             } else {
                 theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 30F));
                 theGraphics.drawString("0", cursorX + 50, cursorY + 50);
                 theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 20F));
-                // theGraphics.drawString(str, cursorX + 70, cursorY + 50);
             }
 
             if (item.getMyName().equals("V") || item.getMyName().equals("H")) {
@@ -343,12 +367,12 @@ public class GameUI implements Serializable {
 
             slotIndex++;
             if (slotIndex % numSlotsPerRow == 0) {
-                // Move to the next row
+
                 slotX = slotXStart;
                 slotY += slotSize + 50;
             } else {
-                // Move to the next column
-                slotX += slotSize + 50; // Add extra spacing between slots if needed
+
+                slotX += slotSize + 50;
             }
         }
     }

@@ -19,6 +19,9 @@ public class TileManager implements Serializable{
     private final DungeonAdventure myDungeonAdventurer;
     private boolean myPitFall = false;
 
+    private boolean myPickedVisionPotion;
+    private boolean myPickedHealthPotion;
+
     private Random myRandom = new Random();
     private int myPitDmg;
     private int myEntranceRow;
@@ -70,7 +73,7 @@ public class TileManager implements Serializable{
     private final String mySkeleton = "S";
     private  int myRow;
     private  int myCol;
-//    private final GameUI myGameUi;
+    //    private final GameUI myGameUi;
     private final Map<String, Tile> myTile;
 
     private Monsters monsterEncountered;
@@ -124,8 +127,8 @@ public class TileManager implements Serializable{
 
             switch (title) {
                 case myHealthPotion, myVisionPotion, myEntrance, myPillarP, myPillarI,
-                        myPillarE, myExit, myMultiple, myPit, myEmpty,
-                        myPillarA, myOgre, myGremlin, mySkeleton -> title = "-";
+                     myPillarE, myExit, myMultiple, myPit, myEmpty,
+                     myPillarA, myOgre, myGremlin, mySkeleton -> title = "-";
             }
 
             int bound = myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyTileSize();
@@ -168,65 +171,65 @@ public class TileManager implements Serializable{
                 for(int col = 0; col < this.myCol; col++) { // 20
                     String[] numbers = line.split(" "); // * * A *
                     String s = numbers[col];
-                if(s.equals("i")){
-                    myEntranceRow = row;
-                    myEntranceCol = col;
-                }
-                if(s.equals("M")){
-                   myMultipleCoordinates.add(row);
-                   myMultipleCoordinates.add(col);
-                }
-                if(s.equals("A")){
-                    myPillarACoordinates = new int[2];
-                    myPillarACoordinates[0] = row;
-                    myPillarACoordinates[1] = col;
-                }
-                if(s.equals("I")){
-                    myPillarICoordinates = new int[2];
-                    myPillarICoordinates[0] = row;
-                    myPillarICoordinates[1] = col;
-                }
+                    if(s.equals("i")){
+                        myEntranceRow = row;
+                        myEntranceCol = col;
+                    }
+                    if(s.equals("M")){
+                        myMultipleCoordinates.add(row);
+                        myMultipleCoordinates.add(col);
+                    }
+                    if(s.equals("A")){
+                        myPillarACoordinates = new int[2];
+                        myPillarACoordinates[0] = row;
+                        myPillarACoordinates[1] = col;
+                    }
+                    if(s.equals("I")){
+                        myPillarICoordinates = new int[2];
+                        myPillarICoordinates[0] = row;
+                        myPillarICoordinates[1] = col;
+                    }
 
-                if(s.equals("E")){
-                    myPillarECoordinates = new int[2];
-                    myPillarECoordinates[0] = row;
-                    myPillarECoordinates[1] = col;
-                }
+                    if(s.equals("E")){
+                        myPillarECoordinates = new int[2];
+                        myPillarECoordinates[0] = row;
+                        myPillarECoordinates[1] = col;
+                    }
 
-                if(s.equals("H")){
-                    myHealthPotionCoordinatesList.add(row);
-                    myHealthPotionCoordinatesList.add(col);
-                }
-                if(s.equals("V")){
-                    myVisionPotionCoordinatesList.add(row);
-                    myVisionPotionCoordinatesList.add(col);
-                }
-                if(s.equals("O")){
-                    myOgreCoordinatesList.add(row);
-                    myOgreCoordinatesList.add(col);
-                }
-                if(s.equals("G")){
-                    myGremlinCoordinatesList.add(row);
-                    myGremlinCoordinatesList.add(col);
-                }
-                if(s.equals("S")){
-                    mySkeletonCoordinatesList.add(row);
-                    mySkeletonCoordinatesList.add(col);
-                }
-                if(s.equals("P")){
-                    myPillarPCoordinates = new int[2];
-                    myPillarPCoordinates[0] = row;
-                    myPillarPCoordinates[1] = col;
-                }
-                if(s.equals("X")){
-                    myPitCoordinates.add(row);
-                    myPitCoordinates.add(col);
-                }
-                if(s.equals("o")){
-                    myExitCoordinates = new int[2];
-                    myExitCoordinates[0] = row;
-                    myExitCoordinates[1] = col;
-                }
+                    if(s.equals("H")){
+                        myHealthPotionCoordinatesList.add(row);
+                        myHealthPotionCoordinatesList.add(col);
+                    }
+                    if(s.equals("V")){
+                        myVisionPotionCoordinatesList.add(row);
+                        myVisionPotionCoordinatesList.add(col);
+                    }
+                    if(s.equals("O")){
+                        myOgreCoordinatesList.add(row);
+                        myOgreCoordinatesList.add(col);
+                    }
+                    if(s.equals("G")){
+                        myGremlinCoordinatesList.add(row);
+                        myGremlinCoordinatesList.add(col);
+                    }
+                    if(s.equals("S")){
+                        mySkeletonCoordinatesList.add(row);
+                        mySkeletonCoordinatesList.add(col);
+                    }
+                    if(s.equals("P")){
+                        myPillarPCoordinates = new int[2];
+                        myPillarPCoordinates[0] = row;
+                        myPillarPCoordinates[1] = col;
+                    }
+                    if(s.equals("X")){
+                        myPitCoordinates.add(row);
+                        myPitCoordinates.add(col);
+                    }
+                    if(s.equals("o")){
+                        myExitCoordinates = new int[2];
+                        myExitCoordinates[0] = row;
+                        myExitCoordinates[1] = col;
+                    }
                     mapTileNums[row][col] = s;
                 }
             }
@@ -247,7 +250,6 @@ public class TileManager implements Serializable{
         int x2 = (theHitBox.x + theHitBox.width) / tileSize;
         int y2 = (theHitBox.y + theHitBox.height) / tileSize;
         boolean isTileSolid = false;
-
         for (int row = y1; row <= y2; row++) {
             for (int col = x1; col <= x2; col++) {
                 String tile = mapTileNums[row][col];
@@ -257,7 +259,7 @@ public class TileManager implements Serializable{
             }
         }
 
-        List<SuperItems> itemsCopy = new ArrayList<>(myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems);
+        List<SuperItems> itemsCopy = new ArrayList<>(myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyItems());
         for (SuperItems item : itemsCopy) {
             if (item.solidArea.intersects(theHitBox)) {
 
@@ -266,19 +268,20 @@ public class TileManager implements Serializable{
                 } else {
                     handleDefaultItemCollision(item);
                 }
-                if(item.getMyName().equals("X") || item.getMyName().equals("M")){
-                   int oldHitPoint = myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints();
+                if (item.getMyName().equals("X") || item.getMyName().equals("M")) {
+                    myPitDmg = myRandom.nextInt(1, 21); // Move this line before damage calculation
+                    int oldHitPoint = myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints();
                     int newHitPoint = oldHitPoint - myPitDmg;
-                   if(oldHitPoint <= 0 || newHitPoint <= 0){
-                       myDungeonPanel.getMyCharacter().setMyPlayerSpeed(0);
-                       myDungeonPanel.getMyGameSounds().playClickSound(4);
-                       myIsGameOver = true;
-                   }
-                   myPitDmg = myRandom.nextInt(1, 21);
+                    if (oldHitPoint <= 0 || newHitPoint <= 0) {
+                        myDungeonPanel.getMyCharacter().setMyPlayerSpeed(0);
+                        myDungeonPanel.getMyGameSounds().playClickSound(4);
+                        myIsGameOver = true;
+                    }
+                    myPitFall = true;
+                    myDungeonPanel.getMyCharacter().getCharacterType().setMyHitPoints(newHitPoint);
+                    myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyItems().remove(item);
+                    myDungeonPanel.getMyGameSounds().playClickSound(5);
 
-                   myPitFall = true;
-                   myDungeonPanel.getMyCharacter().getCharacterType().setMyHitPoints(newHitPoint);
-                    myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems.remove(item);
                 }
 
 
@@ -286,7 +289,7 @@ public class TileManager implements Serializable{
             }
         }
 
-        List<Monsters> monsterCopy = new ArrayList<>(myDungeonPanel.getMyGameUi().getMyDungeonPanel().myMonsters);
+        List<Monsters> monsterCopy = new ArrayList<>(myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyMonsters());
         for (Monsters monster : monsterCopy) {
             if (monster.solidArea.intersects(theHitBox)) {
                 if (myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyDefaultMonsters().containsKey(monster.getMonsterType())) {
@@ -294,7 +297,7 @@ public class TileManager implements Serializable{
                     monsterEncountered = monster;
 
                     if (myDungeonPanel.getMyGameUi().getMyCharacter().getCharacterType().getMyHitPoints() > 0 && monsterEncountered.getMyMonster().getMyHitPoints() <= 0) {
-                        myDungeonPanel.getMyGameUi().getMyDungeonPanel().myMonsters.remove(monster);
+                        myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyMonsters().remove(monster);
                     } else if (myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints() <= 0) {
                         myIsGameOver = true;
                         myDungeonPanel.getMyGameSounds().playClickSound(4);
@@ -314,8 +317,10 @@ public class TileManager implements Serializable{
             if (myItemCollisionFrequency.get(myPillarA) == 1 && myItemCollisionFrequency.get(myPillarE) == 1 &&
                     myItemCollisionFrequency.get(myPillarI) == 1 && myItemCollisionFrequency.get(myPillarP) == 1) {
                 myIsPlayerWin = true;
+                myDungeonPanel.getMyCharacter().setMyPlayerSpeed(0);
                 myDungeonPanel.getMyGameSounds().playClickSound(3);
-                myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems.remove(item);
+                myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyItems().remove(item);
+                myDungeonPanel.getMyGameSounds().playClickSound(5);
             }
         }
     }
@@ -324,18 +329,26 @@ public class TileManager implements Serializable{
         if (item.getMyName().equals("M")) {
             myItemCollisionFrequency.put("H", myItemCollisionFrequency.getOrDefault("H", 0) + 1);
             myItemCollisionFrequency.put("V", myItemCollisionFrequency.getOrDefault("V", 0) + 1);
+            myPickedHealthPotion = true;
+            myPickedVisionPotion = true;
         } else {
-            if (myDungeonPanel.getMyGameUi().getMyDungeonPanel().myDefaultItems.containsKey(item.getMyName())) {
-                myDungeonPanel.getMyGameUi().getMyDungeonPanel().myDefaultItems.get(item.getMyName()).setMyCollisoin(true);
+            if (myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyDefaultItems().containsKey(item.getMyName())) {
+                if(item.getMyName().equals("V")){
+                    myPickedVisionPotion = true;
+                }
+                if(item.getMyName().equals("H")){
+                    myPickedHealthPotion = true;
+                }
+                myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyDefaultItems().get(item.getMyName()).setMyCollisoin(true);
                 myItemCollisionFrequency.put(item.getMyName(), myItemCollisionFrequency.getOrDefault(item.getMyName(), 0) + 1);
             }
         }
-        myDungeonPanel.getMyGameUi().getMyDungeonPanel().myItems.remove(item);
+        myDungeonPanel.getMyGameUi().getMyDungeonPanel().getMyItems().remove(item);
+        myDungeonPanel.getMyGameSounds().playClickSound(5);
+
     }
 
-    public void drawPitDmg(Graphics2D theGraphics){
-        theGraphics.drawString("You fall into a pit -" + myPitDmg, 300, 300);
-    }
+
 
 
     private void drawBattleWindow(final Graphics2D theGraphics) {
@@ -662,5 +675,21 @@ public class TileManager implements Serializable{
 
     public void setMyPitFall(boolean myPitFall) {
         this.myPitFall = myPitFall;
+    }
+
+    public boolean isMyPickedVisionPotion() {
+        return myPickedVisionPotion;
+    }
+
+    public void setMyPickedVisionPotion(boolean myPickedVisionPotion) {
+        this.myPickedVisionPotion = myPickedVisionPotion;
+    }
+
+    public boolean isMyPickedHealthPotion() {
+        return myPickedHealthPotion;
+    }
+
+    public void setMyPickedHealthPotion(boolean myPickedHealthPotion) {
+        this.myPickedHealthPotion = myPickedHealthPotion;
     }
 }

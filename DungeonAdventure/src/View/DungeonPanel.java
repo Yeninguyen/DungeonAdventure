@@ -1,4 +1,3 @@
-
 package View;
 
 import Controller.*;
@@ -44,9 +43,9 @@ public class DungeonPanel extends JPanel implements Runnable {
     private Lighting myLighting;
     private Thread gameThread;
 
-    public List<SuperItems> myItems;
-    public List<Monsters> myMonsters;
-    public Map<String, SuperItems> myDefaultItems;
+    private List<SuperItems> myItems;
+    private List<Monsters> myMonsters;
+    private Map<String, SuperItems> myDefaultItems;
 
     private final int miniMapSize = 100;
     private final float miniMapScale = 0.1f;
@@ -67,6 +66,7 @@ public class DungeonPanel extends JPanel implements Runnable {
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
         myGameSounds = new GameSounds();
+        myGameSounds.playBackgroundMusic();
         setLighting();
         initMiniMap();
         startGameThread();
@@ -309,17 +309,17 @@ public class DungeonPanel extends JPanel implements Runnable {
             myDefaultItems.put("V", visionPotion);
         }
 
-            for (int i = 0; i < myTileManager.getMyMultipleCoordinates().size(); i+=2) {
-                SuperItems multipleItem = new SuperItems(myGameUi);
-                multipleItem.setMyName("M");
-                multipleItem.setMyImage(multipleImg);
-                multipleItem.setMyY(myTileManager.getMyMultipleCoordinates().get(i) * 64);
-                multipleItem.setWorldX(myTileManager.getMyMultipleCoordinates().get(i + 1) * 64);
-                multipleItem.solidArea.x = multipleItem.getWorldX() + multipleItem.getMySolidAreaDefaultX();
-                multipleItem.solidArea.y = multipleItem.getMyY() + multipleItem.getMySolidAreaDefaultY();
-                multipleItem.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
-                multipleItem.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
-                myItems.add(multipleItem);
+        for (int i = 0; i < myTileManager.getMyMultipleCoordinates().size(); i+=2) {
+            SuperItems multipleItem = new SuperItems(myGameUi);
+            multipleItem.setMyName("M");
+            multipleItem.setMyImage(multipleImg);
+            multipleItem.setMyY(myTileManager.getMyMultipleCoordinates().get(i) * 64);
+            multipleItem.setWorldX(myTileManager.getMyMultipleCoordinates().get(i + 1) * 64);
+            multipleItem.solidArea.x = multipleItem.getWorldX() + multipleItem.getMySolidAreaDefaultX();
+            multipleItem.solidArea.y = multipleItem.getMyY() + multipleItem.getMySolidAreaDefaultY();
+            multipleItem.solidArea.width = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            multipleItem.solidArea.height = myGameUi.getMyDungeonPanel().getMyTileSize() - 20;
+            myItems.add(multipleItem);
 
         }
 
@@ -527,5 +527,14 @@ public class DungeonPanel extends JPanel implements Runnable {
     public List<SuperItems> getMyItems() {
         return myItems;
     }
+
+    public List<Monsters> getMyMonsters() {
+        return myMonsters;
+    }
+
+    public Map<String, SuperItems> getMyDefaultItems() {
+        return myDefaultItems;
+    }
+
 
 }

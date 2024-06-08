@@ -75,7 +75,6 @@ public class DungeonGUI extends JFrame {
             }
         });
 
-        /*** This is the message show the rules of the Game of Craps. */
         rules.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -86,7 +85,7 @@ public class DungeonGUI extends JFrame {
                                 " and take them to the exit to win the game." +
                                 "\nSome features of the dungeon will prove a hindrance to the adventurer's task (pits), " +
                                 " while some will prove helpful (healing and vision potions)\n"
-                                );
+                );
             }
         });
 
@@ -103,12 +102,20 @@ public class DungeonGUI extends JFrame {
         shortcuts.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(DungeonGUI.this, "Keyboard Shortcuts: " +
-                        "\nGame is Ctrl + Alt + G" + "\nHelp is Ctrl + Alt + H"
-                        + "\nSave Game is Ctrl + S" +
-                        "\nExit is Ctrl + E" + "\nAbout is Ctrl + A" + "\nRules is Ctrl + Z"
-                        + "\nShortcuts is Ctrl + F" + "\nRollDice Button is Ctrl + Alt + R" +
-                        "\nPlayAgain Button is Ctrl + Alt + P" + "\nSetBank Button is Ctrl + Alt + S ");
+                JOptionPane.showMessageDialog(DungeonGUI.this, """
+                        Keyboard Shortcuts:\s
+                        Movement: Arrow Keys (Up, Down, Left, Right)
+                        Open Inventory: Enter
+                        Use Vision Potion: V
+                        Use Health Potion: H
+                        Close Inventory/Battle Window: Mouse Click
+                        Start Game: Mouse Click on 'NEW GAME'
+                        Load Game: Mouse Click on 'LOAD GAME'
+                        Quit Game: Mouse Click on 'QUIT GAME'
+                        Select Character: Mouse Click on Checkbox
+                        Select Difficulty: Mouse Click on Checkbox
+                        Enter Username: Type in the Username Box
+                        Confirm Selection: Mouse Click on 'DONE'""");
             }
         });
         about.setAccelerator(KeyStroke.getKeyStroke("control A"));
