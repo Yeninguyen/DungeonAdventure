@@ -361,7 +361,7 @@ public class GameUI implements Serializable {
                 if (val > 0) {
                     val--;
                     myDungeonPanel.getMyLighting().setMyVisionPotionUsed(true);
-                    myDungeonPanel.getMyLighting().setMyVisionTimer(System.currentTimeMillis()); // Set the timer
+                    myDungeonPanel.getMyLighting().setMyVisionTimer(System.currentTimeMillis());
                     myDungeonPanel.getMyTileManager().getMyItemCollisionFrequency().put("V", val);
                     myGameControls.setMyVisionPotionSelected(false);
                 }

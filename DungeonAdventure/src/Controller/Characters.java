@@ -445,4 +445,5 @@ public class Characters implements Serializable {
     public void setMyMaxHeroHitPoint(int myMaxHeroHitPoint) {
         this.myMaxHeroHitPoint = myMaxHeroHitPoint;
     }
+
 }

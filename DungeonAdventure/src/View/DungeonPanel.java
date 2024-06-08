@@ -411,12 +411,6 @@ public class DungeonPanel extends JPanel implements Runnable {
         theGraphics.drawString(text, x, y);
         theGraphics.setFont(theGraphics.getFont().deriveFont(Font.BOLD, 20F));
 
-
-        myStartOverRectangle = new RoundRectangle2D.Double(x + 10, getMyTileSize() + y, getMyTileSize() * 3, getMyTileSize(), 20, 20);
-        theGraphics.fill(myStartOverRectangle);
-        theGraphics.setColor(Color.BLACK);
-        theGraphics.drawString("Start Over", (int) (myStartOverRectangle.getX() + 50), (int) (myStartOverRectangle.getY() +  35));
-
     }
 
     public int getXforCenteredText() {

@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 public class DataStorage implements Serializable {
+
+    private int myMaxHitPoint;
     private int myX;
 
     private int myPlayerHitPoint;
@@ -184,6 +186,14 @@ public class DataStorage implements Serializable {
 
     public void setMyPlayerHitPoint(int myPlayerHitPoint) {
         this.myPlayerHitPoint = myPlayerHitPoint;
+    }
+
+    public int getMyMaxHitPoint() {
+        return myMaxHitPoint;
+    }
+
+    public void setMyMaxHitPoint(int myMaxHitPoint) {
+        this.myMaxHitPoint = myMaxHitPoint;
     }
 }
 

@@ -20,7 +20,7 @@ public class SaveLoad {
     }
 
     public void save() {
-        Date currentDate = new Date();
+
 
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(SAVE_FILE_PATH))) {
             DataStorage ds = new DataStorage();
@@ -30,6 +30,7 @@ public class SaveLoad {
             ds.setMyY(myDungeonPanel.getMyCharacter().getMyY());
             ds.setMyX(myDungeonPanel.getMyCharacter().getMyX());
             ds.setMyPlayerHitPoint(myDungeonPanel.getMyCharacter().getCharacterType().getMyHitPoints());
+            ds.setMyMaxHitPoint(myDungeonPanel.getMyCharacter().getMyMaxHeroHitPoint());
             ds.setMySize(myDungeonPanel.getMyGameUi().getMyMazeSize());
             ds.setMyTileNums(myDungeonPanel.getMyTileManager().getMapTileNums());
             ds.setMyPriestessSelected(myDungeonPanel.getMyGameUi().getMyGameControls().isMyPriestessSelected());
@@ -115,6 +116,7 @@ public class SaveLoad {
             myDungeonPanel.getMyGameUi().getMyGameControls().setMyUsernameBoxSelected(true);
 
             myDungeonPanel.getMyCharacter().getCharacterType().setMyHitPoints(ds.getMyPlayerHitPoint());
+            myDungeonPanel.getMyCharacter().setMyMaxHeroHitPoint(ds.getMyMaxHitPoint());
             myDungeonPanel.getMyGameUi().setMyUserName(ds.getMyName());
 
             SuperItems pillarP = new SuperItems(myDungeonPanel.getMyGameUi());
